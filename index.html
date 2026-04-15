@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Radio Gram</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    .emoji {
+      position: fixed;
+      font-size: 24px;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 1000;
+      animation: floatEmoji 4s ease-in-out;
+    }
+    @keyframes floatEmoji {
+      0% { opacity: 0; transform: translateY(20px) scale(0.5); }
+      20% { opacity: 1; transform: translateY(0) scale(1); }
+      80% { opacity: 1; transform: translateY(-10px) scale(1); }
+      100% { opacity: 0; transform: translateY(-30px) scale(0.8); }
+    }
+    
+    .player-wrapper { text-align: center; margin-bottom: 40px; position: relative; z-index: 10; }
+    
+    .play-button {
+      width: 120px; height: 120px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #4a4a4f, #1a1a1e 80%);
+      border: none;
+      cursor: pointer;
+      margin: 0 auto 25px; transition: all 0.3s ease;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+    }
+    .play-button:hover { 
+      transform: scale(1.03);
+      background: radial-gradient(circle at 30% 20%, #55555a, #222226 80%);
+    }
+    .play-button:active { transform: scale(0.98); }
+    
+    .play-button.paused {
+      box-shadow: 0 0 25px rgba(255, 59, 48, 0.5), 0 8px 25px rgba(0, 0, 0, 0.6);
+    }
+    .play-button.playing {
+      box-shadow: 0 0 35px rgba(52, 211, 153, 0.6), 0 8px 25px rgba(0, 0, 0, 0.6);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 30px rgba(52, 211, 153, 0.5), 0 8px 25px rgba(0, 0, 0, 0.6); }
+      50% { box-shadow: 0 0 50px rgba(52, 211, 153, 0.8), 0 8px 25px rgba(0, 0, 0, 0.6); }
+    }
+    
+    .gram-icon {
+      width: 55px; height: 55px;
+      fill: none;
+      stroke: #ffffff;
+      stroke-width: 7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+      transition: all 0.3s;
+    }
+
+    .pause-icon {
+      width: 50px; height: 50px;
+      fill: #ffffff;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+      transition: all 0.3s;
+    }
+    
+    .main-title { font-size: 36px; font-weight: 700; letter-spacing: 4px; margin-bottom: 8px; }
+    .sub-title { font-size: 11px; color: #666; letter-spacing: 3px; margin-bottom: 20px; }
+    .status { color: #ff3b30; font-size: 12px; margin-bottom: 10px; min-height: 18px; }
+    .status.error { color: #ef4444; }
+    .status.success { color: #4ade80; }
+    .listeners-count { color: #4ade80; font-size: 12px; margin-bottom: 25px; }
+    
+    .social-icons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+    .social-icons a {
+      padding: 10px 20px; border-radius: 25px;
+      background: #1a1a1a; color: #fff; text-decoration: none;
+      transition: all 0.3s; font-size: 14px; border: 2px solid #333;
+    }
+    .social-icons a:hover { 
+      background: #ff3b30; 
+      border-color: #ff3b30;
+      transform: translateY(-3px); 
+    }
+    .social-icons a.youtube:hover { background: #ff0000; border-color: #ff0000; }
+    .social-icons a.telegram:hover { background: #0088cc; border-color: #0088cc; }
+    
+    .chat-container {
+      width: 100%; max-width: 450px; background: #0a0a0a;
+      border: 1px solid #222; border-radius: 12px; overflow: hidden;
+      position: relative; z-index: 10;
+    }
+    .chat-header {
+      background: #111; padding: 12px; text-align: center;
+      font-size: 13px; font-weight: 600; letter-spacing: 1.5px;
+      border-bottom: 1px solid #222;
+    }
+    .chat-messages {
+      height: 280px; overflow-y: auto; padding: 12px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .chat-messages::-webkit-scrollbar { width: 5px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    .chat-message {
+      background: #151515; padding: 10px; border-radius: 8px;
+      border-left: 3px solid #ff3b30; animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .message-nick { font-size: 12px; color: #ff3b30; font-weight: 600; margin-bottom: 4px; }
+    .message-text { font-size: 13px; line-height: 1.4; word-wrap: break-word; }
+    .message-time { font-size: 10px; color: #555; margin-top: 4px; text-align: right; }
+    .chat-input-wrapper {
+      padding: 12px; background: #111; display: flex;
+      gap: 8px; border-top: 1px solid #222;
+    }
+    .chat-input-wrapper input {
+      flex: 1; padding: 10px 15px; border-radius: 20px;
+      border: 1px solid #333; background: #0a0a0a;
+      color: #fff; font-size: 13px; outline: none;
+    }
+    .chat-input-wrapper input:focus { border-color: #ff3b30; }
+    .chat-input-wrapper button {
+      width: 44px; height: 40px; border-radius: 50%;
+      border: none; background: #ff3b30; color: #fff;
+      cursor: pointer; font-size: 16px; transition: all 0.3s;
+    }
+    .chat-input-wrapper button:hover { background: #ff5750; transform: scale(1.1); }
+    
+    .nick-modal {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.95); display: flex;
+      justify-content: center; align-items: center; z-index: 1000;
+    }
+    .nick-modal.hidden { display: none; }
+    .modal-box {
+      background: #1a1a1a; padding: 30px; border-radius: 12px;
+      border: 1px solid #333; text-align: center;
+      max-width: 90%; width: 320px;
+    }
+    .modal-box h3 { margin-bottom: 10px; font-size: 20px; }
+    .modal-box p { color: #666; font-size: 13px; margin-bottom: 20px; }
+    .modal-box input {
+      width: 100%; padding: 12px; border-radius: 8px;
+      border: 1px solid #333; background: #0a0a0a;
+      color: #fff; margin-bottom: 15px; font-size: 14px;
+    }
+    .modal-box button {
+      width: 100%; padding: 12px; border-radius: 8px;
+      border: none; background: #ff3b30; color: #fff;
+      font-weight: 600; cursor: pointer; font-size: 14px;
+    }
+    @media (max-width: 600px) {
+      body { padding: 15px; }
+      .main-title { font-size: 28px; }
+      .play-button { width: 100px; height: 100px; }
+      .gram-icon { width: 45px; height: 45px; }
+      .pause-icon { width: 40px; height: 40px; }
+      .chat-messages { height: 240px; }
+      .social-icons a { padding: 8px 16px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="player-wrapper">
+    <button class="play-button paused" id="playBtn" aria-label="Play">
+      <svg class="gram-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 14 22 L 32 52 L 50 22" />
+        <path d="M 14 22 L 50 22" />
+        <path d="M 32 22 L 32 37" />
+      </svg>
+    </button>
+    <div class="main-title">GRAM</div>
+    <div class="sub-title">RADIO STREAM</div>
+    <div class="status" id="statusText">Нажми для старта</div>
+    <div class="listeners-count">🔊 Слушателей: <span id="listenerCount">0</span></div>
+    
+    <div class="social-icons">
+      <a href="https://www.youtube.com/@blogcheloveka" target="_blank" class="youtube">📺 YouTube</a>
+      <a href="https://t.me/blogchelovecka" target="_blank" class="telegram">💬 Личный TG</a>
+      <a href="https://t.me/gramradiochill" target="_blank" class="telegram">🎵 Радио TG</a>
+      <a href="#" target="_blank">🌐 Веб-сайт</a>
+    </div>
+  </div>
+
+  <div class="chat-container">
+    <div class="chat-header">💬 ЧАТ ЭФИРА</div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-message">
+        <div class="message-nick">Система</div>
+        <div class="message-text">Добро пожаловать в эфир! 🔥</div>
+        <div class="message-time">Сейчас</div>
+      </div>
+    </div>
+    <div class="chat-input-wrapper">
+      <input type="text" id="chatInput" placeholder="Сообщение..." autocomplete="off">
+      <button onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+  <div class="nick-modal" id="nickModal">
+    <div class="modal-box">
+      <h3>Представься</h3>
+      <p>Это будет твой ник в чате</p>
+      <input type="text" id="nickInput" placeholder="@username">
+      <button onclick="saveNick()">Войти в эфир</button>
+    </div>
+  </div>
+
+  <script>
+    const streamUrl = 'http://72.56.248.12/listen/radio_gram/radio.mp3';
+    
+    const audio = new Audio();
+    audio.preload = 'none';
+    
+    const playBtn = document.getElementById('playBtn');
+    const statusText = document.getElementById('statusText');
+    let isPlaying = false;
+
+    const pauseIconSVG = `<svg class="pause-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <rect x="16" y="14" width="12" height="36" rx="4" />
+      <rect x="36" y="14" width="12" height="36" rx="4" />
+    </svg>`;
+    
+    const gramIconSVG = `<svg class="gram-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 14 22 L 32 52 L 50 22" />
+      <path d="M 14 22 L 50 22" />
+      <path d="M 32 22 L 32 37" />
+    </svg>`;
+
+    playBtn.addEventListener('click', async () => {
+      if (!isPlaying) {
+        try {
+          statusText.textContent = '⏳ Подключение...';
+          statusText.className = 'status';
+          
+          audio.src = streamUrl;
+          await audio.play();
+          
+          playBtn.innerHTML = pauseIconSVG;
+          playBtn.classList.remove('paused');
+          playBtn.classList.add('playing');
+          statusText.textContent = '🔴 СЕЙЧАС ИГРАЕТ';
+          statusText.className = 'status success';
+          isPlaying = true;
+        } catch (err) {
+          console.error('Ошибка:', err);
+          statusText.textContent = '❌ Ошибка подключения';
+          statusText.className = 'status error';
+          playBtn.classList.remove('playing');
+          playBtn.classList.add('paused');
+          playBtn.innerHTML = gramIconSVG;
+        }
+      } else {
+        audio.pause();
+        audio.src = '';
+        playBtn.innerHTML = gramIconSVG;
+        playBtn.classList.remove('playing');
+        playBtn.classList.add('paused');
+        statusText.textContent = '⏸ ПАУЗА';
+        statusText.className = 'status';
+        isPlaying = false;
+      }
+    });
+
+    const emojis = ['😊', '❤️', '👍', '🔥', '✨', '🎵', '💯', '🌟', '', '💪'];
+    
+    function showRandomEmoji() {
+      const emoji = document.createElement('div');
+      emoji.className = 'emoji';
+      emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      
+      const x = Math.random() * (window.innerWidth - 50);
+      const y = Math.random() * (window.innerHeight - 50);
+      
+      emoji.style.left = x + 'px';
+      emoji.style.top = y + 'px';
+      
+      document.body.appendChild(emoji);
+      
+      setTimeout(() => {
+        emoji.remove();
+      }, 4000);
+      
+      scheduleNextEmoji();
+    }
+    
+    function scheduleNextEmoji() {
+      const delay = Math.random() * 90000 + 30000;
+      setTimeout(showRandomEmoji, delay);
+    }
+    
+    setTimeout(scheduleNextEmoji, 30000);
+
+    const savedNick = localStorage.getItem('radioGramNick');
+    if (savedNick) {
+      document.getElementById('nickModal').classList.add('hidden');
+    }
+
+    function saveNick() {
+      const val = document.getElementById('nickInput').value.trim();
+      if (val) {
+        localStorage.setItem('radioGramNick', val);
+        document.getElementById('nickModal').classList.add('hidden');
+      }
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const nick = localStorage.getItem('radioGramNick') || 'Аноним';
+      addMessage(nick, text);
+      input.value = '';
+
+      try {
+        await fetch('/.netlify/functions/send-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nick: nick, text: text })
+        });
+      } catch (err) {
+        console.log('Чат работает локально');
+      }
+    }
+
+    function addMessage(nick, text) {
+      const chat = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'chat-message';
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      const safeNick = escapeHtml(nick);
+      const safeText = escapeHtml(text);
+      
+      div.innerHTML = `
+        <div class="message-nick">${safeNick}</div>
+        <div class="message-text">${safeText}</div>
+        <div class="message-time">${time}</div>
+      `;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    document.getElementById('chatInput').addEventListener('keypress', e => {
+      if (e.key === 'Enter') sendMessage();
+    });
+    document.getElementById('nickInput').addEventListener('keypress', e => {
+      if (e.key === 'Enter') saveNick();
+    });
+  </script>
+</body>
+</html>
