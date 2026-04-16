@@ -665,7 +665,36 @@
         // Сообщение сохранено в истории, просто не отправлено на сервер
       }
     }
+// === ФУНКЦИЯ ПОЛУЧЕНИЯ СООБЩЕНИЙ ИЗ TELEGRAM ===
+const displayedMessageIds = new Set(); // Защита от дубликатов
 
+async function getMessagesFromTelegram() {
+  try {
+    const response = await fetch('https://radiogram-backend-production.up.railway.app/api/get-from-telegram');
+    const data = await response.json();
+    
+    if (data.messages && data.messages.length > 0) {
+      for (const msg of data.messages) {
+        // Если такого ID еще нет в списке отображенных
+        if (!displayedMessageIds.has(msg.id)) {
+          // Добавляем в историю и отображаем на сайте
+          const time = addMessageToHistory(msg.user, msg.message);
+          renderMessage(msg.user, msg.message, time);
+          
+          // Запоминаем ID, чтобы не показать снова
+          displayedMessageIds.add(msg.id);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to get messages from Telegram:', error);
+  }
+}
+
+// Запускаем опрос каждые 3 секунды
+setInterval(getMessagesFromTelegram, 3000);
+// Первый запрос через 1 секунду после загрузки
+setTimeout(getMessagesFromTelegram, 1000);
     // Обработчики событий чата
     chatInput.addEventListener('keypress', e => {
       if (e.key === 'Enter') sendMessage();
