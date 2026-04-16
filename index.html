@@ -2,7 +2,10 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://radiogram.su https://api.radiogram.su; media-src 'self' https://radiogram.su https://*.radiogram.su; img-src 'self' data: blob:;">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="Radio Gram - онлайн радио поток с чатом">
   <title>Radio Gram</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -18,6 +21,7 @@
       padding: 20px;
       position: relative;
       overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
     }
     
     .emoji {
@@ -27,6 +31,7 @@
       opacity: 0;
       z-index: 1000;
       animation: floatEmoji 4s ease-in-out;
+      will-change: transform, opacity;
     }
     @keyframes floatEmoji {
       0% { opacity: 0; transform: translateY(20px) scale(0.5); }
@@ -46,12 +51,17 @@
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
       position: relative;
+      will-change: transform;
     }
     .play-button:hover { 
       transform: scale(1.03);
       background: radial-gradient(circle at 30% 20%, #55555a, #222226 80%);
     }
     .play-button:active { transform: scale(0.98); }
+    .play-button:focus-visible {
+      outline: 3px solid #ff3b30;
+      outline-offset: 4px;
+    }
     
     .play-button.paused {
       box-shadow: 0 0 25px rgba(255, 59, 48, 0.5), 0 8px 25px rgba(0, 0, 0, 0.6);
@@ -88,22 +98,23 @@
     .status { color: #ff3b30; font-size: 12px; margin-bottom: 10px; min-height: 18px; }
     .status.error { color: #ef4444; }
     .status.success { color: #4ade80; }
+    .status.buffering { color: #fbbf24; }
     .listeners-count { 
-    color: #4ade80; 
-    font-size: 12px; 
-    margin-bottom: 25px;
-    font-weight: bold;
-    text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
-    transition: color 0.3s ease;
-}
-.listeners-count.active {
-    color: #00ff88;
-    text-shadow: 0 0 15px rgba(0, 255, 136, 0.7);
-}
-.listeners-count.offline {
-    color: #ff6600;
-    text-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
-}
+      color: #4ade80; 
+      font-size: 12px; 
+      margin-bottom: 25px;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+      transition: color 0.3s ease;
+    }
+    .listeners-count.active {
+      color: #00ff88;
+      text-shadow: 0 0 15px rgba(0, 255, 136, 0.7);
+    }
+    .listeners-count.offline {
+      color: #ff6600;
+      text-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+    }
     
     .social-icons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
     .social-icons a {
@@ -115,6 +126,10 @@
       background: #ff3b30; 
       border-color: #ff3b30;
       transform: translateY(-3px); 
+    }
+    .social-icons a:focus-visible {
+      outline: 2px solid #ff3b30;
+      outline-offset: 2px;
     }
     .social-icons a.youtube:hover { background: #ff0000; border-color: #ff0000; }
     .social-icons a.telegram:hover { background: #0088cc; border-color: #0088cc; }
@@ -132,9 +147,11 @@
     .chat-messages {
       height: 280px; overflow-y: auto; padding: 12px;
       display: flex; flex-direction: column; gap: 8px;
+      scroll-behavior: smooth;
     }
     .chat-messages::-webkit-scrollbar { width: 5px; }
     .chat-messages::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    .chat-messages[aria-live="polite"] { }
     .chat-message {
       background: #151515; padding: 10px; border-radius: 8px;
       border-left: 3px solid #ff3b30; animation: slideIn 0.3s ease;
@@ -156,12 +173,20 @@
       color: #fff; font-size: 13px; outline: none;
     }
     .chat-input-wrapper input:focus { border-color: #ff3b30; }
+    .chat-input-wrapper input:focus-visible {
+      outline: 2px solid #ff3b30;
+      outline-offset: 2px;
+    }
     .chat-input-wrapper button {
       width: 44px; height: 40px; border-radius: 50%;
       border: none; background: #ff3b30; color: #fff;
       cursor: pointer; font-size: 16px; transition: all 0.3s;
     }
     .chat-input-wrapper button:hover { background: #ff5750; transform: scale(1.1); }
+    .chat-input-wrapper button:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+    }
     
     .nick-modal {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -181,10 +206,28 @@
       border: 1px solid #333; background: #0a0a0a;
       color: #fff; margin-bottom: 15px; font-size: 14px;
     }
+    .modal-box input:focus-visible {
+      outline: 2px solid #ff3b30;
+      outline-offset: 2px;
+    }
     .modal-box button {
       width: 100%; padding: 12px; border-radius: 8px;
       border: none; background: #ff3b30; color: #fff;
       font-weight: 600; cursor: pointer; font-size: 14px;
+    }
+    .modal-box button:hover { background: #ff5750; }
+    .modal-box button:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
+    }
+    .error-message {
+      color: #ef4444;
+      font-size: 12px;
+      margin-top: 8px;
+      display: none;
+    }
+    .error-message.visible {
+      display: block;
     }
     @media (max-width: 600px) {
       body { padding: 15px; }
@@ -199,8 +242,8 @@
 </head>
 <body>
   <div class="player-wrapper">
-    <button class="play-button paused" id="playBtn" aria-label="Play">
-      <svg class="gram-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <button class="play-button paused" id="playBtn" aria-label="Play/Pause" aria-pressed="false" role="button" tabindex="0">
+      <svg class="gram-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M 14 22 L 32 52 L 50 22" />
         <path d="M 14 22 L 50 22" />
         <path d="M 32 22 L 32 37" />
@@ -208,20 +251,20 @@
     </button>
     <div class="main-title">GRAM</div>
     <div class="sub-title">RADIO STREAM</div>
-    <div class="status" id="statusText">Нажми для старта</div>
+    <div class="status" id="statusText" role="status" aria-live="polite">Нажми для старта</div>
     <div class="listeners-count">🔊 Слушателей: <span id="listenerCount">0</span></div>
     
-    <div class="social-icons">
-      <a href="https://www.youtube.com/@blogcheloveka" target="_blank" class="youtube">📺 YouTube</a>
-      <a href="https://t.me/blogchelovecka" target="_blank" class="telegram">💬 Личный TG</a>
-      <a href="https://t.me/gramradiochill" target="_blank" class="telegram">🎵 Радио TG</a>
-      <a href="#" target="_blank">🌐 Веб-сайт</a>
+    <div class="social-icons" role="navigation" aria-label="Социальные сети">
+      <a href="https://www.youtube.com/@blogcheloveka" target="_blank" rel="noopener noreferrer" class="youtube" aria-label="YouTube канал">📺 YouTube</a>
+      <a href="https://t.me/blogchelovecka" target="_blank" rel="noopener noreferrer" class="telegram" aria-label="Личный Telegram">💬 Личный TG</a>
+      <a href="https://t.me/gramradiochill" target="_blank" rel="noopener noreferrer" class="telegram" aria-label="Telegram радио">🎵 Радио TG</a>
+      <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Веб-сайт">🌐 Веб-сайт</a>
     </div>
   </div>
 
-  <div class="chat-container">
+  <div class="chat-container" role="region" aria-label="Чат эфира">
     <div class="chat-header">💬 ЧАТ ЭФИРА</div>
-    <div class="chat-messages" id="chatMessages">
+    <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-relevant="additions">
       <div class="chat-message">
         <div class="message-nick">Система</div>
         <div class="message-text">Добро пожаловать в эфир! 🔥</div>
@@ -229,113 +272,238 @@
       </div>
     </div>
     <div class="chat-input-wrapper">
-      <input type="text" id="chatInput" placeholder="Сообщение..." autocomplete="off">
-      <button onclick="sendMessage()">➤</button>
+      <input type="text" id="chatInput" placeholder="Сообщение..." autocomplete="off" aria-label="Введите сообщение" maxlength="500">
+      <button onclick="sendMessage()" aria-label="Отправить сообщение">➤</button>
     </div>
+    <div class="error-message" id="chatError" role="alert"></div>
   </div>
 
-  <div class="nick-modal" id="nickModal">
+  <div class="nick-modal" id="nickModal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
     <div class="modal-box">
-      <h3>Представься</h3>
+      <h3 id="modalTitle">Представься</h3>
       <p>Это будет твой ник в чате</p>
-      <input type="text" id="nickInput" placeholder="@username">
-      <button onclick="saveNick()">Войти в эфир</button>
+      <input type="text" id="nickInput" placeholder="@username" aria-label="Ваш никнейм" maxlength="20" pattern="[a-zA-Z0-9_@]{3,20}">
+      <div class="error-message" id="nickError" role="alert"></div>
+      <button onclick="saveNick()" aria-label="Войти в эфир">Войти в эфир</button>
     </div>
   </div>
 
   <script>
-    const streamUrl = 'https://radiogram.su/listen/radio_gram/radio.mp3';
-    // === СЧЁТЧИК СЛУШАТЕЛЕЙ ===
-const apiUrl = 'https://radiogram.su/api/nowplaying/radio_gram';
+    // === КОНСТАНТЫ ===
+    const CONSTANTS = {
+      STREAM_URL: 'https://radiogram.su/listen/radio_gram/radio.mp3',
+      API_URL: 'https://radiogram.su/api/nowplaying/radio_gram',
+      CHAT_API: '/.netlify/functions/send-chat',
+      MAX_NICK_LENGTH: 20,
+      MIN_NICK_LENGTH: 3,
+      MAX_MESSAGE_LENGTH: 500,
+      MAX_CHAT_HISTORY: 50,
+      RECONNECT_DELAY: 3000,
+      UPDATE_INTERVAL: 30000
+    };
 
-async function updateListenerCount() {
-    try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        const listeners = data.listeners?.total || 0;
-        
-        const countEl = document.getElementById('listenerCount');
-        const statusEl = document.getElementById('statusText');
-        const listenersEl = document.querySelector('.listeners-count');
-        
-        if (countEl) countEl.textContent = listeners;
-        
-        if (listeners > 0) {
-            if (listenersEl) {
-                listenersEl.className = 'listeners-count active';
-            }
-            if (statusEl && isPlaying) {
-                statusEl.textContent = '🔴 СЕЙЧАС ИГРАЕТ';
-                statusEl.className = 'status success';
-            }
-        } else {
-            if (listenersEl) {
-                listenersEl.className = 'listeners-count offline';
-            }
-        }
-    } catch (error) {
-        console.error('Ошибка статистики:', error);
+    // === ФУНКЦИЯ БЕЗОПАСНОСТИ (XSS защита) ===
+    function escapeHtml(text) {
+      if (typeof text !== 'string') return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
-}
 
-// Запускаем обновление
-updateListenerCount();
-setInterval(updateListenerCount, 30000);
-// === КОНЕЦ СЧЁТЧИКА ===
-    const audio = new Audio();
-    audio.preload = 'none';
-    
+    // === ВАЛИДАЦИЯ НИКА ===
+    function validateNick(nick) {
+      const trimmed = nick.trim();
+      if (trimmed.length < CONSTANTS.MIN_NICK_LENGTH) {
+        return { valid: false, error: `Минимум ${CONSTANTS.MIN_NICK_LENGTH} символа` };
+      }
+      if (trimmed.length > CONSTANTS.MAX_NICK_LENGTH) {
+        return { valid: false, error: `Максимум ${CONSTANTS.MAX_NICK_LENGTH} символов` };
+      }
+      if (!/^[a-zA-Z0-9_@]+$/.test(trimmed)) {
+        return { valid: false, error: 'Только буквы, цифры, _ и @' };
+      }
+      return { valid: true, value: trimmed };
+    }
+
+    // === АУДИО ПЛЕЕР ===
+    let audio = null;
+    let isPlaying = false;
+    let reconnectTimer = null;
+    let isBuffering = false;
+
     const playBtn = document.getElementById('playBtn');
     const statusText = document.getElementById('statusText');
-    let isPlaying = false;
 
-    const pauseIconSVG = `<svg class="pause-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    const pauseIconSVG = `<svg class="pause-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect x="16" y="14" width="12" height="36" rx="4" />
       <rect x="36" y="14" width="12" height="36" rx="4" />
     </svg>`;
     
-    const gramIconSVG = `<svg class="gram-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    const gramIconSVG = `<svg class="gram-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <path d="M 14 22 L 32 52 L 50 22" />
       <path d="M 14 22 L 50 22" />
       <path d="M 32 22 L 32 37" />
     </svg>`;
 
-    playBtn.addEventListener('click', async () => {
+    function initAudio() {
+      if (!audio) {
+        audio = new Audio();
+        audio.preload = 'none';
+        audio.crossOrigin = 'anonymous';
+        
+        // Обработка ошибок аудио
+        audio.addEventListener('error', handleAudioError);
+        audio.addEventListener('waiting', () => {
+          isBuffering = true;
+          statusText.textContent = '⏳ Буферизация...';
+          statusText.className = 'status buffering';
+        });
+        audio.addEventListener('playing', () => {
+          isBuffering = false;
+          statusText.textContent = '🔴 СЕЙЧАС ИГРАЕТ';
+          statusText.className = 'status success';
+        });
+        audio.addEventListener('stalled', handleAudioError);
+      }
+    }
+
+    function handleAudioError() {
+      console.error('Ошибка аудио потока');
+      statusText.textContent = '⚠️ Потеряно соединение. Переподключение...';
+      statusText.className = 'status error';
+      
+      // Автоматическое переподключение
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      reconnectTimer = setTimeout(() => {
+        if (isPlaying && audio) {
+          statusText.textContent = '🔄 Переподключение...';
+          statusText.className = 'status buffering';
+          audio.src = CONSTANTS.STREAM_URL;
+          audio.play().catch(err => {
+            console.error('Не удалось переподключиться:', err);
+            stopPlayback();
+          });
+        }
+      }, CONSTANTS.RECONNECT_DELAY);
+    }
+
+    function stopPlayback() {
+      if (audio) {
+        audio.pause();
+        audio.src = '';
+      }
+      isPlaying = false;
+      isBuffering = false;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      playBtn.innerHTML = gramIconSVG;
+      playBtn.classList.remove('playing', 'paused');
+      playBtn.classList.add('paused');
+      playBtn.setAttribute('aria-pressed', 'false');
+      statusText.textContent = '⏸ ПАУЗА';
+      statusText.className = 'status';
+    }
+
+    async function togglePlayback() {
+      initAudio();
+      
       if (!isPlaying) {
         try {
           statusText.textContent = '⏳ Подключение...';
-          statusText.className = 'status';
+          statusText.className = 'status buffering';
           
-          audio.src = streamUrl;
+          audio.src = CONSTANTS.STREAM_URL;
           await audio.play();
           
           playBtn.innerHTML = pauseIconSVG;
           playBtn.classList.remove('paused');
           playBtn.classList.add('playing');
+          playBtn.setAttribute('aria-pressed', 'true');
           statusText.textContent = '🔴 СЕЙЧАС ИГРАЕТ';
           statusText.className = 'status success';
           isPlaying = true;
         } catch (err) {
-          console.error('Ошибка:', err);
+          console.error('Ошибка воспроизведения:', err);
           statusText.textContent = '❌ Ошибка подключения';
           statusText.className = 'status error';
-          playBtn.classList.remove('playing');
-          playBtn.classList.add('paused');
-          playBtn.innerHTML = gramIconSVG;
+          stopPlayback();
         }
       } else {
-        audio.pause();
-        audio.src = '';
-        playBtn.innerHTML = gramIconSVG;
-        playBtn.classList.remove('playing');
-        playBtn.classList.add('paused');
-        statusText.textContent = '⏸ ПАУЗА';
-        statusText.className = 'status';
-        isPlaying = false;
+        stopPlayback();
+      }
+    }
+
+    // Обработчики событий плеера
+    playBtn.addEventListener('click', togglePlayback);
+    
+    // Горячие клавиши
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
+        e.preventDefault();
+        togglePlayback();
       }
     });
 
-    const emojis = ['😊', '❤️', '👍', '🔥', '✨', '🎵', '💯', '🌟', '', '💪'];
+    // Очистка при закрытии страницы
+    window.addEventListener('beforeunload', () => {
+      if (reconnectTimer) clearTimeout(reconnectTimer);
+      if (audio) {
+        audio.pause();
+        audio.src = '';
+      }
+      // Очищаем все таймеры
+      const maxId = window.setTimeout(() => {}, 0);
+      for (let i = 1; i <= maxId; i++) {
+        clearTimeout(i);
+      }
+    });
+
+    // === СЧЁТЧИК СЛУШАТЕЛЕЙ ===
+    async function updateListenerCount() {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        const response = await fetch(CONSTANTS.API_URL, { 
+          signal: controller.signal,
+          headers: { 'Accept': 'application/json' }
+        });
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) throw new Error('HTTP error');
+        
+        const data = await response.json();
+        const listeners = data.listeners?.total || 0;
+        
+        const countEl = document.getElementById('listenerCount');
+        const listenersEl = document.querySelector('.listeners-count');
+        
+        if (countEl) countEl.textContent = listeners;
+        
+        if (listeners > 0) {
+          if (listenersEl) {
+            listenersEl.className = 'listeners-count active';
+          }
+          if (isPlaying && !isBuffering) {
+            statusText.textContent = '🔴 СЕЙЧАС ИГРАЕТ';
+            statusText.className = 'status success';
+          }
+        } else {
+          if (listenersEl) {
+            listenersEl.className = 'listeners-count offline';
+          }
+        }
+      } catch (error) {
+        console.error('Ошибка статистики:', error.message);
+      }
+    }
+
+    // Запускаем обновление счётчика
+    updateListenerCount();
+    const statsInterval = setInterval(updateListenerCount, CONSTANTS.UPDATE_INTERVAL);
+
+    // === ЭМОДЗИ АНИМАЦИЯ ===
+    const emojis = ['😊', '❤️', '👍', '🔥', '✨', '🎵', '💯', '🌟', '💪'];
+    let emojiTimer = null;
     
     function showRandomEmoji() {
       const emoji = document.createElement('div');
@@ -358,50 +526,81 @@ setInterval(updateListenerCount, 30000);
     }
     
     function scheduleNextEmoji() {
+      if (emojiTimer) clearTimeout(emojiTimer);
       const delay = Math.random() * 90000 + 30000;
-      setTimeout(showRandomEmoji, delay);
+      emojiTimer = setTimeout(showRandomEmoji, delay);
     }
     
-    setTimeout(scheduleNextEmoji, 30000);
+    // Запуск анимации эмодзи
+    emojiTimer = setTimeout(scheduleNextEmoji, 30000);
 
-    const savedNick = localStorage.getItem('radioGramNick');
-    if (savedNick) {
-      document.getElementById('nickModal').classList.add('hidden');
+    // === УПРАВЛЕНИЕ НИКОМ ===
+    const nickModal = document.getElementById('nickModal');
+    const nickInput = document.getElementById('nickInput');
+    const nickError = document.getElementById('nickError');
+
+    function showNickError(message) {
+      nickError.textContent = message;
+      nickError.classList.add('visible');
+      setTimeout(() => nickError.classList.remove('visible'), 3000);
     }
 
     function saveNick() {
-      const val = document.getElementById('nickInput').value.trim();
-      if (val) {
-        localStorage.setItem('radioGramNick', val);
-        document.getElementById('nickModal').classList.add('hidden');
+      const validation = validateNick(nickInput.value);
+      if (!validation.valid) {
+        showNickError(validation.error);
+        return;
+      }
+      
+      localStorage.setItem('radioGramNick', validation.value);
+      nickModal.classList.add('hidden');
+    }
+
+    // Проверка сохранённого ника при загрузке
+    const savedNick = localStorage.getItem('radioGramNick');
+    if (savedNick) {
+      const validation = validateNick(savedNick);
+      if (validation.valid) {
+        nickModal.classList.add('hidden');
+      } else {
+        localStorage.removeItem('radioGramNick');
       }
     }
 
-    async function sendMessage() {
-      const input = document.getElementById('chatInput');
-      const text = input.value.trim();
-      if (!text) return;
+    // === ЧАТ ===
+    const chatInput = document.getElementById('chatInput');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatError = document.getElementById('chatError');
+    let chatHistory = [];
 
-      const nick = localStorage.getItem('radioGramNick') || 'Аноним';
-      addMessage(nick, text);
-      input.value = '';
-
-      try {
-        await fetch('/.netlify/functions/send-chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nick: nick, text: text })
-        });
-      } catch (err) {
-        console.log('Чат работает локально');
+    function loadChatHistory() {
+      const saved = localStorage.getItem('radioGramChatHistory');
+      if (saved) {
+        try {
+          chatHistory = JSON.parse(saved);
+          // Восстанавливаем последние сообщения
+          chatHistory.slice(-CONSTANTS.MAX_CHAT_HISTORY).forEach(msg => {
+            renderMessage(msg.nick, msg.text, msg.time, false);
+          });
+        } catch (e) {
+          console.error('Ошибка загрузки истории чата:', e);
+        }
       }
     }
 
-    function addMessage(nick, text) {
-      const chat = document.getElementById('chatMessages');
+    function saveChatHistory() {
+      localStorage.setItem('radioGramChatHistory', JSON.stringify(chatHistory));
+    }
+
+    function showChatError(message) {
+      chatError.textContent = message;
+      chatError.classList.add('visible');
+      setTimeout(() => chatError.classList.remove('visible'), 3000);
+    }
+
+    function renderMessage(nick, text, time, scroll = true) {
       const div = document.createElement('div');
       div.className = 'chat-message';
-      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       
       const safeNick = escapeHtml(nick);
       const safeText = escapeHtml(text);
@@ -411,22 +610,80 @@ setInterval(updateListenerCount, 30000);
         <div class="message-text">${safeText}</div>
         <div class="message-time">${time}</div>
       `;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
+      chatMessages.appendChild(div);
+      
+      // Ограничиваем историю в DOM
+      const messages = chatMessages.querySelectorAll('.chat-message');
+      if (messages.length > CONSTANTS.MAX_CHAT_HISTORY) {
+        messages[0].remove();
+      }
+      
+      if (scroll) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
     }
 
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
+    function addMessageToHistory(nick, text) {
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      chatHistory.push({ nick, text, time });
+      
+      // Ограничиваем размер истории
+      if (chatHistory.length > CONSTANTS.MAX_CHAT_HISTORY) {
+        chatHistory.shift();
+      }
+      
+      saveChatHistory();
+      return time;
     }
 
-    document.getElementById('chatInput').addEventListener('keypress', e => {
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      if (text.length > CONSTANTS.MAX_MESSAGE_LENGTH) {
+        showChatError(`Сообщение слишком длинное (макс. ${CONSTANTS.MAX_MESSAGE_LENGTH})`);
+        return;
+      }
+
+      const nick = localStorage.getItem('radioGramNick') || 'Аноним';
+      const time = addMessageToHistory(nick, text);
+      renderMessage(nick, text, time);
+      chatInput.value = '';
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        await fetch(CONSTANTS.CHAT_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nick: nick, text: text }),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+      } catch (err) {
+        console.log('Чат работает локально:', err.message);
+        // Сообщение сохранено в истории, просто не отправлено на сервер
+      }
+    }
+
+    // Обработчики событий чата
+    chatInput.addEventListener('keypress', e => {
       if (e.key === 'Enter') sendMessage();
     });
-    document.getElementById('nickInput').addEventListener('keypress', e => {
+    
+    nickInput.addEventListener('keypress', e => {
       if (e.key === 'Enter') saveNick();
     });
+
+    // Загрузка истории чата при старте
+    loadChatHistory();
+
+    // === PWA SUPPORT (Service Worker registration placeholder) ===
+    if ('serviceWorker' in navigator) {
+      // Можно зарегистрировать service worker для офлайн поддержки
+      // navigator.serviceWorker.register('/sw.js');
+    }
   </script>
 </body>
 </html>
