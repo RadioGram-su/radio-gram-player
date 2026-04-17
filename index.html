@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; connect-src 'self' https://api.radiogram.su https://radiogram.su https://radiogram-backend-production.up.railway.app https://*.zeno.fm; img-src 'self' https: data:; media-src 'self' blob: https://radiogram.su https://*.zeno.fm; object-src 'none'; frame-src 'self' https://www.youtube.com;">
+ <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; connect-src 'self' https://api.radiogram.su https://radiogram.su https://radiogram-backend-production.up.railway.app https://stream.zeno.fm https://*.zeno.fm; img-src 'self' https: data:; media-src 'self' blob: https://radiogram.su https://stream.zeno.fm https://*.zeno.fm; object-src 'none'; frame-src 'self' https://www.youtube.com;">
   <title>Radio Gram</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -568,7 +568,7 @@
   <script>
     // === КОНСТАНТЫ ===
     const CONSTANTS = {
-      STREAM_URL: 'https://radiogram.su/listen/radio_gram/radio.mp3',
+      STREAM_URL: 'https://radiogram.su/radio/8000/radio.mp3',
       API_URL: 'https://radiogram.su/api/nowplaying/radio_gram',
       CHAT_API: '/.netlify/functions/send-chat',
       MAX_NICK_LENGTH: 20,
@@ -691,18 +691,14 @@
           audio.src = CONSTANTS.STREAM_URL;
           console.log('Attempting to play:', CONSTANTS.STREAM_URL);
           await audio.play();
-          } catch (err) {
-            console.error('Play error:', err);
-            throw err;
-          }
-
+          
           // Wait for playback to actually start
-          try {
-            await new Promise((resolve, reject) => {
+          await new Promise((resolve, reject) => {
             const timeout = setTimeout(() => reject(new Error('Playback timeout')), 5000);
             audio.addEventListener('playing', () => { clearTimeout(timeout); resolve(); }, { once: true });
             audio.addEventListener('error', (e) => { clearTimeout(timeout); reject(e); }, { once: true });
           });
+          
           console.log('Play initiated');
           
           playBtn.innerHTML = pauseIconSVG;
@@ -797,7 +793,7 @@
     const statsInterval = setInterval(updateListenerCount, CONSTANTS.UPDATE_INTERVAL);
 
     // === ЭМОДЗИ АНИМАЦИЯ ===
-    const emojis = ['😊', '❤️', '👍', '🔥', '✨', '🎵', '💯', '🌟', '💪'];
+    const emojis = ['😊', '❤️', '👍', '', '✨', '', '💯', '🌟', '💪'];
     let emojiTimer = null;
     
     function showRandomEmoji() {
@@ -1086,6 +1082,7 @@
         // Сообщение сохранено в истории, просто не отправлено на сервер
       }
     }
+
 // === ФУНКЦИЯ ПОЛУЧЕНИЯ СООБЩЕНИЙ ИЗ TELEGRAM ===
 const displayedMessageIds = new Set(); // Защита от дубликатов
 
@@ -1116,6 +1113,7 @@ async function getMessagesFromTelegram() {
 setInterval(getMessagesFromTelegram, 3000);
 // Первый запрос через 1 секунду после загрузки
 setTimeout(getMessagesFromTelegram, 1000);
+
     // Обработчики событий чата
     chatInput.addEventListener('keypress', e => {
       if (e.key === 'Enter') sendMessage();
@@ -1317,209 +1315,122 @@ setTimeout(getMessagesFromTelegram, 1000);
 
       swimPepe();
     }
-      const fishes = [fish1, fish2];
 
-      fishes.forEach((fish, index) => {
-        // Начальная позиция и направление
-        let x = Math.random() * window.innerWidth;
-        let y = Math.random() * (window.innerHeight - 200) + 100;
-        let baseSpeed = Math.random() * 1 + 0.5; // Базовая скорость для этой рыбки
-        let speedX = baseSpeed * (Math.random() > 0.5 ? 1 : -1);
-        let speedY = baseSpeed * 0.3 * (Math.random() > 0.5 ? 1 : -1);
-        let direction = speedX > 0 ? 'right' : 'left';
-        let isAccelerating = false;
-
-        fish.style.left = x + 'px';
-        fish.style.top = y + 'px';
-
-        // Плавное движение
-        function swim() {
-          // Постепенное замедление по вертикали для более плавного движения
-          if (!isAccelerating) {
-            speedY *= 0.98;
-            if (Math.abs(speedY) < 0.1) speedY = 0;
-          }
-
-          x += speedX;
-          y += speedY;
-
-          // Гравитация/плавучесть - легкое стремление к центру по вертикали
-          if (!isAccelerating && y < window.innerHeight / 2) {
-            speedY += 0.02;
-          } else if (!isAccelerating && y > window.innerHeight / 2) {
-            speedY -= 0.02;
-          }
-
-          // Отталкивание от краев экрана
-          if (x <= -60) {
-            x = -60;
-            speedX = Math.abs(speedX);
-            direction = 'right';
-          } else if (x >= window.innerWidth - 20) {
-            x = window.innerWidth - 20;
-            speedX = -Math.abs(speedX);
-            direction = 'left';
-          }
-
-          // Отталкивание от верха и низа
-          if (y <= 60) {
-            y = 60;
-            speedY = Math.abs(speedY) * 0.5;
-          } else if (y >= window.innerHeight - 60) {
-            y = window.innerHeight - 60;
-            speedY = -Math.abs(speedY) * 0.5;
-          }
-
-          // Поворот рыбки в направлении движения
-          if (direction === 'left') {
-            fish.classList.add('swimming-left');
-          } else {
-            fish.classList.remove('swimming-left');
-          }
-
-          fish.style.left = x + 'px';
-          fish.style.top = y + 'px';
-
-          requestAnimationFrame(swim);
-        }
-
-        swim();
-
-        // Клик по рыбке - она уплывает в другую сторону
-        fish.addEventListener('click', (e) => {
-          e.stopPropagation();
-          isAccelerating = true;
-          
-          const boost = 3 + Math.random() * 2;
-          speedX = -speedX * boost;
-          speedY = (Math.random() - 0.5) * 4;
-
-          // Возврат к нормальной скорости через 2 секунды
-          setTimeout(() => {
-            isAccelerating = false;
-            baseSpeed = Math.random() * 1 + 0.5;
-            speedX = speedX > 0 ? baseSpeed : -baseSpeed;
-            speedY = baseSpeed * 0.3 * (Math.random() > 0.5 ? 1 : -1);
-          }, 2000);
-        });
-      });
-    }
-    
     // Запуск рыбок после загрузки страницы
     setTimeout(initFish, 1000);
 
- // === ФУНКЦИЯ ОТПРАВКИ В TELEGRAM ===
-async function sendToTelegram(message) {
-  try {
-    await fetch('https://radiogram-backend-production.up.railway.app/api/send-to-telegram', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: message })
-    });
-    console.log('Message sent to Telegram');
-  } catch (error) {
-    console.error('Telegram error:', error);
-  }
-}
-
-
-// === ЕЖЕЧАСНОЕ ОБЪЯВЛЕНИЕ ВРЕМЕНИ ===
-function announceTime() {
-  const now = new Date();
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  
-  // Объявляем только в начале часа (0 минут)
-  if (minutes !== 0) return;
-
-  const timeString = `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
-  const message = `Сейчас московское время: ${hours} часов ${minutes === 0 ? '' : minutes + ' минут'}`;
-  
-  // Используем SpeechSynthesis для озвучки
-  if ('speechSynthesis' in window) {
-    // Отменяем предыдущие речи, если есть
-    window.speechSynthesis.cancel();
-    
-    const utterance = new SpeechSynthesisUtterance(message);
-    utterance.lang = 'ru-RU';
-    utterance.rate = 0.9; // Немного медленнее для нежности
-    utterance.pitch = 1.2; // Чуть выше для женского голоса
-    utterance.volume = 0.8;
-    
-    // Пытаемся найти женский голос
-    const voices = window.speechSynthesis.getVoices();
-    const femaleVoice = voices.find(voice => 
-      voice.name.includes('Female') || 
-      voice.name.includes('Irina') || 
-      voice.name.includes('Milena') ||
-      voice.name.includes('Tatyana') ||
-      voice.lang === 'ru-RU' && voice.name.toLowerCase().includes('female')
-    );
-    
-    if (femaleVoice) {
-      utterance.voice = femaleVoice;
+    // === ФУНКЦИЯ ОТПРАВКИ В TELEGRAM ===
+    async function sendToTelegram(message) {
+      try {
+        await fetch('https://radiogram-backend-production.up.railway.app/api/send-to-telegram', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: message })
+        });
+        console.log('Message sent to Telegram');
+      } catch (error) {
+        console.error('Telegram error:', error);
+      }
     }
-    
-    window.speechSynthesis.speak(utterance);
-    console.log('Объявление времени:', message);
-  }
-}
 
-// Проверяем время каждую минуту
-setInterval(announceTime, 60000);
+    // === ЕЖЕЧАСНОЕ ОБЪЯВЛЕНИЕ ВРЕМЕНИ ===
+    function announceTime() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      
+      // Объявляем только в начале часа (0 минут)
+      if (minutes !== 0) return;
 
-// Также проверяем сразу при загрузке (на случай если страница открылась ровно в начале часа)
-setTimeout(announceTime, 2000);
+      const timeString = `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+      const message = `Сейчас московское время: ${hours} часов ${minutes === 0 ? '' : minutes + ' минут'}`;
+      
+      // Используем SpeechSynthesis для озвучки
+      if ('speechSynthesis' in window) {
+        // Отменяем предыдущие речи, если есть
+        window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.lang = 'ru-RU';
+        utterance.rate = 0.9; // Немного медленнее для нежности
+        utterance.pitch = 1.2; // Чуть выше для женского голоса
+        utterance.volume = 0.8;
+        
+        // Пытаемся найти женский голос
+        const voices = window.speechSynthesis.getVoices();
+        const femaleVoice = voices.find(voice => 
+          voice.name.includes('Female') || 
+          voice.name.includes('Irina') || 
+          voice.name.includes('Milena') ||
+          voice.name.includes('Tatyana') ||
+          voice.lang === 'ru-RU' && voice.name.toLowerCase().includes('female')
+        );
+        
+        if (femaleVoice) {
+          utterance.voice = femaleVoice;
+        }
+        
+        window.speechSynthesis.speak(utterance);
+        console.log('Объявление времени:', message);
+      }
+    }
+
+    // Проверяем время каждую минуту
+    setInterval(announceTime, 60000);
+
+    // Также проверяем сразу при загрузке (на случай если страница открылась ровно в начале часа)
+    setTimeout(announceTime, 2000);
 
 
-// === ДИНАМИЧЕСКИЙ ФОН ПОБЕРЕЖЬЯ ===
-function updateOceanBackground() {
-  const now = new Date();
-  const nowLocal = new Date();
-  const hours = nowLocal.getHours();
-  
-  const backgroundElement = document.getElementById('oceanBackground');
-  if (!backgroundElement) return;
-  
-  // Определяем время суток и устанавливаем соответствующее изображение
-  // Утро (5:00 - 11:59) - рассвет
-  // День (12:00 - 16:59) - ясный день
-  // Вечер (17:00 - 21:59) - закат
-  // Ночь (22:00 - 4:59) - ночное побережье
-  
-  let timeClass = 'night';
-  let imageUrl = '';
-  
-  if (hours >= 5 && hours < 12) {
-    // Утро - рассвет над океаном
-    timeClass = 'sunrise';
-    imageUrl = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80';
-  } else if (hours >= 12 && hours < 17) {
-    // День - солнечный пляж
-    timeClass = 'day';
-    imageUrl = 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1920&q=80';
-  } else if (hours >= 17 && hours < 22) {
-    // Вечер - закат у океана
-    timeClass = 'evening';
-    imageUrl = 'https://images.unsplash.com/photo-1473116763249-56464eb6f81e?w=1920&q=80';
-  } else {
-    // Ночь - лунная ночь на побережье
-    timeClass = 'night';
-    imageUrl = 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1920&q=80';
-  }
-  
-  // Применяем класс времени суток
-  backgroundElement.className = `ocean-background ${timeClass}`;
-  
-  // Устанавливаем фоновое изображение
-  backgroundElement.style.backgroundImage = `url('${imageUrl}')`;
-}
+    // === ДИНАМИЧЕСКИЙ ФОН ПОБЕРЕЖЬЯ ===
+    function updateOceanBackground() {
+      const now = new Date();
+      const nowLocal = new Date();
+      const hours = nowLocal.getHours();
+      
+      const backgroundElement = document.getElementById('oceanBackground');
+      if (!backgroundElement) return;
+      
+      // Определяем время суток и устанавливаем соответствующее изображение
+      // Утро (5:00 - 11:59) - рассвет
+      // День (12:00 - 16:59) - ясный день
+      // Вечер (17:00 - 21:59) - закат
+      // Ночь (22:00 - 4:59) - ночное побережье
+      
+      let timeClass = 'night';
+      let imageUrl = '';
+      
+      if (hours >= 5 && hours < 12) {
+        // Утро - рассвет над океаном
+        timeClass = 'sunrise';
+        imageUrl = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80';
+      } else if (hours >= 12 && hours < 17) {
+        // День - солнечный пляж
+        timeClass = 'day';
+        imageUrl = 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1920&q=80';
+      } else if (hours >= 17 && hours < 22) {
+        // Вечер - закат у океана
+        timeClass = 'evening';
+        imageUrl = 'https://images.unsplash.com/photo-1473116763249-56464eb6f81e?w=1920&q=80';
+      } else {
+        // Ночь - лунная ночь на побережье
+        timeClass = 'night';
+        imageUrl = 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1920&q=80';
+      }
+      
+      // Применяем класс времени суток
+      backgroundElement.className = `ocean-background ${timeClass}`;
+      
+      // Устанавливаем фоновое изображение
+      backgroundElement.style.backgroundImage = `url('${imageUrl}')`;
+    }
 
-// Обновляем фон при загрузке и каждые 30 секунд
-updateOceanBackground();
-setInterval(updateOceanBackground, 30000);
+    // Обновляем фон при загрузке и каждые 30 секунд
+    updateOceanBackground();
+    setInterval(updateOceanBackground, 30000);
 
-</script>
+  </script>
 </body>
 </html>
+
  
