@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Radio Gram">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; connect-src 'self' https://api.radiogram.su https://radiogram.su https://radiogram-backend-production.up.railway.app https://stream.zeno.fm https://*.zeno.fm; img-src 'self' https: ; media-src 'self' blob: https://radiogram.su https://stream.zeno.fm https://*.zeno.fm; object-src 'none'; frame-src 'self' https://www.youtube.com;">
   <title>Radio Gram</title>
   <style>
@@ -133,6 +139,39 @@
       filter: drop-shadow(0 4px 8px rgba(100, 255, 100, 0.6));
       transform: scale(1.1);
     }
+    
+    /* Диалог лягушки */
+    .pepe-dialog {
+      position: fixed;
+      background: linear-gradient(135deg, #fff, #f0f0f0);
+      color: #333;
+      padding: 12px 18px;
+      border-radius: 20px;
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', cursive, sans-serif;
+      font-size: 13px;
+      font-weight: bold;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 1002;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(76, 175, 80, 0.4);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .pepe-dialog::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 8px 8px 0;
+      border-style: solid;
+      border-color: #fff transparent transparent transparent;
+    }
+    .pepe-dialog.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     .player-wrapper { text-align: center; margin-bottom: 40px; position: relative; z-index: 10; }
     
@@ -162,36 +201,6 @@
       box-shadow: 0 0 25px rgba(255, 59, 48, 0.5), 0 8px 25px rgba(0, 0, 0, 0.6);
     }
     
-    /* Эквалайзер вокруг кнопки Play */
-    .equalizer-container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 160px;
-      height: 160px;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 1;
-      display: none;
-    }
-    .equalizer-container.active {
-      display: block;
-    }
-    .eq-bar {
-      position: absolute;
-      width: 6px;
-      background: linear-gradient(180deg, #34d399, #059669, #34d399);
-      border-radius: 3px;
-      bottom: 50%;
-      transform-origin: center bottom;
-      box-shadow: 0 0 10px rgba(52, 211, 153, 0.6);
-      transition: height 0.1s ease;
-    }
-    @keyframes equalizerFloat {
-      0%, 100% { opacity: 0.7; }
-      50% { opacity: 1; }
-    }
     .play-button.playing {
       box-shadow: 0 0 35px rgba(52, 211, 153, 0.6), 0 8px 25px rgba(0, 0, 0, 0.6);
       animation: pulse 2s infinite;
@@ -458,16 +467,6 @@
   <div class="ocean-background" id="oceanBackground"></div>
   
   <div class="player-wrapper">
-    <div class="equalizer-container" id="equalizerContainer">
-      <div class="eq-bar" id="eqBar1"></div>
-      <div class="eq-bar" id="eqBar2"></div>
-      <div class="eq-bar" id="eqBar3"></div>
-      <div class="eq-bar" id="eqBar4"></div>
-      <div class="eq-bar" id="eqBar5"></div>
-      <div class="eq-bar" id="eqBar6"></div>
-      <div class="eq-bar" id="eqBar7"></div>
-      <div class="eq-bar" id="eqBar8"></div>
-    </div>
     <button class="play-button paused" id="playBtn" aria-label="Play/Pause" aria-pressed="false" role="button" tabindex="0">
       <svg class="gram-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M 14 22 L 32 52 L 50 22" />
@@ -557,6 +556,7 @@
       <ellipse cx="40" cy="24" rx="4" ry="3" fill="#4CAF50"/>
     </svg>
   </div>
+  <div class="pepe-dialog" id="pepeDialog">я знаю где купить телеграм подарки</div>
 
   <script>
     // === КОНСТАНТЫ ===
@@ -585,17 +585,9 @@
     let isPlaying = false;
     let reconnectTimer = null;
     let isBuffering = false;
-    let equalizerContainer = null;
-    let equalizerInterval = null;
-    const eqBars = [];
 
     const playBtn = document.getElementById('playBtn');
     const statusText = document.getElementById('statusText');
-    equalizerContainer = document.getElementById('equalizerContainer');
-    
-    for (let i = 1; i <= 8; i++) {
-      eqBars.push(document.getElementById(`eqBar${i}`));
-    }
 
     const pauseIconSVG = `<svg class="pause-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect x="16" y="14" width="12" height="36" rx="4" />
@@ -664,8 +656,6 @@
       playBtn.setAttribute('aria-pressed', 'false');
       statusText.textContent = '⏸ ПАУЗА';
       statusText.className = 'status';
-      equalizerContainer.classList.remove('active');
-      stopEqualizer();
     }
 
     async function togglePlayback() {
@@ -732,8 +722,6 @@
           playBtn.innerHTML = pauseIconSVG;
           playBtn.classList.remove('paused');
           playBtn.classList.add('playing');
-          equalizerContainer.classList.add('active');
-          startEqualizer();
           playBtn.setAttribute('aria-pressed', 'true');
           statusText.textContent = '🔴 СЕЙЧАС ИГРАЕТ';
           statusText.className = 'status success';
@@ -766,7 +754,6 @@
         audio.src = '';
       }
       clearSleepTimer();
-      stopEqualizer();
       const maxId = window.setTimeout(() => {}, 0);
       for (let i = 1; i <= maxId; i++) {
         clearTimeout(i);
@@ -925,51 +912,6 @@
       sleepTimeRemaining = 0;
     }
     
-    // === ЭКВАЛАЙЗЕР ===
-    function startEqualizer() {
-      if (equalizerInterval) clearInterval(equalizerInterval);
-      
-      const radius = 70;
-      const centerX = 80;
-      const centerY = 80;
-      const totalBars = eqBars.length;
-      
-      eqBars.forEach((bar, index) => {
-        const angle = (index / totalBars) * Math.PI * 2 - Math.PI / 2;
-        const x = centerX + radius * Math.cos(angle) - 3;
-        const y = centerY + radius * Math.sin(angle);
-        
-        bar.style.left = x + 'px';
-        bar.style.top = y + 'px';
-        bar.style.height = '20px';
-        bar.style.transform = `rotate(${angle + Math.PI / 2}rad)`;
-      });
-      
-      equalizerInterval = setInterval(() => {
-        eqBars.forEach((bar, index) => {
-          const baseHeight = 15 + Math.random() * 25;
-          const waveOffset = Math.sin(Date.now() / 200 + index * 0.5) * 15;
-          const height = Math.max(10, baseHeight + waveOffset);
-          
-          bar.style.height = height + 'px';
-          
-          const hue = 140 + (height / 40) * 40;
-          bar.style.background = `linear-gradient(180deg, hsl(${hue}, 70%, 60%), hsl(${hue}, 80%, 40%), hsl(${hue}, 70%, 60%))`;
-          bar.style.boxShadow = `0 0 ${height/3}px rgba(52, 211, 153, 0.8)`;
-        });
-      }, 100);
-    }
-    
-    function stopEqualizer() {
-      if (equalizerInterval) {
-        clearInterval(equalizerInterval);
-        equalizerInterval = null;
-      }
-      eqBars.forEach(bar => {
-        bar.style.height = '20px';
-      });
-    }
-
     // === ЧАТ ===
     function getCurrentNick() {
       return 'Аноним';
@@ -1123,12 +1065,22 @@
     loadChatHistory();
 
     if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(registration => {
+            console.log('Service Worker зарегистрирован:', registration.scope);
+          })
+          .catch(error => {
+            console.log('Ошибка регистрации Service Worker:', error);
+          });
+      });
     }
 
     // === АКВАРИУМНЫЕ РЫБКИ ===
     const fish1 = document.getElementById('fish1');
     const fish2 = document.getElementById('fish2');
     const pepeFish = document.getElementById('pepeFish');
+    const pepeDialog = document.getElementById('pepeDialog');
 
     function createBubble(x, y) {
       const bubble = document.createElement('div');
@@ -1142,6 +1094,30 @@
       document.body.appendChild(bubble);
       
       setTimeout(() => bubble.remove(), 4000);
+    }
+
+    function updatePepeDialog() {
+      if (!pepeFish || !pepeDialog) return;
+      
+      const pepeRect = pepeFish.getBoundingClientRect();
+      const dialogWidth = pepeDialog.offsetWidth;
+      const dialogHeight = pepeDialog.offsetHeight;
+      
+      const dialogX = pepeRect.left + (pepeRect.width / 2) - (dialogWidth / 2);
+      const dialogY = pepeRect.top - dialogHeight - 10;
+      
+      pepeDialog.style.left = dialogX + 'px';
+      pepeDialog.style.top = dialogY + 'px';
+    }
+
+    function showPepeDialog() {
+      if (!pepeDialog) return;
+      updatePepeDialog();
+      pepeDialog.classList.add('visible');
+      
+      setTimeout(() => {
+        pepeDialog.classList.remove('visible');
+      }, 3000);
     }
 
     function openPepeLink() {
@@ -1285,6 +1261,11 @@
 
         if (Math.random() < 0.003) {
           createBubble(pepeX + 25, pepeY + 15);
+        }
+
+        // Показываем диалог периодически
+        if (Math.random() < 0.001) {
+          showPepeDialog();
         }
 
         requestAnimationFrame(swimPepe);
