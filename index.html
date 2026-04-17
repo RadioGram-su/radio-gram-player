@@ -39,7 +39,6 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      transition: background-image 1.5s ease-in-out;
     }
     .ocean-background::before {
       content: '';
@@ -62,6 +61,15 @@
     }
     .ocean-background.night::before {
       background: rgba(0, 0, 0, 0.6);
+    }
+    
+    /* Плавное переключение фона */
+    .ocean-background.fade-in {
+      animation: fadeIn 2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
     
     /* Аквариумные рыбки */
@@ -1328,37 +1336,90 @@
     setTimeout(announceTime, 2000);
 
     // === ДИНАМИЧЕСКИЙ ФОН ПОБЕРЕЖЬЯ ===
+    // Массивы изображений для каждого времени суток (меняются каждый час)
+    const beachImages = {
+      sunrise: [
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80',
+        'https://images.unsplash.com/photo-1590523741831-ab7f41199401?w=1920&q=80',
+        'https://images.unsplash.com/photo-1505118380757-91f5f5636de0?w=1920&q=80',
+        'https://images.unsplash.com/photo-1544983058-293e26f4b9d6?w=1920&q=80'
+      ],
+      day: [
+        'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1920&q=80',
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80',
+        'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1920&q=80',
+        'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=1920&q=80'
+      ],
+      evening: [
+        'https://images.unsplash.com/photo-1473116763249-56464eb6f81e?w=1920&q=80',
+        'https://images.unsplash.com/photo-1473116763249-56464eb6f81e?w=1920&q=80',
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80',
+        'https://images.unsplash.com/photo-1505118380757-91f5f5636de0?w=1920&q=80'
+      ],
+      night: [
+        'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1920&q=80',
+        'https://images.unsplash.com/photo-1505118380757-91f5f5636de0?w=1920&q=80',
+        'https://images.unsplash.com/photo-1544983058-293e26f4b9d6?w=1920&q=80',
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80'
+      ]
+    };
+
+    let lastHour = -1;
+    let lastImageIndex = -1;
+
     function updateOceanBackground() {
-      const now = new Date();
       const nowLocal = new Date();
       const hours = nowLocal.getHours();
+      const currentHour = hours;
       
       const backgroundElement = document.getElementById('oceanBackground');
       if (!backgroundElement) return;
       
       let timeClass = 'night';
-      let imageUrl = '';
+      let imageArray = beachImages.night;
       
+      // Определяем время суток и массив изображений
       if (hours >= 5 && hours < 12) {
         timeClass = 'sunrise';
-        imageUrl = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80';
+        imageArray = beachImages.sunrise;
       } else if (hours >= 12 && hours < 17) {
         timeClass = 'day';
-        imageUrl = 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1920&q=80';
+        imageArray = beachImages.day;
       } else if (hours >= 17 && hours < 22) {
         timeClass = 'evening';
-        imageUrl = 'https://images.unsplash.com/photo-1473116763249-56464eb6f81e?w=1920&q=80';
+        imageArray = beachImages.evening;
       } else {
         timeClass = 'night';
-        imageUrl = 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1920&q=80';
+        imageArray = beachImages.night;
       }
       
-      backgroundElement.className = `ocean-background ${timeClass}`;
-      backgroundElement.style.backgroundImage = `url('${imageUrl}')`;
+      // Меняем изображение только если наступил новый час или это первый запуск
+      if (currentHour !== lastHour || lastImageIndex === -1) {
+        // Выбираем случайное изображение из массива, отличное от предыдущего
+        let newIndex;
+        do {
+          newIndex = Math.floor(Math.random() * imageArray.length);
+        } while (newIndex === lastImageIndex && imageArray.length > 1);
+        
+        lastImageIndex = newIndex;
+        const imageUrl = imageArray[newIndex];
+        
+        // Добавляем класс для плавного появления
+        backgroundElement.classList.remove('fade-in');
+        void backgroundElement.offsetWidth; // Триггер reflow для перезапуска анимации
+        backgroundElement.classList.add('fade-in');
+        
+        backgroundElement.className = `ocean-background ${timeClass} fade-in`;
+        backgroundElement.style.backgroundImage = `url('${imageUrl}')`;
+        
+        lastHour = currentHour;
+        console.log(`Фон обновлен: ${timeClass}, час: ${currentHour}`);
+      }
     }
 
     updateOceanBackground();
-    setInterval(updateOceanBackground, 30000);
+    // Проверяем каждый час (3600000 мс), но также можно чаще для тестирования
+    setInterval(updateOceanBackground, 3600000);
 
   </script>
 </body>
