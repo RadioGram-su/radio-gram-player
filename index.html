@@ -134,60 +134,6 @@
       transform: scale(1.1);
     }
 
-    /* Московское время */
-    .moscow-time {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: linear-gradient(135deg, rgba(20, 20, 30, 0.9), rgba(40, 40, 60, 0.95));
-      border: 1px solid rgba(100, 200, 255, 0.3);
-      border-radius: 16px;
-      padding: 12px 20px;
-      text-align: center;
-      z-index: 1000;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 
-                  0 0 15px rgba(100, 200, 255, 0.2),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      transition: all 0.3s ease;
-      animation: pulseGlow 3s ease-in-out infinite;
-    }
-    .moscow-time:hover {
-      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6), 
-                  0 0 25px rgba(100, 200, 255, 0.4),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.15);
-      transform: translateY(-2px);
-    }
-    .time-label {
-      font-size: 11px;
-      color: rgba(150, 200, 255, 0.8);
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 4px;
-      font-weight: 500;
-    }
-    .time-value {
-      font-size: 28px;
-      font-weight: 700;
-      color: #fff;
-      text-shadow: 0 0 10px rgba(100, 200, 255, 0.6),
-                   0 0 20px rgba(100, 200, 255, 0.3);
-      font-family: 'Courier New', monospace;
-      letter-spacing: 2px;
-    }
-    @keyframes pulseGlow {
-      0%, 100% {
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 
-                    0 0 15px rgba(100, 200, 255, 0.2),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      }
-      50% {
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 
-                    0 0 25px rgba(100, 200, 255, 0.35),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      }
-    }
-
     .player-wrapper { text-align: center; margin-bottom: 40px; position: relative; z-index: 10; }
     
     .play-button {
@@ -463,7 +409,6 @@
     }
     .message-nick { font-size: 12px; color: #ff3b30; font-weight: 600; margin-bottom: 4px; }
     .message-text { font-size: 13px; line-height: 1.4; word-wrap: break-word; }
-    .message-time { font-size: 10px; color: #555; margin-top: 4px; text-align: right; }
     .chat-input-wrapper {
       padding: 12px; background: #111; display: flex;
       gap: 8px; border-top: 1px solid #222;
@@ -488,39 +433,6 @@
       outline: 2px solid #fff;
       outline-offset: 2px;
     }
-    
-    .nick-modal {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.95); display: flex;
-      justify-content: center; align-items: center; z-index: 1000;
-    }
-    .nick-modal.hidden { display: none; }
-    .modal-box {
-      background: #1a1a1a; padding: 30px; border-radius: 12px;
-      border: 1px solid #333; text-align: center;
-      max-width: 90%; width: 320px;
-    }
-    .modal-box h3 { margin-bottom: 10px; font-size: 20px; }
-    .modal-box p { color: #666; font-size: 13px; margin-bottom: 20px; }
-    .modal-box input {
-      width: 100%; padding: 12px; border-radius: 8px;
-      border: 1px solid #333; background: #0a0a0a;
-      color: #fff; margin-bottom: 15px; font-size: 14px;
-    }
-    .modal-box input:focus-visible {
-      outline: 2px solid #ff3b30;
-      outline-offset: 2px;
-    }
-    .modal-box button {
-      width: 100%; padding: 12px; border-radius: 8px;
-      border: none; background: #ff3b30; color: #fff;
-      font-weight: 600; cursor: pointer; font-size: 14px;
-    }
-    .modal-box button:hover { background: #ff5750; }
-    .modal-box button:focus-visible {
-      outline: 2px solid #fff;
-      outline-offset: 2px;
-    }
     .error-message {
       color: #ef4444;
       font-size: 12px;
@@ -529,34 +441,6 @@
     }
     .error-message.visible {
       display: block;
-    }
-    
-    /* Стили для Telegram-кнопки */
-    .telegram-login-btn {
-      display: inline-block;
-      padding: 14px 32px;
-      border-radius: 30px;
-      background: linear-gradient(135deg, #0088cc, #0099ee);
-      color: #fff;
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      box-shadow: 0 4px 20px rgba(0, 136, 204, 0.4);
-      animation: gentlePulse 2s ease-in-out infinite;
-      position: relative;
-      overflow: hidden;
-      margin-top: 20px;
-    }
-    .telegram-login-btn:hover {
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 8px 30px rgba(0, 136, 204, 0.6);
-    }
-    .telegram-login-btn:active {
-      transform: translateY(-1px) scale(1.02);
     }
     @media (max-width: 600px) {
       body { padding: 15px; }
@@ -572,9 +456,6 @@
 <body>
   <!-- Динамический фон побережья океана -->
   <div class="ocean-background" id="oceanBackground"></div>
-  
-  <!-- Telegram WebApp Script -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <div class="player-wrapper">
     <div class="equalizer-container" id="equalizerContainer">
@@ -629,7 +510,6 @@
       <div class="chat-message">
         <div class="message-nick">Система</div>
         <div class="message-text">Добро пожаловать в эфир! 🔥</div>
-        <div class="message-time">Сейчас</div>
       </div>
     </div>
     <div class="chat-input-wrapper">
@@ -639,16 +519,7 @@
     <div class="error-message" id="chatError" role="alert"></div>
   </div>
 
-  <div class="nick-modal" id="nickModal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
-    <div class="modal-box">
-      <h3 id="modalTitle">Добро пожаловать в Radio Gram</h3>
-      <p>Для входа в чат используйте ваш Telegram аккаунт</p>
-      <button class="telegram-login-btn" onclick="loginWithTelegram()" aria-label="Войти через Telegram">
-        ✈ Войти через Telegram
-      </button>
-      <p style="margin-top: 15px; font-size: 12px; color: #666;">Ник будет автоматически взят из вашего Telegram профиля</p>
-    </div>
-  </div>
+
 
   <!-- Аквариумные рыбки -->
   <div class="fish" id="fish1" style="top: 20%; left: -50px;">
@@ -693,11 +564,6 @@
     </svg>
   </div>
 
-  <!-- Московское время -->
-  <div class="moscow-time" id="moscowTime">
-    <div class="time-label">Москва</div>
-    <div class="time-value" id="timeValue">00:00</div>
-  </div>
 
   <script>
     // === КОНСТАНТЫ ===
@@ -1074,61 +940,10 @@
       });
     }
 
-    // === УПРАВЛЕНИЕ НИКОМ (Telegram) ===
-    const nickModal = document.getElementById('nickModal');
-    let currentUserNick = '';
-
-    // Функция входа через Telegram
-    function loginWithTelegram() {
-      if (window.Telegram && window.Telegram.WebApp) {
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        
-        // Получаем данные пользователя из Telegram
-        const user = tg.initDataUnsafe.user;
-        
-        if (user) {
-          // Формируем ник из имени пользователя или имени
-          let nick = user.username ? '@' + user.username : (user.first_name || 'User');
-          
-          // Сохраняем ник
-          localStorage.setItem('radioGramNick', nick);
-          currentUserNick = nick;
-          
-          // Скрываем модальное окно
-          nickModal.classList.add('hidden');
-          
-          // Добавляем сообщение в чат
-          addSystemMessage(`${nick} присоединился к эфиру! 🎉`);
-        } else {
-          // Если открыто не в Telegram, используем случайный ник
-          const randomNick = 'Guest_' + Math.floor(Math.random() * 1000);
-          localStorage.setItem('radioGramNick', randomNick);
-          currentUserNick = randomNick;
-          nickModal.classList.add('hidden');
-          addSystemMessage(`${randomNick} присоединился к эфиру! 🎉`);
-        }
-      } else {
-        // Если скрипт Telegram не загружен, используем случайный ник
-        const randomNick = 'Guest_' + Math.floor(Math.random() * 1000);
-        localStorage.setItem('radioGramNick', randomNick);
-        currentUserNick = randomNick;
-        nickModal.classList.add('hidden');
-        addSystemMessage(`${randomNick} присоединился к эфиру! 🎉`);
-      }
-    }
-
-    // Проверка сохранённого ника при загрузке
-    const savedNick = localStorage.getItem('radioGramNick');
-    if (savedNick) {
-      currentUserNick = savedNick;
-      nickModal.classList.add('hidden');
-    }
-    
-    // Функция получения текущего ника
+    // === АНОНИМНЫЙ ЧАТ ===
+    // Все сообщения анонимные, без входа и ников
     function getCurrentNick() {
-      return currentUserNick || localStorage.getItem('radioGramNick') || 'Anonymous';
+      return 'Аноним';
     }
 
     // === ЧАТ ===
@@ -1172,7 +987,6 @@
       div.innerHTML = `
         <div class="message-nick">${safeNick}</div>
         <div class="message-text">${safeText}</div>
-        <div class="message-time">${time}</div>
       `;
       chatMessages.appendChild(div);
       
@@ -1220,7 +1034,6 @@
       messageDiv.innerHTML = `
         <div class="message-nick" style="color: #4a9bc9;">Система</div>
         <div class="message-text">${escapeHtml(text)}</div>
-        <div class="message-time">${time}</div>
       `;
       chatMessages.appendChild(messageDiv);
       chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -1238,7 +1051,7 @@
       const nick = getCurrentNick();
       const time = addMessageToHistory(nick, text);
       renderMessage(nick, text, time);
-      sendToTelegram(nick, text);
+      sendToTelegram(text);
       chatInput.value = '';
 
       try {
@@ -1290,10 +1103,6 @@ setTimeout(getMessagesFromTelegram, 1000);
     // Обработчики событий чата
     chatInput.addEventListener('keypress', e => {
       if (e.key === 'Enter') sendMessage();
-    });
-    
-    nickInput.addEventListener('keypress', e => {
-      if (e.key === 'Enter') saveNick();
     });
 
     // Загрузка истории чата при старте
@@ -1584,12 +1393,12 @@ setTimeout(getMessagesFromTelegram, 1000);
     setTimeout(initFish, 1000);
 
  // === ФУНКЦИЯ ОТПРАВКИ В TELEGRAM ===
-async function sendToTelegram(user, message) {
+async function sendToTelegram(message) {
   try {
     await fetch('https://radiogram-backend-production.up.railway.app/api/send-to-telegram', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user: user, message: message })
+      body: JSON.stringify({ message: message })
     });
     console.log('Message sent to Telegram');
   } catch (error) {
@@ -1597,9 +1406,6 @@ async function sendToTelegram(user, message) {
   }
 }
 
-// === НАЙДИ ФУНКЦИЮ ОТПРАВКИ СООБЩЕНИЯ И ДОБАВЬ ВЫЗОВ ===
-// Пример: если у тебя есть функция sendMessage(), добавь туда:
-// sendToTelegram(nickInput.value, messageInput.value);
 
 // === ЕЖЕЧАСНОЕ ОБЪЯВЛЕНИЕ ВРЕМЕНИ ===
 function announceTime() {
@@ -1649,30 +1455,12 @@ setInterval(announceTime, 60000);
 // Также проверяем сразу при загрузке (на случай если страница открылась ровно в начале часа)
 setTimeout(announceTime, 2000);
 
-// === ОБНОВЛЕНИЕ ОТОБРАЖЕНИЯ ВРЕМЕНИ ===
-function updateMoscowTime() {
-  const now = new Date();
-  
-  // Получаем московское время
-  const moscowTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
-  const hours = String(moscowTime.getHours()).padStart(2, '0');
-  const minutes = String(moscowTime.getMinutes()).padStart(2, '0');
-  
-  const timeValueElement = document.getElementById('timeValue');
-  if (timeValueElement) {
-    timeValueElement.textContent = `${hours}:${minutes}`;
-  }
-}
-
-// Обновляем время каждую секунду для плавности
-setInterval(updateMoscowTime, 1000);
-updateMoscowTime(); // Первичное обновление
 
 // === ДИНАМИЧЕСКИЙ ФОН ПОБЕРЕЖЬЯ ===
 function updateOceanBackground() {
   const now = new Date();
-  const moscowTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
-  const hours = moscowTime.getHours();
+  const nowLocal = new Date();
+  const hours = nowLocal.getHours();
   
   const backgroundElement = document.getElementById('oceanBackground');
   if (!backgroundElement) return;
