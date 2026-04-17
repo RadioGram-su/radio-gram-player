@@ -22,6 +22,28 @@
       -webkit-tap-highlight-color: transparent;
     }
     
+    /* Аквариумные рыбки */
+    .fish {
+      position: fixed;
+      width: 40px;
+      height: 25px;
+      pointer-events: auto;
+      cursor: pointer;
+      z-index: 999;
+      transition: transform 0.3s ease;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+    .fish svg {
+      width: 100%;
+      height: 100%;
+    }
+    .fish.swimming-left {
+      transform: scaleX(-1);
+    }
+    .fish:hover {
+      filter: drop-shadow(0 4px 8px rgba(100, 200, 255, 0.5));
+    }
+    
     .emoji {
       position: fixed;
       font-size: 24px;
@@ -49,6 +71,7 @@
       display: flex; align-items: center; justify-content: center;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
       position: relative;
+      z-index: 2;
       will-change: transform;
     }
     .play-button:hover { 
@@ -63,6 +86,37 @@
     
     .play-button.paused {
       box-shadow: 0 0 25px rgba(255, 59, 48, 0.5), 0 8px 25px rgba(0, 0, 0, 0.6);
+    }
+    
+    /* Эквалайзер вокруг кнопки Play */
+    .equalizer-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      display: none;
+    }
+    .equalizer-container.active {
+      display: block;
+    }
+    .eq-bar {
+      position: absolute;
+      width: 6px;
+      background: linear-gradient(180deg, #34d399, #059669, #34d399);
+      border-radius: 3px;
+      bottom: 50%;
+      transform-origin: center bottom;
+      box-shadow: 0 0 10px rgba(52, 211, 153, 0.6);
+      transition: height 0.1s ease;
+    }
+    @keyframes equalizerFloat {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
     }
     .play-button.playing {
       box-shadow: 0 0 35px rgba(52, 211, 153, 0.6), 0 8px 25px rgba(0, 0, 0, 0.6);
@@ -179,6 +233,80 @@
       }
     }
     
+    .sleep-timer-container {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .sleep-timer-btn {
+      padding: 12px 24px;
+      border-radius: 25px;
+      background: linear-gradient(135deg, #1e3a5f, #2d5a87);
+      color: #fff;
+      border: 2px solid #3a7ca5;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(30, 58, 95, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sleep-timer-btn:hover {
+      background: linear-gradient(135deg, #2d5a87, #3a7ca5);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(58, 124, 165, 0.5);
+    }
+    .sleep-timer-btn.active {
+      background: linear-gradient(135deg, #3a7ca5, #4a9bc9);
+      box-shadow: 0 0 20px rgba(58, 124, 165, 0.7);
+      animation: timerPulse 2s ease-in-out infinite;
+    }
+    @keyframes timerPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(58, 124, 165, 0.5); }
+      50% { box-shadow: 0 0 25px rgba(58, 124, 165, 0.8); }
+    }
+    .sleep-timer-options {
+      display: none;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .sleep-timer-options.show {
+      display: flex;
+    }
+    .sleep-time-option {
+      padding: 10px 20px;
+      border-radius: 20px;
+      background: #1a1a1e;
+      color: #fff;
+      border: 2px solid #333;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .sleep-time-option:hover {
+      background: #2d5a87;
+      border-color: #3a7ca5;
+      transform: scale(1.05);
+    }
+    .sleep-time-option.selected {
+      background: #3a7ca5;
+      border-color: #4a9bc9;
+      box-shadow: 0 0 15px rgba(58, 124, 165, 0.6);
+    }
+    .sleep-timer-display {
+      font-size: 12px;
+      color: #4a9bc9;
+      min-height: 18px;
+      font-weight: 600;
+      text-shadow: 0 0 10px rgba(74, 155, 201, 0.5);
+    }
+    
     .chat-container {
       width: 100%; max-width: 450px; background: #0a0a0a;
       border: 1px solid #222; border-radius: 12px; overflow: hidden;
@@ -287,6 +415,16 @@
 </head>
 <body>
   <div class="player-wrapper">
+    <div class="equalizer-container" id="equalizerContainer">
+      <div class="eq-bar" id="eqBar1"></div>
+      <div class="eq-bar" id="eqBar2"></div>
+      <div class="eq-bar" id="eqBar3"></div>
+      <div class="eq-bar" id="eqBar4"></div>
+      <div class="eq-bar" id="eqBar5"></div>
+      <div class="eq-bar" id="eqBar6"></div>
+      <div class="eq-bar" id="eqBar7"></div>
+      <div class="eq-bar" id="eqBar8"></div>
+    </div>
     <button class="play-button paused" id="playBtn" aria-label="Play/Pause" aria-pressed="false" role="button" tabindex="0">
       <svg class="gram-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <path d="M 14 22 L 32 52 L 50 22" />
@@ -306,9 +444,21 @@
       <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Веб-сайт">🌐 Веб-сайт</a>
     </div>
     
-    <a href="https://web.tribute.tg/d/Iuo" target="_blank" rel="noopener noreferrer" class="donate-button" aria-label="Помочь разработчику">
+    <a href="https://pressf.com/radiogram/donate" target="_blank" rel="noopener noreferrer" class="donate-button" aria-label="Помочь разработчику">
       ❤️ Помочь разработчику
     </a>
+    
+    <div class="sleep-timer-container">
+      <button class="sleep-timer-btn" id="sleepTimerBtn" aria-label="Таймер сна">
+        ⏳ Спать
+      </button>
+      <div class="sleep-timer-options" id="sleepTimerOptions">
+        <button class="sleep-time-option" data-minutes="15">15 мин</button>
+        <button class="sleep-time-option" data-minutes="30">30 мин</button>
+        <button class="sleep-time-option" data-minutes="60">60 мин</button>
+      </div>
+      <div class="sleep-timer-display" id="sleepTimerDisplay"></div>
+    </div>
   </div>
 
   <div class="chat-container" role="region" aria-label="Чат эфира">
@@ -335,6 +485,28 @@
       <div class="error-message" id="nickError" role="alert"></div>
       <button onclick="saveNick()" aria-label="Войти в эфир">Войти в эфир</button>
     </div>
+  </div>
+
+  <!-- Аквариумные рыбки -->
+  <div class="fish" id="fish1" style="top: 20%; left: -50px;">
+    <svg viewBox="0 0 40 25" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="18" cy="12.5" rx="12" ry="8" fill="#ff6b6b"/>
+      <ellipse cx="28" cy="12.5" rx="8" ry="6" fill="#ff8787"/>
+      <polygon points="35,12.5 40,8 40,17" fill="#ff6b6b"/>
+      <circle cx="14" cy="10" r="2" fill="#fff"/>
+      <circle cx="14" cy="10" r="1" fill="#000"/>
+      <path d="M 18 12.5 Q 22 8 28 10" stroke="#ff8787" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+  <div class="fish" id="fish2" style="top: 70%; left: -50px;">
+    <svg viewBox="0 0 40 25" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="18" cy="12.5" rx="12" ry="8" fill="#4ecdc4"/>
+      <ellipse cx="28" cy="12.5" rx="8" ry="6" fill="#6ee7df"/>
+      <polygon points="35,12.5 40,8 40,17" fill="#4ecdc4"/>
+      <circle cx="14" cy="10" r="2" fill="#fff"/>
+      <circle cx="14" cy="10" r="1" fill="#000"/>
+      <path d="M 18 12.5 Q 22 8 28 10" stroke="#6ee7df" stroke-width="1" fill="none"/>
+    </svg>
   </div>
 
   <script>
@@ -379,9 +551,20 @@
     let isPlaying = false;
     let reconnectTimer = null;
     let isBuffering = false;
+    
+    // Эквалайзер
+    let equalizerContainer = null;
+    let equalizerInterval = null;
+    const eqBars = [];
 
     const playBtn = document.getElementById('playBtn');
     const statusText = document.getElementById('statusText');
+    equalizerContainer = document.getElementById('equalizerContainer');
+    
+    // Инициализация полосок эквалайзера
+    for (let i = 1; i <= 8; i++) {
+      eqBars.push(document.getElementById(`eqBar${i}`));
+    }
 
     const pauseIconSVG = `<svg class="pause-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect x="16" y="14" width="12" height="36" rx="4" />
@@ -450,6 +633,8 @@
       playBtn.setAttribute('aria-pressed', 'false');
       statusText.textContent = '⏸ ПАУЗА';
       statusText.className = 'status';
+      equalizerContainer.classList.remove('active');
+      stopEqualizer();
     }
 
     async function togglePlayback() {
@@ -466,6 +651,8 @@
           playBtn.innerHTML = pauseIconSVG;
           playBtn.classList.remove('paused');
           playBtn.classList.add('playing');
+          equalizerContainer.classList.add('active');
+          startEqualizer();
           playBtn.setAttribute('aria-pressed', 'true');
           statusText.textContent = '🔴 СЕЙЧАС ИГРАЕТ';
           statusText.className = 'status success';
@@ -499,6 +686,8 @@
         audio.pause();
         audio.src = '';
       }
+      clearSleepTimer();
+      stopEqualizer();
       // Очищаем все таймеры
       const maxId = window.setTimeout(() => {}, 0);
       for (let i = 1; i <= maxId; i++) {
@@ -576,12 +765,139 @@
     
     function scheduleNextEmoji() {
       if (emojiTimer) clearTimeout(emojiTimer);
-      const delay = Math.random() * 90000 + 30000;
+      const delay = Math.random() * 2000 + 5000; // 5-7 секунд
       emojiTimer = setTimeout(showRandomEmoji, delay);
     }
     
     // Запуск анимации эмодзи
-    emojiTimer = setTimeout(scheduleNextEmoji, 30000);
+    emojiTimer = setTimeout(scheduleNextEmoji, 5000);
+
+    // === ТАЙМЕР СНА ===
+    let sleepTimer = null;
+    let sleepTimeRemaining = 0;
+    let sleepInterval = null;
+    
+    const sleepTimerBtn = document.getElementById('sleepTimerBtn');
+    const sleepTimerOptions = document.getElementById('sleepTimerOptions');
+    const sleepTimerDisplay = document.getElementById('sleepTimerDisplay');
+    const sleepTimeOptions = document.querySelectorAll('.sleep-time-option');
+    
+    sleepTimerBtn.addEventListener('click', () => {
+      sleepTimerOptions.classList.toggle('show');
+      sleepTimerBtn.classList.toggle('active');
+    });
+    
+    sleepTimeOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        const minutes = parseInt(option.dataset.minutes);
+        setSleepTimer(minutes);
+        
+        sleepTimeOptions.forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+        
+        sleepTimerOptions.classList.remove('show');
+      });
+    });
+    
+    function setSleepTimer(minutes) {
+      clearSleepTimer();
+      
+      sleepTimeRemaining = minutes * 60 * 1000;
+      const endTime = Date.now() + sleepTimeRemaining;
+      
+      updateSleepTimerDisplay(sleepTimeRemaining);
+      
+      sleepInterval = setInterval(() => {
+        sleepTimeRemaining = endTime - Date.now();
+        
+        if (sleepTimeRemaining <= 0) {
+          clearInterval(sleepInterval);
+          stopPlayback();
+          sleepTimerDisplay.textContent = '💤 Таймер выключил радио';
+          sleepTimerBtn.classList.remove('active');
+          sleepTimeOptions.forEach(opt => opt.classList.remove('selected'));
+          
+          setTimeout(() => {
+            sleepTimerDisplay.textContent = '';
+          }, 5000);
+        } else {
+          updateSleepTimerDisplay(sleepTimeRemaining);
+        }
+      }, 1000);
+    }
+    
+    function updateSleepTimerDisplay(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      
+      let display = '⏳ Осталось: ';
+      if (hours > 0) {
+        display += `${hours}ч `;
+      }
+      display += `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      sleepTimerDisplay.textContent = display;
+    }
+    
+    function clearSleepTimer() {
+      if (sleepInterval) {
+        clearInterval(sleepInterval);
+        sleepInterval = null;
+      }
+      sleepTimeRemaining = 0;
+    }
+    
+    // === ЭКВАЛАЙЗЕР ===
+    function startEqualizer() {
+      if (equalizerInterval) clearInterval(equalizerInterval);
+      
+      // Позиционируем полоски по кругу
+      const radius = 70; // радиус круга
+      const centerX = 80; // центр контейнера 160px / 2
+      const centerY = 80;
+      const totalBars = eqBars.length;
+      
+      eqBars.forEach((bar, index) => {
+        const angle = (index / totalBars) * Math.PI * 2 - Math.PI / 2;
+        const x = centerX + radius * Math.cos(angle) - 3; // -3 это половина ширины полоски
+        const y = centerY + radius * Math.sin(angle);
+        
+        bar.style.left = x + 'px';
+        bar.style.top = y + 'px';
+        bar.style.height = '20px';
+        bar.style.transform = `rotate(${angle + Math.PI / 2}rad)`;
+      });
+      
+      // Анимация эквалайзера
+      equalizerInterval = setInterval(() => {
+        eqBars.forEach((bar, index) => {
+          // Создаем эффект волны с разной высотой для каждой полоски
+          const baseHeight = 15 + Math.random() * 25;
+          const waveOffset = Math.sin(Date.now() / 200 + index * 0.5) * 15;
+          const height = Math.max(10, baseHeight + waveOffset);
+          
+          bar.style.height = height + 'px';
+          
+          // Меняем цвет в зависимости от высоты
+          const hue = 140 + (height / 40) * 40; // от зеленого к бирюзовому
+          bar.style.background = `linear-gradient(180deg, hsl(${hue}, 70%, 60%), hsl(${hue}, 80%, 40%), hsl(${hue}, 70%, 60%))`;
+          bar.style.boxShadow = `0 0 ${height/3}px rgba(52, 211, 153, 0.8)`;
+        });
+      }, 100);
+    }
+    
+    function stopEqualizer() {
+      if (equalizerInterval) {
+        clearInterval(equalizerInterval);
+        equalizerInterval = null;
+      }
+      // Сбрасываем высоту полосок
+      eqBars.forEach(bar => {
+        bar.style.height = '20px';
+      });
+    }
 
     // === УПРАВЛЕНИЕ НИКОМ ===
     const nickModal = document.getElementById('nickModal');
@@ -763,6 +1079,77 @@ setTimeout(getMessagesFromTelegram, 1000);
       // Можно зарегистрировать service worker для офлайн поддержки
       // navigator.serviceWorker.register('/sw.js');
     }
+
+    // === АКВАРИУМНЫЕ РЫБКИ ===
+    const fish1 = document.getElementById('fish1');
+    const fish2 = document.getElementById('fish2');
+    
+    function initFish() {
+      const fishes = [fish1, fish2];
+      
+      fishes.forEach((fish, index) => {
+        // Начальная позиция и направление
+        let x = Math.random() * window.innerWidth;
+        let y = Math.random() * (window.innerHeight - 100);
+        let speedX = (Math.random() * 1.5 + 0.5) * (Math.random() > 0.5 ? 1 : -1);
+        let speedY = (Math.random() * 0.5 + 0.2) * (Math.random() > 0.5 ? 1 : -1);
+        let direction = speedX > 0 ? 'right' : 'left';
+        
+        fish.style.left = x + 'px';
+        fish.style.top = y + 'px';
+        
+        // Плавное движение
+        function swim() {
+          x += speedX;
+          y += speedY;
+          
+          // Отталкивание от краев экрана
+          if (x <= -50) {
+            x = -50;
+            speedX = Math.abs(speedX);
+            direction = 'right';
+          } else if (x >= window.innerWidth - 10) {
+            x = window.innerWidth - 10;
+            speedX = -Math.abs(speedX);
+            direction = 'left';
+          }
+          
+          if (y <= 50 || y >= window.innerHeight - 50) {
+            speedY = -speedY;
+          }
+          
+          // Поворот рыбки в направлении движения
+          if (direction === 'left') {
+            fish.classList.add('swimming-left');
+          } else {
+            fish.classList.remove('swimming-left');
+          }
+          
+          fish.style.left = x + 'px';
+          fish.style.top = y + 'px';
+          
+          requestAnimationFrame(swim);
+        }
+        
+        swim();
+        
+        // Клик по рыбке - она уплывает в другую сторону
+        fish.addEventListener('click', () => {
+          speedX = -speedX * 3; // Ускорение и смена направления
+          speedY = -speedY * 2;
+          
+          // Возврат к нормальной скорости через 2 секунды
+          setTimeout(() => {
+            speedX = speedX > 0 ? Math.abs(speedX) / 3 : -Math.abs(speedX) / 3;
+            speedY = speedY > 0 ? Math.abs(speedY) / 2 : -Math.abs(speedY) / 2;
+          }, 2000);
+        });
+      });
+    }
+    
+    // Запуск рыбок после загрузки страницы
+    setTimeout(initFish, 1000);
+
  // === ФУНКЦИЯ ОТПРАВКИ В TELEGRAM ===
 async function sendToTelegram(user, message) {
   try {
