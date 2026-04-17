@@ -1340,28 +1340,28 @@
     // Массивы изображений для каждого времени суток (меняются каждый час)
     const beachImages = {
       sunrise: [
-        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80',
-        'https://images.unsplash.com/photo-1590523741831-ab7f41199401?w=1920&q=80',
-        'https://images.unsplash.com/photo-1505118380757-91f5f5636de0?w=1920&q=80',
-        'https://images.unsplash.com/photo-1544983058-293e26f4b9d6?w=1920&q=80'
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
+        'https://images.unsplash.com/photo-1590523741831-ab7f41199401?auto=format&fit=crop&w=1920&q=80',
+        'https://images.unsplash.com/photo-1505118380757-91f5f5636de0?auto=format&fit=crop&w=1920&q=80',
+        'https://images.unsplash.com/photo-1544983058-293e26f4b9d6?auto=format&fit=crop&w=1920&q=80'
       ],
       day: [
-        'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1920&q=80',
-        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80',
-        'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1920&q=80',
-        'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=1920&q=80'
+        'https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=1920&q=80',
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
+        'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1920&q=80',
+        'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?auto=format&fit=crop&w=1920&q=80'
       ],
       evening: [
-        'https://images.unsplash.com/photo-1473116763249-56464eb6f81e?w=1920&q=80',
-        'https://images.unsplash.com/photo-1473116763249-56464eb6f81e?w=1920&q=80',
-        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80',
-        'https://images.unsplash.com/photo-1505118380757-91f5f5636de0?w=1920&q=80'
+        'https://images.unsplash.com/photo-1473116763249-56464eb6f81e?auto=format&fit=crop&w=1920&q=80',
+        'https://images.unsplash.com/photo-1473116763249-56464eb6f81e?auto=format&fit=crop&w=1920&q=80',
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
+        'https://images.unsplash.com/photo-1505118380757-91f5f5636de0?auto=format&fit=crop&w=1920&q=80'
       ],
       night: [
-        'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1920&q=80',
-        'https://images.unsplash.com/photo-1505118380757-91f5f5636de0?w=1920&q=80',
-        'https://images.unsplash.com/photo-1544983058-293e26f4b9d6?w=1920&q=80',
-        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80'
+        'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1920&q=80',
+        'https://images.unsplash.com/photo-1505118380757-91f5f5636de0?auto=format&fit=crop&w=1920&q=80',
+        'https://images.unsplash.com/photo-1544983058-293e26f4b9d6?auto=format&fit=crop&w=1920&q=80',
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80'
       ]
     };
 
@@ -1406,17 +1406,43 @@
         lastImageIndex = newIndex;
         const imageUrl = imageArray[newIndex];
         
-        // Добавляем класс для плавного появления
-        backgroundElement.classList.remove('fade-in');
-        void backgroundElement.offsetWidth; // Триггер reflow для перезапуска анимации
-        backgroundElement.classList.add('fade-in');
-        
-        backgroundElement.className = `ocean-background ${timeClass} fade-in`;
-        backgroundElement.style.backgroundImage = `url('${imageUrl}')`;
-        backgroundElement.style.setProperty('background-image', `url('${imageUrl}')`, 'important');
-        
-        lastHour = currentHour;
-        console.log(`Фон обновлен: ${timeClass}, час: ${currentHour}, URL: ${imageUrl}`);
+        // Предзагрузка изображения перед установкой фона
+        const img = new Image();
+        img.onload = function() {
+          console.log('Изображение загружено:', imageUrl);
+          // Добавляем класс для плавного появления
+          backgroundElement.classList.remove('fade-in');
+          void backgroundElement.offsetWidth; // Триггер reflow для перезапуска анимации
+          backgroundElement.classList.add('fade-in');
+          
+          backgroundElement.className = `ocean-background ${timeClass} fade-in`;
+          backgroundElement.style.backgroundImage = `url('${imageUrl}')`;
+          backgroundElement.style.setProperty('background-image', `url('${imageUrl}')`, 'important');
+          
+          lastHour = currentHour;
+          console.log(`Фон обновлен: ${timeClass}, час: ${currentHour}, URL: ${imageUrl}`);
+        };
+        img.onerror = function() {
+          console.error('Ошибка загрузки изображения:', imageUrl);
+          // Пробуем запасное изображение в случае ошибки
+          if (imageArray.length > 1) {
+            const fallbackIndex = (newIndex + 1) % imageArray.length;
+            const fallbackUrl = imageArray[fallbackIndex];
+            const fallbackImg = new Image();
+            fallbackImg.onload = function() {
+              backgroundElement.classList.remove('fade-in');
+              void backgroundElement.offsetWidth;
+              backgroundElement.classList.add('fade-in');
+              backgroundElement.className = `ocean-background ${timeClass} fade-in`;
+              backgroundElement.style.backgroundImage = `url('${fallbackUrl}')`;
+              backgroundElement.style.setProperty('background-image', `url('${fallbackUrl}')`, 'important');
+              lastHour = currentHour;
+              console.log(`Фон обновлен (запасной): ${timeClass}, час: ${currentHour}, URL: ${fallbackUrl}`);
+            };
+            fallbackImg.src = fallbackUrl;
+          }
+        };
+        img.src = imageUrl;
       }
     }
 
