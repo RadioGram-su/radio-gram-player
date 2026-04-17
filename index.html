@@ -694,7 +694,7 @@
           
           // Wait for playback to actually start
           await new Promise((resolve, reject) => {
-            const timeout = setTimeout(() => reject(new Error('Playback timeout')), 5000);
+            const timeout = setTimeout(() => reject(new Error('Playback timeout')), 15000);
             audio.addEventListener('playing', () => { clearTimeout(timeout); resolve(); }, { once: true });
             audio.addEventListener('error', (e) => { clearTimeout(timeout); reject(e); }, { once: true });
           });
