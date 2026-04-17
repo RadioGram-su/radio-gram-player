@@ -132,6 +132,53 @@
     .social-icons a.youtube:hover { background: #ff0000; border-color: #ff0000; }
     .social-icons a.telegram:hover { background: #0088cc; border-color: #0088cc; }
     
+    .donate-button {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 14px 32px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #667eea);
+      background-size: 300% 300%;
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+      animation: gradientPulse 4s ease infinite, gentlePulse 2s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    .donate-button:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+    }
+    .donate-button:active {
+      transform: translateY(-1px) scale(1.02);
+    }
+    .donate-button:focus-visible {
+      outline: 3px solid #fff;
+      outline-offset: 3px;
+    }
+    @keyframes gradientPulse {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes gentlePulse {
+      0%, 100% { 
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        transform: scale(1);
+      }
+      50% { 
+        box-shadow: 0 6px 25px rgba(118, 75, 162, 0.5);
+        transform: scale(1.03);
+      }
+    }
+    
     .chat-container {
       width: 100%; max-width: 450px; background: #0a0a0a;
       border: 1px solid #222; border-radius: 12px; overflow: hidden;
@@ -258,6 +305,10 @@
       <a href="https://t.me/gramradiochill" target="_blank" rel="noopener noreferrer" class="telegram" aria-label="Telegram радио">🎵 Радио TG</a>
       <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Веб-сайт">🌐 Веб-сайт</a>
     </div>
+    
+    <a href="https://web.tribute.tg/d/Iuo" target="_blank" rel="noopener noreferrer" class="donate-button" aria-label="Помочь разработчику">
+      ❤️ Помочь разработчику
+    </a>
   </div>
 
   <div class="chat-container" role="region" aria-label="Чат эфира">
