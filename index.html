@@ -541,7 +541,7 @@
   </div>
   
   <!-- Лягушка Pepe -->
-  <div class="pepe-fish" id="pepeFish" style="top: 50%; left: -60px;" onclick="openPepeLink()">
+  <a href="https://t.me/chatradiogram" target="_blank" rel="noopener noreferrer" class="pepe-fish" id="pepeFish" style="top: 50%; left: -60px;" aria-label="Перейти в чат Telegram">
     <svg viewBox="0 0 50 35" xmlns="http://www.w3.org/2000/svg">
       <ellipse cx="25" cy="18" rx="18" ry="12" fill="#4CAF50"/>
       <ellipse cx="25" cy="18" rx="14" ry="9" fill="#81C784"/>
@@ -555,8 +555,8 @@
       <ellipse cx="10" cy="24" rx="4" ry="3" fill="#4CAF50"/>
       <ellipse cx="40" cy="24" rx="4" ry="3" fill="#4CAF50"/>
     </svg>
-  </div>
-  <div class="pepe-dialog" id="pepeDialog">я знаю где купить телеграм подарки</div>
+  </a>
+  <div class="pepe-dialog" id="pepeDialog">переходи в наш чат в телеграм</div>
 
   <script>
     // === КОНСТАНТЫ ===
@@ -1118,10 +1118,6 @@
       setTimeout(() => {
         pepeDialog.classList.remove('visible');
       }, 3000);
-    }
-
-    function openPepeLink() {
-      window.open('https://t.me/mrkt/app?startapp=2010814946', '_blank');
     }
 
     function initFish() {
