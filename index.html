@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; connect-src 'self' https://api.radiogram.su https://radiogram.su https://radiogram-backend-production.up.railway.app; img-src 'self' https: data:; media-src 'self' blob: https://radiogram.su; object-src 'none'; frame-src 'self' https://www.youtube.com;">
+ <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; connect-src 'self' https://api.radiogram.su https://radiogram.su https://radiogram-backend-production.up.railway.app https://stream.zeno.fm https://*.zeno.fm; img-src 'self' https: data:; media-src 'self' blob: https://radiogram.su https://stream.zeno.fm https://*.zeno.fm; object-src 'none'; frame-src 'self' https://www.youtube.com;">
   <title>Radio Gram</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -568,7 +568,7 @@
   <script>
     // === КОНСТАНТЫ ===
     const CONSTANTS = {
-      STREAM_URL: 'https://radiogram.su/listen/radio_gram/radio.mp3',
+      STREAM_URL: 'https://stream.zeno.fm/xtvq7602w4quv',
       API_URL: 'https://radiogram.su/api/nowplaying/radio_gram',
       CHAT_API: '/.netlify/functions/send-chat',
       MAX_NICK_LENGTH: 20,
@@ -621,8 +621,9 @@
     function initAudio() {
       if (!audio) {
         audio = new Audio();
-        audio.preload = 'none';
+        audio.preload = 'auto';
         audio.crossOrigin = 'anonymous';
+        audio.volume = 1.0;
         
         // Обработка ошибок аудио
         audio.addEventListener('error', handleAudioError);
@@ -652,6 +653,7 @@
           statusText.textContent = '🔄 Переподключение...';
           statusText.className = 'status buffering';
           audio.src = CONSTANTS.STREAM_URL;
+          console.log('Attempting to play:', CONSTANTS.STREAM_URL);
           audio.play().catch(err => {
             console.error('Не удалось переподключиться:', err);
             stopPlayback();
@@ -687,7 +689,20 @@
           statusText.className = 'status buffering';
           
           audio.src = CONSTANTS.STREAM_URL;
+          console.log('Attempting to play:', CONSTANTS.STREAM_URL);
           await audio.play();
+          } catch (err) {
+            console.error('Play error:', err);
+            throw err;
+          }
+
+          // Wait for playback to actually start
+          await new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => reject(new Error('Playback timeout')), 5000);
+            audio.addEventListener('playing', () => { clearTimeout(timeout); resolve(); }, { once: true });
+            audio.addEventListener('error', (e) => { clearTimeout(timeout); reject(e); }, { once: true });
+          });
+          console.log('Play initiated');
           
           playBtn.innerHTML = pauseIconSVG;
           playBtn.classList.remove('paused');
