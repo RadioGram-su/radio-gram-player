@@ -530,6 +530,34 @@
     .error-message.visible {
       display: block;
     }
+    
+    /* Стили для Telegram-кнопки */
+    .telegram-login-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #0088cc, #0099ee);
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      box-shadow: 0 4px 20px rgba(0, 136, 204, 0.4);
+      animation: gentlePulse 2s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    .telegram-login-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 30px rgba(0, 136, 204, 0.6);
+    }
+    .telegram-login-btn:active {
+      transform: translateY(-1px) scale(1.02);
+    }
     @media (max-width: 600px) {
       body { padding: 15px; }
       .main-title { font-size: 28px; }
@@ -544,6 +572,9 @@
 <body>
   <!-- Динамический фон побережья океана -->
   <div class="ocean-background" id="oceanBackground"></div>
+  
+  <!-- Telegram WebApp Script -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <div class="player-wrapper">
     <div class="equalizer-container" id="equalizerContainer">
@@ -610,11 +641,12 @@
 
   <div class="nick-modal" id="nickModal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
     <div class="modal-box">
-      <h3 id="modalTitle">Представься</h3>
-      <p>Это будет твой ник в чате</p>
-      <input type="text" id="nickInput" placeholder="@username" aria-label="Ваш никнейм" maxlength="20" pattern="[a-zA-Z0-9_@]{3,20}">
-      <div class="error-message" id="nickError" role="alert"></div>
-      <button onclick="saveNick()" aria-label="Войти в эфир">Войти в эфир</button>
+      <h3 id="modalTitle">Добро пожаловать в Radio Gram</h3>
+      <p>Для входа в чат используйте ваш Telegram аккаунт</p>
+      <button class="telegram-login-btn" onclick="loginWithTelegram()" aria-label="Войти через Telegram">
+        ✈ Войти через Telegram
+      </button>
+      <p style="margin-top: 15px; font-size: 12px; color: #666;">Ник будет автоматически взят из вашего Telegram профиля</p>
     </div>
   </div>
 
@@ -687,21 +719,6 @@
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
-    }
-
-    // === ВАЛИДАЦИЯ НИКА ===
-    function validateNick(nick) {
-      const trimmed = nick.trim();
-      if (trimmed.length < CONSTANTS.MIN_NICK_LENGTH) {
-        return { valid: false, error: `Минимум ${CONSTANTS.MIN_NICK_LENGTH} символа` };
-      }
-      if (trimmed.length > CONSTANTS.MAX_NICK_LENGTH) {
-        return { valid: false, error: `Максимум ${CONSTANTS.MAX_NICK_LENGTH} символов` };
-      }
-      if (!/^[a-zA-Z0-9_@]+$/.test(trimmed)) {
-        return { valid: false, error: 'Только буквы, цифры, _ и @' };
-      }
-      return { valid: true, value: trimmed };
     }
 
     // === АУДИО ПЛЕЕР ===
@@ -1057,37 +1074,61 @@
       });
     }
 
-    // === УПРАВЛЕНИЕ НИКОМ ===
+    // === УПРАВЛЕНИЕ НИКОМ (Telegram) ===
     const nickModal = document.getElementById('nickModal');
-    const nickInput = document.getElementById('nickInput');
-    const nickError = document.getElementById('nickError');
+    let currentUserNick = '';
 
-    function showNickError(message) {
-      nickError.textContent = message;
-      nickError.classList.add('visible');
-      setTimeout(() => nickError.classList.remove('visible'), 3000);
-    }
-
-    function saveNick() {
-      const validation = validateNick(nickInput.value);
-      if (!validation.valid) {
-        showNickError(validation.error);
-        return;
+    // Функция входа через Telegram
+    function loginWithTelegram() {
+      if (window.Telegram && window.Telegram.WebApp) {
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        
+        // Получаем данные пользователя из Telegram
+        const user = tg.initDataUnsafe.user;
+        
+        if (user) {
+          // Формируем ник из имени пользователя или имени
+          let nick = user.username ? '@' + user.username : (user.first_name || 'User');
+          
+          // Сохраняем ник
+          localStorage.setItem('radioGramNick', nick);
+          currentUserNick = nick;
+          
+          // Скрываем модальное окно
+          nickModal.classList.add('hidden');
+          
+          // Добавляем сообщение в чат
+          addSystemMessage(`${nick} присоединился к эфиру! 🎉`);
+        } else {
+          // Если открыто не в Telegram, используем случайный ник
+          const randomNick = 'Guest_' + Math.floor(Math.random() * 1000);
+          localStorage.setItem('radioGramNick', randomNick);
+          currentUserNick = randomNick;
+          nickModal.classList.add('hidden');
+          addSystemMessage(`${randomNick} присоединился к эфиру! 🎉`);
+        }
+      } else {
+        // Если скрипт Telegram не загружен, используем случайный ник
+        const randomNick = 'Guest_' + Math.floor(Math.random() * 1000);
+        localStorage.setItem('radioGramNick', randomNick);
+        currentUserNick = randomNick;
+        nickModal.classList.add('hidden');
+        addSystemMessage(`${randomNick} присоединился к эфиру! 🎉`);
       }
-      
-      localStorage.setItem('radioGramNick', validation.value);
-      nickModal.classList.add('hidden');
     }
 
     // Проверка сохранённого ника при загрузке
     const savedNick = localStorage.getItem('radioGramNick');
     if (savedNick) {
-      const validation = validateNick(savedNick);
-      if (validation.valid) {
-        nickModal.classList.add('hidden');
-      } else {
-        localStorage.removeItem('radioGramNick');
-      }
+      currentUserNick = savedNick;
+      nickModal.classList.add('hidden');
+    }
+    
+    // Функция получения текущего ника
+    function getCurrentNick() {
+      return currentUserNick || localStorage.getItem('radioGramNick') || 'Anonymous';
     }
 
     // === ЧАТ ===
@@ -1158,6 +1199,32 @@
       saveChatHistory();
       return time;
     }
+    
+    // Функция добавления системного сообщения
+    function addSystemMessage(text) {
+      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      chatHistory.push({ nick: 'Система', text: text, time: time, isSystem: true });
+      
+      // Ограничиваем размер истории
+      if (chatHistory.length > CONSTANTS.MAX_CHAT_HISTORY) {
+        chatHistory.shift();
+      }
+      
+      saveChatHistory();
+      
+      // Создаём элемент сообщения
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'chat-message system-message';
+      messageDiv.style.borderLeftColor = '#4a9bc9';
+      messageDiv.style.background = '#1a1a25';
+      messageDiv.innerHTML = `
+        <div class="message-nick" style="color: #4a9bc9;">Система</div>
+        <div class="message-text">${escapeHtml(text)}</div>
+        <div class="message-time">${time}</div>
+      `;
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
     async function sendMessage() {
       const text = chatInput.value.trim();
@@ -1168,7 +1235,7 @@
         return;
       }
 
-      const nick = localStorage.getItem('radioGramNick') || 'Аноним';
+      const nick = getCurrentNick();
       const time = addMessageToHistory(nick, text);
       renderMessage(nick, text, time);
       sendToTelegram(nick, text);
