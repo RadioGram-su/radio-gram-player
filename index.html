@@ -41,7 +41,7 @@
       -webkit-tap-highlight-color: transparent;
     }
     
-    /* Динамический фон побережья */
+    /* Динамический фон побережья океана */
     .ocean-background {
       position: fixed;
       top: 0;
@@ -49,11 +49,12 @@
       width: 100%;
       height: 100%;
       z-index: -1;
-      background-size: cover !important;
-      background-position: center !important;
-      background-repeat: no-repeat !important;
-      background-attachment: fixed !important;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: background-image 2s ease-in-out;
     }
+
     .ocean-background::before {
       content: '';
       position: absolute;
@@ -64,15 +65,20 @@
       background: rgba(0, 0, 0, 0.4);
       transition: background 1.5s ease-in-out;
     }
+
+    /* Классы для затемнения в разное время */
     .ocean-background.sunrise::before {
       background: rgba(0, 0, 0, 0.3);
     }
+
     .ocean-background.day::before {
       background: rgba(0, 0, 0, 0.35);
     }
+
     .ocean-background.evening::before {
       background: rgba(0, 0, 0, 0.45);
     }
+
     .ocean-background.night::before {
       background: rgba(0, 0, 0, 0.6);
     }
@@ -1413,119 +1419,70 @@
     setInterval(announceTime, 60000);
     setTimeout(announceTime, 2000);
 
-    // === ДИНАМИЧЕСКИЙ ФОН ПОБЕРЕЖЬЯ ===
-    // Массивы изображений для каждого времени суток (меняются каждый час)
-    const beachImages = {
-      sunrise: [
-        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
-        'https://images.unsplash.com/photo-1590523741831-ab7f41199401?auto=format&fit=crop&w=1920&q=80',
-        'https://images.unsplash.com/photo-1505118380757-91f5f5636de0?auto=format&fit=crop&w=1920&q=80',
-        'https://images.unsplash.com/photo-1544983058-293e26f4b9d6?auto=format&fit=crop&w=1920&q=80'
-      ],
-      day: [
-        'https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=1920&q=80',
-        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
-        'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1920&q=80',
-        'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?auto=format&fit=crop&w=1920&q=80'
-      ],
-      evening: [
-        'https://images.unsplash.com/photo-1473116763249-56464eb6f81e?auto=format&fit=crop&w=1920&q=80',
-        'https://images.unsplash.com/photo-1473116763249-56464eb6f81e?auto=format&fit=crop&w=1920&q=80',
-        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
-        'https://images.unsplash.com/photo-1505118380757-91f5f5636de0?auto=format&fit=crop&w=1920&q=80'
-      ],
-      night: [
-        'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1920&q=80',
-        'https://images.unsplash.com/photo-1505118380757-91f5f5636de0?auto=format&fit=crop&w=1920&q=80',
-        'https://images.unsplash.com/photo-1544983058-293e26f4b9d6?auto=format&fit=crop&w=1920&q=80',
-        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80'
-      ]
-    };
-
-    let lastHour = -1;
-    let lastImageIndex = -1;
-
+    // === ДИНАМИЧЕСКИЙ ФОН ПО ВРЕМЕНИ СУТОК ===
     function updateOceanBackground() {
       const nowLocal = new Date();
       const hours = nowLocal.getHours();
-      const currentHour = hours;
       
       const backgroundElement = document.getElementById('oceanBackground');
-      console.log('updateOceanBackground вызван, час:', currentHour, 'элемент найден:', !!backgroundElement);
-      if (!backgroundElement) return;
+      if (!backgroundElement) {
+        console.error('Элемент фона не найден!');
+        return;
+      }
       
       let timeClass = 'night';
-      let imageArray = beachImages.night;
+      let imageUrl = '';
       
-      // Определяем время суток и массив изображений
+      // Локальные картинки из папки images
+      const images = {
+        sunrise: 'images/sunrise.jpg',
+        day: 'images/day.jpg',
+        evening: 'images/evening.jpg',
+        night: 'images/night.jpg'
+      };
+      
+      // Определяем время суток
       if (hours >= 5 && hours < 12) {
         timeClass = 'sunrise';
-        imageArray = beachImages.sunrise;
       } else if (hours >= 12 && hours < 17) {
         timeClass = 'day';
-        imageArray = beachImages.day;
       } else if (hours >= 17 && hours < 22) {
         timeClass = 'evening';
-        imageArray = beachImages.evening;
       } else {
         timeClass = 'night';
-        imageArray = beachImages.night;
       }
       
-      // Меняем изображение только если наступил новый час или это первый запуск
-      if (currentHour !== lastHour || lastImageIndex === -1) {
-        // Выбираем случайное изображение из массива, отличное от предыдущего
-        let newIndex;
-        do {
-          newIndex = Math.floor(Math.random() * imageArray.length);
-        } while (newIndex === lastImageIndex && imageArray.length > 1);
-        
-        lastImageIndex = newIndex;
-        const imageUrl = imageArray[newIndex];
-        
-        // Предзагрузка изображения перед установкой фона
-        const img = new Image();
-        img.onload = function() {
-          console.log('Изображение загружено:', imageUrl);
-          // Добавляем класс для плавного появления
-          backgroundElement.classList.remove('fade-in');
-          void backgroundElement.offsetWidth; // Триггер reflow для перезапуска анимации
-          backgroundElement.classList.add('fade-in');
-          
-          backgroundElement.className = `ocean-background ${timeClass} fade-in`;
-          backgroundElement.style.backgroundImage = `url('${imageUrl}')`;
-          backgroundElement.style.setProperty('background-image', `url('${imageUrl}')`, 'important');
-          
-          lastHour = currentHour;
-          console.log(`Фон обновлен: ${timeClass}, час: ${currentHour}, URL: ${imageUrl}`);
+      imageUrl = images[timeClass];
+      
+      // Применяем класс времени суток
+      backgroundElement.className = `ocean-background ${timeClass}`;
+      
+      // Предзагрузка картинки для плавности
+      const img = new Image();
+      img.onload = () => {
+        backgroundElement.style.backgroundImage = `url('${imageUrl}')`;
+        console.log(`✅ Фон загружен: ${timeClass} (${hours}:00) - ${imageUrl}`);
+      };
+      img.onerror = () => {
+        console.error(`❌ Ошибка загрузки фона: ${imageUrl}`);
+        // Если картинка не загрузилась — используем градиент
+        const gradients = {
+          sunrise: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%)',
+          day: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          evening: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+          night: 'linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)'
         };
-        img.onerror = function() {
-          console.error('Ошибка загрузки изображения:', imageUrl);
-          // Пробуем запасное изображение в случае ошибки
-          if (imageArray.length > 1) {
-            const fallbackIndex = (newIndex + 1) % imageArray.length;
-            const fallbackUrl = imageArray[fallbackIndex];
-            const fallbackImg = new Image();
-            fallbackImg.onload = function() {
-              backgroundElement.classList.remove('fade-in');
-              void backgroundElement.offsetWidth;
-              backgroundElement.classList.add('fade-in');
-              backgroundElement.className = `ocean-background ${timeClass} fade-in`;
-              backgroundElement.style.backgroundImage = `url('${fallbackUrl}')`;
-              backgroundElement.style.setProperty('background-image', `url('${fallbackUrl}')`, 'important');
-              lastHour = currentHour;
-              console.log(`Фон обновлен (запасной): ${timeClass}, час: ${currentHour}, URL: ${fallbackUrl}`);
-            };
-            fallbackImg.src = fallbackUrl;
-          }
-        };
-        img.src = imageUrl;
-      }
+        backgroundElement.style.background = gradients[timeClass];
+        backgroundElement.style.backgroundSize = 'cover';
+      };
+      img.src = imageUrl;
     }
 
+    // Запускаем сразу при загрузке
     updateOceanBackground();
-    // Проверяем каждый час (3600000 мс), но также можно чаще для тестирования
-    setInterval(updateOceanBackground, 3600000);
+
+    // Обновляем каждые 30 секунд (на случай если час изменился)
+    setInterval(updateOceanBackground, 30000);
 
     // Счетчик уникальных пользователей за сутки из Яндекс.Метрики
     function updateUniqueUsersCounter() {
