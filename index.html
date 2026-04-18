@@ -10,6 +10,19 @@
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; connect-src 'self' https://api.radiogram.su https://radiogram.su https://radiogram-backend-production.up.railway.app https://stream.zeno.fm https://*.zeno.fm; img-src 'self' https: data: blob:; media-src 'self' blob: https://radiogram.su https://stream.zeno.fm https://*.zeno.fm; object-src 'none'; frame-src 'self' https://www.youtube.com;">
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript">
+      (function(m,e,t,r,i,k,a){
+          m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+          m[i].l=1*new Date();
+          for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+      })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=108652352', 'ym');
+
+      ym(108652352, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+  </script>
+  <noscript><div><img src=" https://mc.yandex.ru/watch/108652352 " style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
   <title>Radio Gram</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -76,13 +89,13 @@
     /* Аквариумные рыбки */
     .fish {
       position: fixed;
-      width: 40px;
-      height: 25px;
+      width: 50px;
+      height: 35px;
       pointer-events: auto;
       cursor: pointer;
       z-index: 999;
-      transition: transform 0.3s ease;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      transition: filter 0.3s ease;
     }
     .fish svg {
       width: 100%;
@@ -93,6 +106,12 @@
     }
     .fish:hover {
       filter: drop-shadow(0 4px 8px rgba(100, 200, 255, 0.5));
+    }
+    
+    /* Тело рыбки для анимации хвоста */
+    .fish-body {
+      transform-origin: center;
+      transition: transform 0.1s ease-out;
     }
     
     .emoji {
@@ -126,27 +145,26 @@
       100% { opacity: 0; transform: translateY(-150px) scale(1.3); }
     }
 
-    /* Лягушка Pepe */
-    .pepe-fish {
+    /* Лягушка на чате */
+    .pepe-on-chat {
       position: fixed;
-      width: 50px;
-      height: 35px;
+      width: 60px;
+      height: 45px;
       pointer-events: auto;
       cursor: pointer;
       z-index: 1001;
-      transition: transform 0.3s ease;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      transition: filter 0.3s ease;
     }
-    .pepe-fish svg {
+    .pepe-on-chat svg {
       width: 100%;
       height: 100%;
     }
-    .pepe-fish.swimming-left {
+    .pepe-on-chat.swimming-left {
       transform: scaleX(-1);
     }
-    .pepe-fish:hover {
+    .pepe-on-chat:hover {
       filter: drop-shadow(0 4px 8px rgba(100, 255, 100, 0.6));
-      transform: scale(1.1);
     }
     
     /* Диалог лягушки */
@@ -164,7 +182,7 @@
       z-index: 1002;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(76, 175, 80, 0.4);
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(10px) scale(0.9);
       transition: opacity 0.3s ease, transform 0.3s ease;
     }
     .pepe-dialog::after {
@@ -179,10 +197,10 @@
     }
     .pepe-dialog.visible {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
     }
 
-    .player-wrapper { text-align: center; margin-bottom: 40px; position: relative; z-index: 10; }
+    .player-wrapper { text-align: center; margin-bottom: 20px; position: relative; z-index: 10; }
     
     .play-button {
       width: 120px; height: 120px; border-radius: 50%;
@@ -403,6 +421,7 @@
       width: 100%; max-width: 450px; background: #0a0a0a;
       border: 1px solid #222; border-radius: 12px; overflow: hidden;
       position: relative; z-index: 10;
+      margin-top: 20px;
     }
     .chat-header {
       background: #111; padding: 12px; text-align: center;
@@ -563,40 +582,46 @@
 
   <!-- Аквариумные рыбки -->
   <div class="fish" id="fish1" style="top: 20%; left: -50px;">
-    <svg viewBox="0 0 40 25" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="18" cy="12.5" rx="12" ry="8" fill="#ff6b6b"/>
-      <ellipse cx="28" cy="12.5" rx="8" ry="6" fill="#ff8787"/>
-      <polygon points="35,12.5 40,8 40,17" fill="#ff6b6b"/>
-      <circle cx="14" cy="10" r="2" fill="#fff"/>
-      <circle cx="14" cy="10" r="1" fill="#000"/>
-      <path d="M 18 12.5 Q 22 8 28 10" stroke="#ff8787" stroke-width="1" fill="none"/>
+    <svg viewBox="0 0 50 35" xmlns="http://www.w3.org/2000/svg">
+      <g class="fish-body">
+        <ellipse cx="22" cy="17.5" rx="14" ry="10" fill="#ff6b6b"/>
+        <ellipse cx="34" cy="17.5" rx="10" ry="7" fill="#ff8787"/>
+        <polygon points="42,17.5 50,12 50,23" fill="#ff6b6b"/>
+        <circle cx="18" cy="14" r="3" fill="#fff"/>
+        <circle cx="18" cy="14" r="1.5" fill="#000"/>
+        <path d="M 22 17.5 Q 28 10 36 13" stroke="#ff8787" stroke-width="1.5" fill="none"/>
+        <ellipse cx="22" cy="22" rx="5" ry="3" fill="#ff6b6b" opacity="0.7"/>
+      </g>
     </svg>
   </div>
   <div class="fish" id="fish2" style="top: 70%; left: -50px;">
-    <svg viewBox="0 0 40 25" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="18" cy="12.5" rx="12" ry="8" fill="#4ecdc4"/>
-      <ellipse cx="28" cy="12.5" rx="8" ry="6" fill="#6ee7df"/>
-      <polygon points="35,12.5 40,8 40,17" fill="#4ecdc4"/>
-      <circle cx="14" cy="10" r="2" fill="#fff"/>
-      <circle cx="14" cy="10" r="1" fill="#000"/>
-      <path d="M 18 12.5 Q 22 8 28 10" stroke="#6ee7df" stroke-width="1" fill="none"/>
+    <svg viewBox="0 0 50 35" xmlns="http://www.w3.org/2000/svg">
+      <g class="fish-body">
+        <ellipse cx="22" cy="17.5" rx="14" ry="10" fill="#4ecdc4"/>
+        <ellipse cx="34" cy="17.5" rx="10" ry="7" fill="#6ee7df"/>
+        <polygon points="42,17.5 50,12 50,23" fill="#4ecdc4"/>
+        <circle cx="18" cy="14" r="3" fill="#fff"/>
+        <circle cx="18" cy="14" r="1.5" fill="#000"/>
+        <path d="M 22 17.5 Q 28 10 36 13" stroke="#6ee7df" stroke-width="1.5" fill="none"/>
+        <ellipse cx="22" cy="22" rx="5" ry="3" fill="#4ecdc4" opacity="0.7"/>
+      </g>
     </svg>
   </div>
   
-  <!-- Лягушка Pepe -->
-  <a href="https://t.me/chatradiogram" target="_blank" rel="noopener noreferrer" class="pepe-fish" id="pepeFish" style="top: 50%; left: -60px;" aria-label="Перейти в чат Telegram">
-    <svg viewBox="0 0 50 35" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="25" cy="18" rx="18" ry="12" fill="#4CAF50"/>
-      <ellipse cx="25" cy="18" rx="14" ry="9" fill="#81C784"/>
-      <circle cx="15" cy="10" r="5" fill="#4CAF50"/>
-      <circle cx="35" cy="10" r="5" fill="#4CAF50"/>
-      <circle cx="15" cy="10" r="3" fill="#fff"/>
-      <circle cx="35" cy="10" r="3" fill="#fff"/>
-      <circle cx="15" cy="10" r="1.5" fill="#000"/>
-      <circle cx="35" cy="10" r="1.5" fill="#000"/>
-      <path d="M 18 22 Q 25 28 32 22" stroke="#2E7D32" stroke-width="2" fill="none"/>
-      <ellipse cx="10" cy="24" rx="4" ry="3" fill="#4CAF50"/>
-      <ellipse cx="40" cy="24" rx="4" ry="3" fill="#4CAF50"/>
+  <!-- Лягушка на чате -->
+  <a href="https://t.me/chatradiogram" target="_blank" rel="noopener noreferrer" class="pepe-on-chat" id="pepeFish" aria-label="Перейти в чат Telegram">
+    <svg viewBox="0 0 60 45" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="30" cy="23" rx="22" ry="15" fill="#4CAF50"/>
+      <ellipse cx="30" cy="23" rx="17" ry="11" fill="#81C784"/>
+      <circle cx="18" cy="13" r="6" fill="#4CAF50"/>
+      <circle cx="42" cy="13" r="6" fill="#4CAF50"/>
+      <circle cx="18" cy="13" r="4" fill="#fff"/>
+      <circle cx="42" cy="13" r="4" fill="#fff"/>
+      <circle cx="18" cy="13" r="2" fill="#000"/>
+      <circle cx="42" cy="13" r="2" fill="#000"/>
+      <path d="M 22 28 Q 30 35 38 28" stroke="#2E7D32" stroke-width="2.5" fill="none"/>
+      <ellipse cx="12" cy="30" rx="5" ry="4" fill="#4CAF50"/>
+      <ellipse cx="48" cy="30" rx="5" ry="4" fill="#4CAF50"/>
     </svg>
   </a>
   <div class="pepe-dialog" id="pepeDialog">переходи в наш чат в телеграм</div>
@@ -1168,61 +1193,81 @@
 
       fishes.forEach((fish, index) => {
         let x = Math.random() * window.innerWidth;
-        let y = Math.random() * (window.innerHeight - 200) + 100;
-        let baseSpeed = Math.random() * 0.5 + 0.3;
+        let y = Math.random() * (window.innerHeight - 100) + 50;
+        let baseSpeed = Math.random() * 0.8 + 0.5;
         let speedX = baseSpeed * (Math.random() > 0.5 ? 1 : -1);
-        let speedY = baseSpeed * 0.2 * (Math.random() > 0.5 ? 1 : -1);
+        let speedY = baseSpeed * 0.3 * (Math.random() > 0.5 ? 1 : -1);
         let direction = speedX > 0 ? 'right' : 'left';
         let isAccelerating = false;
         let lastBubbleTime = Date.now();
+        let tailAngle = 0;
+        let tailSpeed = 0.3 + Math.random() * 0.2;
 
         fish.style.left = x + 'px';
         fish.style.top = y + 'px';
 
         function swim() {
+          // Плавное изменение вертикальной скорости для естественности
           if (!isAccelerating) {
-            speedY *= 0.98;
-            if (Math.abs(speedY) < 0.05) speedY = 0;
+            speedY *= 0.985;
+            if (Math.abs(speedY) < 0.02) speedY = 0;
+            
+            // Небольшое случайное движение вверх/вниз
+            if (Math.random() < 0.02) {
+              speedY += (Math.random() - 0.5) * 0.3;
+            }
           }
 
           x += speedX;
           y += speedY;
 
+          // Гравитация к центру экрана (слабая)
           if (!isAccelerating && y < window.innerHeight / 2) {
-            speedY += 0.01;
+            speedY += 0.008;
           } else if (!isAccelerating && y > window.innerHeight / 2) {
-            speedY -= 0.01;
+            speedY -= 0.008;
           }
 
+          // Отскок от краев с плавным разворотом
           if (x <= -60) {
             x = -60;
-            speedX = Math.abs(speedX);
+            speedX = Math.abs(speedX) * (0.8 + Math.random() * 0.4);
             direction = 'right';
           } else if (x >= window.innerWidth - 20) {
             x = window.innerWidth - 20;
-            speedX = -Math.abs(speedX);
+            speedX = -Math.abs(speedX) * (0.8 + Math.random() * 0.4);
             direction = 'left';
           }
 
-          if (y <= 60) {
-            y = 60;
-            speedY = Math.abs(speedY) * 0.5;
-          } else if (y >= window.innerHeight - 60) {
-            y = window.innerHeight - 60;
-            speedY = -Math.abs(speedY) * 0.5;
+          if (y <= 40) {
+            y = 40;
+            speedY = Math.abs(speedY) * 0.6 + Math.random() * 0.5;
+          } else if (y >= window.innerHeight - 40) {
+            y = window.innerHeight - 40;
+            speedY = -Math.abs(speedY) * 0.6 - Math.random() * 0.5;
           }
 
+          // Реалистичный разворот через замедление и ускорение
           if (direction === 'left') {
             fish.classList.add('swimming-left');
           } else {
             fish.classList.remove('swimming-left');
           }
 
+          // Анимация хвоста
+          tailAngle += tailSpeed;
+          const fishBody = fish.querySelector('.fish-body');
+          if (fishBody) {
+            const tailWag = Math.sin(tailAngle) * 5 * (Math.abs(speedX) / baseSpeed);
+            fishBody.style.transform = `rotate(${tailWag}deg)`;
+          }
+
           fish.style.left = x + 'px';
           fish.style.top = y + 'px';
 
-          if (!isAccelerating && Date.now() - lastBubbleTime > Math.random() * 3000 + 2000) {
-            createBubble(x + 20, y + 10);
+          // Пузырьки во время движения
+          if (!isAccelerating && Date.now() - lastBubbleTime > Math.random() * 4000 + 3000) {
+            createBubble(x + 25, y + 15);
             lastBubbleTime = Date.now();
           }
 
@@ -1235,82 +1280,51 @@
           e.stopPropagation();
           isAccelerating = true;
 
-          const boost = 3 + Math.random() * 2;
+          const boost = 4 + Math.random() * 3;
           speedX = -speedX * boost;
-          speedY = (Math.random() - 0.5) * 4;
+          speedY = (Math.random() - 0.5) * 5;
+          tailSpeed = 0.8;
 
           setTimeout(() => {
             isAccelerating = false;
-            baseSpeed = Math.random() * 0.5 + 0.3;
+            baseSpeed = Math.random() * 0.8 + 0.5;
             speedX = speedX > 0 ? baseSpeed : -baseSpeed;
-            speedY = baseSpeed * 0.2 * (Math.random() > 0.5 ? 1 : -1);
-          }, 2000);
+            speedY = baseSpeed * 0.3 * (Math.random() > 0.5 ? 1 : -1);
+            tailSpeed = 0.3 + Math.random() * 0.2;
+          }, 1500);
         });
       });
 
-      let pepeX = Math.random() * window.innerWidth;
-      let pepeY = Math.random() * (window.innerHeight - 200) + 100;
-      let pepeBaseSpeed = 0.4;
-      let pepeSpeedX = pepeBaseSpeed * (Math.random() > 0.5 ? 1 : -1);
-      let pepeSpeedY = pepeBaseSpeed * 0.15 * (Math.random() > 0.5 ? 1 : -1);
-      let pepeDirection = pepeSpeedX > 0 ? 'right' : 'left';
-
-      pepeFish.style.left = pepeX + 'px';
-      pepeFish.style.top = pepeY + 'px';
-
-      function swimPepe() {
-        pepeSpeedY *= 0.99;
-        if (Math.abs(pepeSpeedY) < 0.03) pepeSpeedY = 0;
-
-        pepeX += pepeSpeedX;
-        pepeY += pepeSpeedY;
-
-        if (pepeY < window.innerHeight / 2) {
-          pepeSpeedY += 0.005;
-        } else if (pepeY > window.innerHeight / 2) {
-          pepeSpeedY -= 0.005;
-        }
-
-        if (pepeX <= -70) {
-          pepeX = -70;
-          pepeSpeedX = Math.abs(pepeSpeedX);
-          pepeDirection = 'right';
-        } else if (pepeX >= window.innerWidth - 30) {
-          pepeX = window.innerWidth - 30;
-          pepeSpeedX = -Math.abs(pepeSpeedX);
-          pepeDirection = 'left';
-        }
-
-        if (pepeY <= 50) {
-          pepeY = 50;
-          pepeSpeedY = Math.abs(pepeSpeedY) * 0.3;
-        } else if (pepeY >= window.innerHeight - 50) {
-          pepeY = window.innerHeight - 50;
-          pepeSpeedY = -Math.abs(pepeSpeedY) * 0.3;
-        }
-
-        if (pepeDirection === 'left') {
-          pepeFish.classList.add('swimming-left');
-        } else {
-          pepeFish.classList.remove('swimming-left');
-        }
-
+      // Лягушка сидит на чате сверху
+      function positionPepeOnChat() {
+        const chatContainer = document.querySelector('.chat-container');
+        if (!chatContainer || !pepeFish) return;
+        
+        const chatRect = chatContainer.getBoundingClientRect();
+        const pepeWidth = 60;
+        const pepeHeight = 45;
+        
+        // Позиция сверху по центру чата
+        const pepeX = chatRect.left + (chatRect.width / 2) - (pepeWidth / 2);
+        const pepeY = chatRect.top - pepeHeight - 5;
+        
         pepeFish.style.left = pepeX + 'px';
         pepeFish.style.top = pepeY + 'px';
-
-        if (Math.random() < 0.003) {
-          createBubble(pepeX + 25, pepeY + 15);
-        }
-
-        // Показываем диалог периодически
-        if (Math.random() < 0.001) {
-          showPepeDialog();
-        }
-
-        requestAnimationFrame(swimPepe);
+        
+        // Лягушка смотрит вправо по умолчанию
+        pepeFish.classList.remove('swimming-left');
       }
 
-      swimPepe();
+      // Позиционируем лягушку при загрузке и изменении размера окна
+      positionPepeOnChat();
+      window.addEventListener('resize', positionPepeOnChat);
+
+      // Показываем диалог периодически
+      setInterval(() => {
+        if (Math.random() < 0.3) {
+          showPepeDialog();
+        }
+      }, 8000);
     }
 
     setTimeout(initFish, 1000);
@@ -1343,6 +1357,13 @@
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         
+        // Сохраняем текущую громкость и уменьшаем её
+        let originalVolume = 1.0;
+        if (audio) {
+          originalVolume = audio.volume;
+          audio.volume = 0.2; // Делаем музыку тихой
+        }
+        
         const utterance = new SpeechSynthesisUtterance(message);
         utterance.lang = 'ru-RU';
         utterance.rate = 0.9;
@@ -1361,6 +1382,13 @@
         if (femaleVoice) {
           utterance.voice = femaleVoice;
         }
+        
+        // Восстанавливаем громкость после окончания объявления
+        utterance.onend = function() {
+          if (audio) {
+            audio.volume = originalVolume; // Возвращаем исходную громкость
+          }
+        };
         
         window.speechSynthesis.speak(utterance);
         console.log('Объявление времени:', message);
