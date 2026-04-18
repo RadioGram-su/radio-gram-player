@@ -2,7 +2,7 @@ name: Deploy to Yandex Cloud Storage
 
 on:
   push:
-    branches: [ main ]  # Запускать при сохранении в ветку main
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -12,12 +12,11 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.YC_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.YC_SECRET_ACCESS_KEY }}
-        aws-region: ru-central1
+    - name: Configure AWS CLI for Yandex
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.YC_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.YC_SECRET_ACCESS_KEY }}
+        aws configure set default.region ru-central1
 
     - name: Upload to Yandex Object Storage
       run: |
