@@ -11,7 +11,7 @@
   <meta name="description" content="Слушай атмосферное радио Radio Gram. Электронная музыка: Deep House, Tech House, Chillout. Идеально для работы, кодинга и отдыха. Эфир 24/7.">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
- <meta http-equiv="Content-Security-Policy" content="default-src 'self' file:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://mc.yandex.ru; connect-src 'self' https://api.radiogram.su https://radiogram.su https://radiogram-backend-production.up.railway.app https://stream.zeno.fm https://*.zeno.fm https://mc.yandex.ru; img-src 'self' https: data: blob: file: https://mc.yandex.ru; media-src 'self' blob: https://radiogram.su https://stream.zeno.fm https://*.zeno.fm file:; object-src 'none'; frame-src 'self' https://www.youtube.com;">
+ <meta http-equiv="Content-Security-Policy" content="default-src 'self' file:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://mc.yandex.ru; connect-src 'self' https://api.radiogram.su https://radiogram.su https://radiogram-backend-production.up.railway.app https://stream.zeno.fm https://*.zeno.fm https://mc.yandex.ru https://pressf.com https://web.tribute.tg; img-src 'self' https: data: blob: file: https://mc.yandex.ru; media-src 'self' blob: https://radiogram.su https://stream.zeno.fm https://*.zeno.fm file:; object-src 'none'; frame-src 'self' https://www.youtube.com https://pressf.com https://web.tribute.tg;">
   <!-- Yandex.Metrika counter -->
   <script type="text/javascript">
       (function(m,e,t,r,i,k,a){
@@ -278,6 +278,34 @@
       color: #ff6600;
       text-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
     }
+    .visualizer-container {
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 4px;
+      height: 40px;
+      margin: 10px auto;
+    }
+    .visualizer-container.active {
+      display: flex;
+    }
+    .visualizer-bar {
+      width: 6px;
+      background: linear-gradient(to top, #4a9bc9, #5aabc9);
+      border-radius: 3px;
+      animation: visualize 0.8s ease-in-out infinite;
+    }
+    .visualizer-bar:nth-child(1) { animation-delay: 0s; height: 20px; }
+    .visualizer-bar:nth-child(2) { animation-delay: 0.2s; height: 30px; }
+    .visualizer-bar:nth-child(3) { animation-delay: 0.4s; height: 25px; }
+    .visualizer-bar:nth-child(4) { animation-delay: 0.1s; height: 35px; }
+    .visualizer-bar:nth-child(5) { animation-delay: 0.3s; height: 22px; }
+    @keyframes visualize {
+      0%, 100% { transform: scaleY(0.5); opacity: 0.7; }
+      50% { transform: scaleY(1); opacity: 1; }
+    }
+    
+
     
     .social-icons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
     .social-icons a {
@@ -707,6 +735,13 @@
         <path d="M 32 22 L 32 37" />
       </svg>
     </button>
+    <div class="visualizer-container" id="visualizer">
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+      <div class="visualizer-bar"></div>
+    </div>
     <div class="main-title">GRAM</div>
     <div class="sub-title">RADIO STREAM</div>
     <div class="status" id="statusText" role="status" aria-live="polite">Нажми для старта</div>
@@ -813,7 +848,8 @@
   <script>
     // === КОНСТАНТЫ ===
     const CONSTANTS = {
-      STREAM_URL: 'https://radiogram.su/radio/8000/radio.mp3',
+      STREAM_URL: 'https://radiogram.su/listen/radio_gram/radio.mp3',
+      BACKUP_STREAM_URL: 'https://stream.zeno.fm/radiogram',
       API_URL: 'https://radiogram.su/api/nowplaying/radio_gram',
       CHAT_API: '/.netlify/functions/send-chat',
       MAX_NICK_LENGTH: 20,
@@ -876,18 +912,21 @@
 
     function handleAudioError() {
       console.error('Ошибка аудио потока');
-      statusText.textContent = '⚠️ Потеряно соединение. Переподключение...';
+      statusText.textContent = '⚠️ Потеряно соединение. Переключение...';
       statusText.className = 'status error';
       
       if (reconnectTimer) clearTimeout(reconnectTimer);
       reconnectTimer = setTimeout(() => {
         if (isPlaying && audio) {
-          statusText.textContent = 'рџ”„ Переподключение...';
+          statusText.textContent = '🔄 Переключение...';
           statusText.className = 'status buffering';
-          audio.src = CONSTANTS.STREAM_URL;
-          console.log('Attempting to play:', CONSTANTS.STREAM_URL);
+          // Try backup stream on error
+          const currentSrc = audio.src;
+          const newSrc = currentSrc.includes('zeno') ? CONSTANTS.STREAM_URL : CONSTANTS.BACKUP_STREAM_URL;
+          audio.src = newSrc;
+          console.log('Attempting to play backup: ', newSrc);
           audio.play().catch(err => {
-            console.error('Не удалось переподключиться:', err);
+            console.error('Не удалось переключиться: ', err);
             stopPlayback();
           });
         }
@@ -908,6 +947,7 @@
       playBtn.setAttribute('aria-pressed', 'false');
       statusText.textContent = '⏸ ПАУЗА';
       statusText.className = 'status';
+      updateVisualizer();
     }
 
     async function togglePlayback() {
@@ -923,6 +963,21 @@
           
           const playPromise = new Promise((resolve, reject) => {
             let hasResolved = false;
+            let fallbackAttempted = false;
+            
+            const tryFallback = () => {
+              if (fallbackAttempted || hasResolved) return;
+              fallbackAttempted = true;
+              console.log('Main stream failed, trying backup...');
+              audio.src = CONSTANTS.BACKUP_STREAM_URL;
+              audio.play().catch(err => {
+                if (!hasResolved) {
+                  hasResolved = true;
+                  cleanup();
+                  reject(new Error('Both streams failed'));
+                }
+              });
+            };
             
             const cleanup = () => {
               audio.removeEventListener('playing', onPlaying);
@@ -941,14 +996,14 @@
               if (hasResolved) return;
               hasResolved = true;
               cleanup();
-              reject(new Error('Audio stream error'));
+              tryFallback();
             };
             
             const onStalled = () => {
               if (hasResolved) return;
               hasResolved = true;
               cleanup();
-              reject(new Error('Stream stalled'));
+              tryFallback();
             };
             
             audio.addEventListener('playing', onPlaying);
@@ -959,7 +1014,7 @@
               if (!hasResolved) {
                 hasResolved = true;
                 cleanup();
-                reject(err);
+                tryFallback();
               }
             });
           });
@@ -978,6 +1033,7 @@
           statusText.textContent = 'рџ”ґ СЕЙЧАС ИГРАЕТ';
           statusText.className = 'status success';
           isPlaying = true;
+          updateVisualizer();
           
         } catch (err) {
           console.error('Ошибка воспроизведения:', err);
@@ -987,6 +1043,18 @@
         }
       } else {
         stopPlayback();
+      }
+    }
+
+    
+    // Visualizer toggle
+    const visualizer = document.getElementById('visualizer');
+    
+    function updateVisualizer() {
+      if (isPlaying && !isBuffering) {
+        visualizer.classList.add('active');
+      } else {
+        visualizer.classList.remove('active');
       }
     }
 
@@ -1184,12 +1252,12 @@
     let selectedImage = null;
     
     // Эмодзи для выбора
-    const emojis = ['🗿','рџЃ','рџ‚','рџ¤Ј','рџѓ','рџ„','рџ…','рџ†','рџ‰','рџЉ','рџ‹','рџЋ','рџЌ','рџ','рџҐ°','рџ—','рџ™','рџљ','рџ™‚','рџ¤—','рџ¤©','рџ¤”','рџ¤Ё','рџђ','рџ‘','рџ¶','рџ™„','рџЏ','рџЈ','рџҐ','рџ®','рџ¤ђ','рџЇ','рџЄ','рџ«','рџґ','рџЊ','рџ›','рџњ','рџќ','рџ¤¤','рџ’','рџ“','рџ”','рџ•','рџ™ѓ','рџ¤‘','рџІ','☹️','рџ™Ѓ','рџ–','рџћ','рџџ','рџ¤','рџў','рџ­','рџ¦','рџ§','рџЁ','рџ©','рџ¤Ї','рџ¬','рџ°','рџ±','рџі','рџ¤Є','рџµ','рџЎ','рџ ','рџ¤¬','рџ·','рџ¤’','рџ¤•','рџ¤ў','рџ¤®','рџ¤§','рџ‡','рџ¤ ','рџ¤Ў','рџҐі','рџҐґ','рџҐє','рџ¤Ґ','рџ¤«','рџ¤­','рџ§ђ','рџ¤“','рџ€','рџ‘ї','рџ‘№','рџ‘є','рџ’Ђ','рџ‘»','рџ‘Ѕ','рџ¤–','рџ’©','рџє','рџё','рџ№','рџ»','рџј','рџЅ','рџ™Ђ','рџї','рџѕ','рџ™€','рџ™‰','рџ™Љ','рџ”Ґ','⭐','✨','рџ’«','рџЊџ','⚡','рџ’Ґ','рџ’ў','рџ’Ё','рџ’¦','рџ’¤','🎵','рџЋ¶','рџЋё','рџЋ№','рџЋє','рџЋ·','рџҐЃ','❤️','рџ§Ў','рџ’›','рџ’љ','рџ’™','рџ’њ','рџ–¤','рџ¤Ќ','рџ¤Ћ','рџ’”','❣️','рџ’•','рџ’ћ','рџ’“','рџ’—','рџ’–','рџ’','рџ’ќ','☮️','✝️','☪️','рџ•‰️','рџ”Ї','рџЄђ','рџ’«','⭐','рџЊџ','⚡','☄️','рџ’Ґ','рџ”Ґ','рџЊЄ️','рџЊ€','☀️','🌐️','⛅','рџЊҐ️','☁️','рџЊ¦️','рџЊ§️','⛈️','рџЊ©️','рџЊЁ️','❄️','☃️','⛄','рџЊ¬️','рџ’Ё','рџЊ«️','рџЊЉ'];
+    const emojiPickerList = ['🗿','рџЃ','рџ‚','рџ¤Ј','рџѓ','рџ„','рџ…','рџ†','рџ‰','рџЉ','рџ‹','рџЋ','рџЌ','рџ','рџҐ°','рџ—','рџ™','рџљ','рџ™‚','рџ¤—','рџ¤©','рџ¤”','рџ¤Ё','рџђ','рџ‘','рџ¶','рџ™„','рџЏ','рџЈ','рџҐ','рџ®','рџ¤ђ','рџЇ','рџЄ','рџ«','рџґ','рџЊ','рџ›','рџњ','рџќ','рџ¤¤','рџ’','рџ“','рџ”','рџ•','рџ™ѓ','рџ¤‘','рџІ','☹️','рџ™Ѓ','рџ–','рџћ','рџџ','рџ¤','рџў','рџ­','рџ¦','рџ§','рџЁ','рџ©','рџ¤Ї','рџ¬','рџ°','рџ±','рџі','рџ¤Є','рџµ','рџЎ','рџ ','рџ¤¬','рџ·','рџ¤’','рџ¤•','рџ¤ў','рџ¤®','рџ¤§','рџ‡','рџ¤ ','рџ¤Ў','рџҐі','рџҐґ','рџҐє','рџ¤Ґ','рџ¤«','рџ¤­','рџ§ђ','рџ¤“','рџ€','рџ‘ї','рџ‘№','рџ‘є','рџ’Ђ','рџ‘»','рџ‘Ѕ','рџ¤–','рџ’©','рџє','рџё','рџ№','рџ»','рџј','рџЅ','рџ™Ђ','рџї','рџѕ','рџ™€','рџ™‰','рџ™Љ','рџ”Ґ','⭐','✨','рџ’«','рџЊџ','⚡','рџ’Ґ','рџ’ў','рџ’Ё','рџ’¦','рџ’¤','🎵','рџЋ¶','рџЋё','рџЋ№','рџЋє','рџЋ·','рџҐЃ','❤️','рџ§Ў','рџ’›','рџ’љ','рџ’™','рџ’њ','рџ–¤','рџ¤Ќ','рџ¤Ћ','рџ’”','❣️','рџ’•','рџ’ћ','рџ’“','рџ’—','рџ’–','рџ’','рџ’ќ','☮️','✝️','☪️','рџ•‰️','рџ”Ї','рџЄђ','рџ’«','⭐','рџЊџ','⚡','☄️','рџ’Ґ','рџ”Ґ','рџЊЄ️','рџЊ€','☀️','🌐️','⛅','рџЊҐ️','☁️','рџЊ¦️','рџЊ§️','⛈️','рџЊ©️','рџЊЁ️','❄️','☃️','⛄','рџЊ¬️','рџ’Ё','рџЊ«️','рџЊЉ'];
     
     // Инициализация пикера эмодзи
     function initEmojiPicker() {
       emojiPicker.innerHTML = '';
-      emojis.forEach(emoji => {
+      emojiPickerList.forEach(emoji => {
         const btn = document.createElement('button');
         btn.className = 'emoji-btn';
         btn.textContent = emoji;
