@@ -114,6 +114,39 @@
       transition: transform 0.1s ease-out;
     }
     
+    /* Диалог рыбки */
+    .fish-dialog {
+      position: fixed;
+      background: linear-gradient(135deg, #fff, #f0f0f0);
+      color: #333;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', cursive, sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(255, 107, 107, 0.4);
+      opacity: 0;
+      transform: translateY(10px) scale(0.9);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .fish-dialog::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 8px 8px 0;
+      border-style: solid;
+      border-color: #fff transparent transparent transparent;
+    }
+    .fish-dialog.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    
     .emoji {
       position: fixed;
       font-size: 24px;
@@ -800,7 +833,7 @@
   </div>
 
   <!-- Аквариумные рыбки -->
-  <div class="fish" id="fish1" style="top: 20%; left: -50px;">
+  <a href="https://t.me/Gram_zonebot?start=679bcd47c630af4776e08ffb" target="_blank" rel="noopener noreferrer" class="fish" id="fish1" style="top: 20%; left: -50px;" aria-label="Играть с рыбкой">
     <svg viewBox="0 0 50 35" xmlns="http://www.w3.org/2000/svg">
       <g class="fish-body">
         <ellipse cx="22" cy="17.5" rx="14" ry="10" fill="#ff6b6b"/>
@@ -812,7 +845,8 @@
         <ellipse cx="22" cy="22" rx="5" ry="3" fill="#ff6b6b" opacity="0.7"/>
       </g>
     </svg>
-  </div>
+  </a>
+  <div class="fish-dialog" id="fishDialog">хочешь поиграть?</div>
   <div class="fish" id="fish2" style="top: 70%; left: -50px;">
     <svg viewBox="0 0 50 35" xmlns="http://www.w3.org/2000/svg">
       <g class="fish-body">
@@ -1511,6 +1545,7 @@
     const fish2 = document.getElementById('fish2');
     const pepeFish = document.getElementById('pepeFish');
     const pepeDialog = document.getElementById('pepeDialog');
+    const fishDialog = document.getElementById('fishDialog');
 
     function createBubble(x, y) {
       const bubble = document.createElement('div');
@@ -1524,6 +1559,30 @@
       document.body.appendChild(bubble);
       
       setTimeout(() => bubble.remove(), 4000);
+    }
+
+    function updateFishDialog() {
+      if (!fish1 || !fishDialog) return;
+      
+      const fishRect = fish1.getBoundingClientRect();
+      const dialogWidth = fishDialog.offsetWidth;
+      const dialogHeight = fishDialog.offsetHeight;
+      
+      const dialogX = fishRect.left + (fishRect.width / 2) - (dialogWidth / 2);
+      const dialogY = fishRect.top - dialogHeight - 10;
+      
+      fishDialog.style.left = dialogX + 'px';
+      fishDialog.style.top = dialogY + 'px';
+    }
+
+    function showFishDialog() {
+      if (!fishDialog) return;
+      updateFishDialog();
+      fishDialog.classList.add('visible');
+      
+      setTimeout(() => {
+        fishDialog.classList.remove('visible');
+      }, 3000);
     }
 
     function updatePepeDialog() {
@@ -1627,6 +1686,11 @@
           fish.style.left = x + 'px';
           fish.style.top = y + 'px';
 
+          // Обновляем позицию диалога рыбки, если он виден
+          if (fish === fish1 && fishDialog && fishDialog.classList.contains('visible')) {
+            updateFishDialog();
+          }
+
           // Пузырьки во время движения
           if (!isAccelerating && Date.now() - lastBubbleTime > Math.random() * 4000 + 3000) {
             createBubble(x + 25, y + 15);
@@ -1639,21 +1703,24 @@
         swim();
 
         fish.addEventListener('click', (e) => {
-          e.stopPropagation();
-          isAccelerating = true;
+          // „лЯ fish1 клик обрабатываетсЯ ссылкой, но можно добавить эффект
+          if (fish !== fish1) {
+            e.stopPropagation();
+            isAccelerating = true;
 
-          const boost = 4 + Math.random() * 3;
-          speedX = -speedX * boost;
-          speedY = (Math.random() - 0.5) * 5;
-          tailSpeed = 0.8;
+            const boost = 4 + Math.random() * 3;
+            speedX = -speedX * boost;
+            speedY = (Math.random() - 0.5) * 5;
+            tailSpeed = 0.8;
 
-          setTimeout(() => {
-            isAccelerating = false;
-            baseSpeed = Math.random() * 0.8 + 0.5;
-            speedX = speedX > 0 ? baseSpeed : -baseSpeed;
-            speedY = baseSpeed * 0.3 * (Math.random() > 0.5 ? 1 : -1);
-            tailSpeed = 0.3 + Math.random() * 0.2;
-          }, 1500);
+            setTimeout(() => {
+              isAccelerating = false;
+              baseSpeed = Math.random() * 0.8 + 0.5;
+              speedX = speedX > 0 ? baseSpeed : -baseSpeed;
+              speedY = baseSpeed * 0.3 * (Math.random() > 0.5 ? 1 : -1);
+              tailSpeed = 0.3 + Math.random() * 0.2;
+            }, 1500);
+          }
         });
       });
 
@@ -1681,12 +1748,19 @@
       positionPepeOnChat();
       window.addEventListener('resize', positionPepeOnChat);
 
-      // Показываем диалог периодически
+      // Показываем диалог периодически для лягушки
       setInterval(() => {
         if (Math.random() < 0.3) {
           showPepeDialog();
         }
       }, 8000);
+      
+      // Показываем диалог рыбки периодически с плавным движением за рыбкой
+      setInterval(() => {
+        if (fish1 && Math.random() < 0.4) {
+          showFishDialog();
+        }
+      }, 6000);
     }
 
     setTimeout(initFish, 1000);
