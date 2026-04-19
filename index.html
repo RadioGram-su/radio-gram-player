@@ -1162,10 +1162,18 @@
         navigator.serviceWorker.register('sw.js')
           .then(registration => {
             console.log('Service Worker зарегистрирован:', registration.scope);
+            // Проверяем наличие обновлений при каждой загрузке
+            registration.update();
           })
           .catch(error => {
             console.log('Ошибка регистрации Service Worker:', error);
           });
+      });
+      
+      // Слушаем обновления Service Worker и принудительно активируем их
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        console.log('Service Worker обновлен, перезагружаем страницу');
+        window.location.reload();
       });
     }
 
