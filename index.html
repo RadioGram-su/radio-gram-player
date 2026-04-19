@@ -244,7 +244,6 @@
       pointer-events: none;
       z-index: 997;
       font-size: 32px;
-      transition: all 0.5s ease;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
 
@@ -406,32 +405,25 @@
     
 
     
-    .social-icons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; position: relative; }
-    .social-icons a,
+    .social-icons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px; position: relative; width: 100%; }
     .social-icons .channels-btn {
       padding: 8px 16px; border-radius: 20px;
       background: rgba(26, 26, 26, 0.8); color: #fff; text-decoration: none;
       transition: all 0.3s; font-size: 12px; border: 1px solid #444;
       backdrop-filter: blur(5px);
-    }
-    .social-icons .channels-btn {
       cursor: pointer;
       font-weight: 600;
     }
-    .social-icons a:hover,
     .social-icons .channels-btn:hover { 
       background: linear-gradient(135deg, #4a9bc9, #3a7ca5); 
       border-color: #5aabc9;
       transform: translateY(-2px) scale(1.03);
       box-shadow: 0 4px 15px rgba(74, 155, 201, 0.4);
     }
-    .social-icons a:focus-visible,
     .social-icons .channels-btn:focus-visible {
       outline: 2px solid #4a9bc9;
       outline-offset: 2px;
     }
-    .social-icons a.youtube:hover { background: linear-gradient(135deg, #ff0000, #cc0000); border-color: #ff3333; }
-    .social-icons a.telegram:hover { background: linear-gradient(135deg, #0088cc, #006699); border-color: #33aaff; }
     
     .channels-menu {
       position: absolute;
@@ -848,46 +840,6 @@
       font-weight: 500;
     }
     
-    /* Кнопка веб-сайта в виде планеты */
-    .website-planet-btn {
-      position: fixed;
-      bottom: 15px;
-      right: 15px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #4a9bc9, #1a3a5c);
-      border: none;
-      cursor: pointer;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      transition: all 0.3s ease;
-      opacity: 0.7;
-      animation: planetGlow 4s ease-in-out infinite;
-      box-shadow: 0 0 15px rgba(74, 155, 201, 0.4), inset -4px -4px 8px rgba(0, 0, 0, 0.5);
-      padding: 0;
-    }
-    @keyframes planetGlow {
-      0%, 100% { 
-        box-shadow: 0 0 10px rgba(74, 155, 201, 0.3), inset -4px -4px 8px rgba(0, 0, 0, 0.5);
-        opacity: 0.7;
-        transform: rotate(0deg);
-      }
-      50% { 
-        box-shadow: 0 0 20px rgba(74, 155, 201, 0.6), inset -4px -4px 8px rgba(0, 0, 0, 0.5);
-        opacity: 0.9;
-        transform: rotate(10deg);
-      }
-    }
-    .website-planet-btn:hover {
-      opacity: 1;
-      transform: scale(1.15) rotate(15deg);
-      box-shadow: 0 0 25px rgba(74, 155, 201, 0.7), inset -4px -4px 8px rgba(0, 0, 0, 0.5);
-    }
-    
     @media (max-width: 600px) {
       .unique-users-counter {
         top: 8px;
@@ -921,9 +873,6 @@
     <div class="sleep-timer-display-compact" id="sleepTimerDisplayCompact"></div>
   </div>
   
-  <!-- Кнопка веб-сайта в виде планеты -->
-  <a href="https://player.radiogram.su/" target="_blank" rel="noopener noreferrer" class="website-planet-btn" aria-label="Веб-сайт">🌍</a>
-  
   <div class="player-wrapper">
     <button class="play-button paused" id="playBtn" aria-label="Play/Pause" aria-pressed="false" role="button" tabindex="0">
       <svg class="gram-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -951,7 +900,6 @@
         <a href="https://www.youtube.com/@blogcheloveka" target="_blank" rel="noopener noreferrer" class="youtube" aria-label="YouTube канал">📺 YouTube</a>
         <a href="https://t.me/gramradiochill" target="_blank" rel="noopener noreferrer" class="telegram" aria-label="Telegram радио">🎵 Радио TG</a>
       </div>
-      <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Веб-сайт">🌐 Веб-сайт</a>
     </div>
     
     <button onclick="openDonateModal()" class="donate-button" aria-label="Помочь разработчику">
@@ -1946,7 +1894,7 @@
       let position = 0; // Позиция вдоль периметра
       const snailSize = 40;
       const perimeter = window.innerWidth * 2 + window.innerHeight * 2;
-      const speed = 0.3; // Очень медленно
+      const speed = 1.5; // Скорость улитки
       
       function moveSnail() {
         let x, y;
