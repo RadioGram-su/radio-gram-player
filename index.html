@@ -145,7 +145,7 @@
       100% { opacity: 0; transform: translateY(-30px) scale(0.8); }
     }
     
-    /* ЛЯГУШКА - простая CSS лягушка внизу слева */
+    /* ЛЯГУШКА - CSS лягушка внизу слева */
     .frog-container {
       position: fixed;
       bottom: 150px;
@@ -155,8 +155,38 @@
     }
 
     .frog {
-      font-size: 50px;
+      width: 50px;
+      height: 40px;
+      background: linear-gradient(180deg, #4CAF50 0%, #388E3C 100%);
+      border-radius: 50% 50% 45% 45%;
+      position: relative;
       animation: frogBounce 2s ease-in-out infinite;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .frog::before {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: 5px;
+      width: 14px;
+      height: 14px;
+      background: linear-gradient(180deg, #4CAF50 0%, #388E3C 100%);
+      border-radius: 50%;
+      box-shadow: 26px 0 0 #4CAF50;
+    }
+
+    .frog::after {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 8px;
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 26px 0 0 white;
+      z-index: 1;
     }
 
     @keyframes frogBounce {
@@ -194,16 +224,63 @@
       to { opacity: 1; }
     }
     
-    /* УЛИТКА */
+    /* УЛИТКА - CSS улитка */
     .snail {
       position: fixed;
       bottom: 20px;
       left: 20px;
-      font-size: 40px;
+      width: 50px;
+      height: 35px;
       z-index: 9998;
       cursor: pointer;
       transition: transform 0.3s;
       animation: snailMove 3600s linear infinite;
+    }
+
+    .snail-shell {
+      position: absolute;
+      top: -15px;
+      left: 15px;
+      width: 30px;
+      height: 25px;
+      background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #CD853F 100%);
+      border-radius: 50% 50% 45% 45%;
+      box-shadow: inset -3px -3px 5px rgba(0,0,0,0.3);
+    }
+
+    .snail-body {
+      position: absolute;
+      bottom: 0;
+      left: 5px;
+      width: 40px;
+      height: 15px;
+      background: linear-gradient(180deg, #D2B48C 0%, #C4A574 100%);
+      border-radius: 50% 50% 40% 40%;
+    }
+
+    .snail-eye {
+      position: absolute;
+      top: -8px;
+      left: 8px;
+      width: 4px;
+      height: 8px;
+      background: #D2B48C;
+      border-radius: 50%;
+    }
+
+    .snail-eye::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 1px;
+      width: 3px;
+      height: 3px;
+      background: #333;
+      border-radius: 50%;
+    }
+
+    .snail-eye.right {
+      left: 22px;
     }
 
     .snail:hover {
@@ -1188,11 +1265,17 @@
   <!-- ЛЯГУШКА -->
   <div class="frog-container" onclick="openChat()">
     <div class="frog-tooltip">переходите в наш чат</div>
-    <div class="frog">🐸</div>
+    <div class="frog"></div>
   </div>
 
   <!-- УЛИТКА -->
-  <div class="snail" id="snail">🐌</div>
+  <div class="snail" id="snail">
+    <div class="snail-shell"></div>
+    <div class="snail-body">
+      <div class="snail-eye"></div>
+      <div class="snail-eye right"></div>
+    </div>
+  </div>
   <div class="snail-dialog" id="snail-dialog"></div>
 
   <script>
@@ -1938,9 +2021,9 @@
 
     // УЛИТКА
     const phrases = [
-      'не трогай меня! Я просто ползу 🐌',
-      'я устала, я ухожу! 😴',
-      'на что я трачу свою жизнь ((( 💭'
+      'не трогай меня! Я просто ползу',
+      'я устала, я ухожу!',
+      'на что я трачу свою жизнь ((( '
     ];
 
     let lastSnailPos = { x: 20, y: window.innerHeight - 60 };
