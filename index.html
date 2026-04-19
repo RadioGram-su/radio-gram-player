@@ -457,6 +457,7 @@
     .chat-input-wrapper {
       padding: 8px 10px; background: rgba(17, 17, 17, 0.8); display: flex;
       gap: 6px; border-top: 1px solid #333; backdrop-filter: blur(5px);
+      position: relative;
     }
     .chat-input-wrapper input {
       flex: 1; padding: 8px 12px; border-radius: 18px;
@@ -478,6 +479,114 @@
     .chat-input-wrapper button:focus-visible {
       outline: 2px solid #4a9bc9;
       outline-offset: 2px;
+    }
+    .chat-input-actions {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .chat-action-btn {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: none; background: rgba(74, 155, 201, 0.2); color: #4a9bc9;
+      cursor: pointer; font-size: 16px; transition: all 0.3s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .chat-action-btn:hover { 
+      background: rgba(74, 155, 201, 0.4); 
+      transform: scale(1.1);
+      color: #5aabc9;
+    }
+    .emoji-picker {
+      position: absolute;
+      bottom: 100%;
+      right: 0;
+      background: rgba(20, 20, 30, 0.95);
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 10px;
+      display: none;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 4px;
+      max-width: 280px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      margin-bottom: 8px;
+    }
+    .emoji-picker.show {
+      display: grid;
+    }
+    .emoji-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .emoji-btn:hover {
+      background: rgba(74, 155, 201, 0.3);
+      transform: scale(1.2);
+    }
+    .image-preview-container {
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(20, 20, 30, 0.95);
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 10px;
+      display: none;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      margin-bottom: 8px;
+    }
+    .image-preview-container.show {
+      display: block;
+    }
+    .image-preview {
+      max-width: 100%;
+      max-height: 150px;
+      border-radius: 8px;
+      object-fit: contain;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .image-preview-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .image-preview-text {
+      font-size: 11px;
+      color: #888;
+    }
+    .image-remove-btn {
+      background: rgba(239, 68, 68, 0.3);
+      border: none;
+      color: #ef4444;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .image-remove-btn:hover {
+      background: rgba(239, 68, 68, 0.5);
+    }
+    .chat-message img {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 8px;
+      margin-top: 6px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    .chat-message img:hover {
+      transform: scale(1.02);
     }
     .error-message {
       color: #ef4444;
@@ -600,7 +709,20 @@
     </div>
     <div class="chat-input-wrapper">
       <input type="text" id="chatInput" placeholder="Сообщение..." autocomplete="off" aria-label="Введите сообщение" maxlength="500">
+      <div class="chat-input-actions">
+        <button type="button" class="chat-action-btn" id="emojiBtn" aria-label="Эмодзи">😀</button>
+        <button type="button" class="chat-action-btn" id="imageBtn" aria-label="Картинка">🖼️</button>
+      </div>
       <button onclick="sendMessage()" aria-label="Отправить сообщение">➤</button>
+      <input type="file" id="imageInput" accept="image/*" style="display: none;">
+    </div>
+    <div class="emoji-picker" id="emojiPicker"></div>
+    <div class="image-preview-container" id="imagePreviewContainer">
+      <img src="" alt="Предпросмотр" class="image-preview" id="imagePreview">
+      <div class="image-preview-actions">
+        <span class="image-preview-text">Изображение готово к отправке</span>
+        <button type="button" class="image-remove-btn" id="imageRemoveBtn">Удалить</button>
+      </div>
     </div>
     <div class="error-message" id="chatError" role="alert"></div>
   </div>
@@ -1013,7 +1135,91 @@
     const chatInput = document.getElementById('chatInput');
     const chatMessages = document.getElementById('chatMessages');
     const chatError = document.getElementById('chatError');
+    const emojiBtn = document.getElementById('emojiBtn');
+    const imageBtn = document.getElementById('imageBtn');
+    const imageInput = document.getElementById('imageInput');
+    const emojiPicker = document.getElementById('emojiPicker');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    const imagePreview = document.getElementById('imagePreview');
+    const imageRemoveBtn = document.getElementById('imageRemoveBtn');
+    
     let chatHistory = [];
+    let selectedImage = null;
+    
+    // Эмодзи для выбора
+    const emojis = ['😀','😁','😂','🤣','😃','😄','😅','😆','😉','😊','😋','😎','😍','😘','🥰','😗','😙','😚','🙂','🤗','🤩','🤔','🤨','😐','😑','😶','🙄','😏','😣','😥','😮','🤐','😯','😪','😫','😴','😌','😛','😜','😝','🤤','😒','😓','😔','😕','🙃','🤑','😲','☹️','🙁','😖','😞','😟','😤','😢','😭','😦','😧','😨','😩','🤯','😬','😰','😱','😳','🤪','😵','😡','😠','🤬','😷','🤒','🤕','🤢','🤮','🤧','😇','🤠','🤡','🥳','🥴','🥺','🤥','🤫','🤭','🧐','🤓','😈','👿','👹','👺','💀','👻','👽','🤖','💩','😺','😸','😹','😻','😼','😽','🙀','😿','😾','🙈','🙉','🙊','🔥','⭐','✨','💫','🌟','⚡','💥','💢','💨','💦','💤','🎵','🎶','🎸','🎹','🎺','🎷','🥁','❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','☮️','✝️','☪️','🕉️','🔯','🪐','💫','⭐','🌟','⚡','☄️','💥','🔥','🌪️','🌈','☀️','🌤️','⛅','🌥️','☁️','🌦️','🌧️','⛈️','🌩️','🌨️','❄️','☃️','⛄','🌬️','💨','🌫️','🌊'];
+    
+    // Инициализация пикера эмодзи
+    function initEmojiPicker() {
+      emojiPicker.innerHTML = '';
+      emojis.forEach(emoji => {
+        const btn = document.createElement('button');
+        btn.className = 'emoji-btn';
+        btn.textContent = emoji;
+        btn.onclick = () => selectEmoji(emoji);
+        emojiPicker.appendChild(btn);
+      });
+    }
+    
+    function toggleEmojiPicker() {
+      emojiPicker.classList.toggle('show');
+      imagePreviewContainer.classList.remove('show');
+    }
+    
+    function selectEmoji(emoji) {
+      chatInput.value += emoji;
+      chatInput.focus();
+      emojiPicker.classList.remove('show');
+    }
+    
+    // Обработка выбора изображения
+    imageBtn.onclick = () => {
+      imageInput.click();
+      emojiPicker.classList.remove('show');
+    };
+    
+    imageInput.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+          showChatError('Файл слишком большой (макс. 5MB)');
+          return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          selectedImage = event.target.result;
+          imagePreview.src = selectedImage;
+          imagePreviewContainer.classList.add('show');
+          emojiPicker.classList.remove('show');
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    
+    imageRemoveBtn.onclick = () => {
+      selectedImage = null;
+      imagePreview.src = '';
+      imagePreviewContainer.classList.remove('show');
+      imageInput.value = '';
+    };
+    
+    emojiBtn.onclick = (e) => {
+      e.stopPropagation();
+      toggleEmojiPicker();
+    };
+    
+    // Закрытие пикеров при клике вне их
+    document.addEventListener('click', (e) => {
+      if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) {
+        emojiPicker.classList.remove('show');
+      }
+      if (!imagePreviewContainer.contains(e.target) && e.target !== imageBtn) {
+        // Не закрываем, если это превью
+      }
+    });
+    
+    initEmojiPicker();
 
     function loadChatHistory() {
       const saved = localStorage.getItem('radioGramChatHistory');
@@ -1021,10 +1227,12 @@
         try {
           chatHistory = JSON.parse(saved);
           chatHistory.slice(-CONSTANTS.MAX_CHAT_HISTORY).forEach(msg => {
-            renderMessage(msg.nick, msg.text, msg.time, false);
+            // ���������, ���� �� ����������� � �������
+            const imageData = msg.imageData || null;
+            renderMessage(msg.nick, msg.text, msg.time, false, imageData);
           });
         } catch (e) {
-          console.error('Ошибка загрузки истории чата:', e);
+          console.error('������ �������� ������� ����:', e);
         }
       }
     }
@@ -1039,16 +1247,21 @@
       setTimeout(() => chatError.classList.remove('visible'), 3000);
     }
 
-    function renderMessage(nick, text, time, scroll = true) {
+    function renderMessage(nick, text, time, scroll = true, imageData = null) {
       const div = document.createElement('div');
       div.className = 'chat-message';
       
       const safeNick = escapeHtml(nick);
       const safeText = escapeHtml(text);
       
+      let imageHtml = '';
+      if (imageData) {
+        imageHtml = `<img src="${imageData}" alt="Изображение" onclick="this.style.transform=this.style.transform==='scale(1.5)'?'scale(1)':'scale(1.5)'">`;
+      }
+      
       div.innerHTML = `
         <div class="message-nick">${safeNick}</div>
-        <div class="message-text">${safeText}</div>
+        <div class="message-text">${safeText}${imageHtml}</div>
       `;
       chatMessages.appendChild(div);
       
@@ -1062,9 +1275,9 @@
       }
     }
 
-    function addMessageToHistory(nick, text) {
+    function addMessageToHistory(nick, text, imageData = null) {
       const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      chatHistory.push({ nick, text, time });
+      chatHistory.push({ nick, text, time, imageData });
       
       if (chatHistory.length > CONSTANTS.MAX_CHAT_HISTORY) {
         chatHistory.shift();
@@ -1098,7 +1311,9 @@
 
     async function sendMessage() {
       const text = chatInput.value.trim();
-      if (!text) return;
+      
+      // Проверяем, есть ли текст или изображение
+      if (!text && !selectedImage) return;
 
       if (text.length > CONSTANTS.MAX_MESSAGE_LENGTH) {
         showChatError(`Сообщение слишком длинное (макс. ${CONSTANTS.MAX_MESSAGE_LENGTH})`);
@@ -1106,10 +1321,17 @@
       }
 
       const nick = getCurrentNick();
-      const time = addMessageToHistory(nick, text);
-      renderMessage(nick, text, time);
-      sendToTelegram(text);
+      const time = addMessageToHistory(nick, text || '📷 Изображение', selectedImage);
+      renderMessage(nick, text || '📷 Изображение', time, true, selectedImage);
+      
+      // Отправляем в Telegram с изображением
+      sendToTelegramWithImage(text, selectedImage);
+      
       chatInput.value = '';
+      selectedImage = null;
+      imagePreview.src = '';
+      imagePreviewContainer.classList.remove('show');
+      imageInput.value = '';
 
       try {
         const controller = new AbortController();
@@ -1118,7 +1340,7 @@
         await fetch(CONSTANTS.CHAT_API, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nick: nick, text: text }),
+          body: JSON.stringify({ nick: nick, text: text, imageData: selectedImage }),
           signal: controller.signal
         });
         clearTimeout(timeoutId);
@@ -1137,8 +1359,10 @@
         if (data.messages && data.messages.length > 0) {
           for (const msg of data.messages) {
             if (!displayedMessageIds.has(msg.id)) {
-              const time = addMessageToHistory(msg.user, msg.message);
-              renderMessage(msg.user, msg.message, time);
+              // ���������, ���� �� ����������� � ���������
+              const imageData = msg.imageData || null;
+              const time = addMessageToHistory(msg.user, msg.message, imageData);
+              renderMessage(msg.user, msg.message, time, true, imageData);
               displayedMessageIds.add(msg.id);
             }
           }
@@ -1371,6 +1595,25 @@
           body: JSON.stringify({ message: message })
         });
         console.log('Message sent to Telegram');
+      } catch (error) {
+        console.error('Telegram error:', error);
+      }
+    }
+    
+    // === ФУНКЦИЯ ОТПРАВКИ В TELEGRAM С ИЗОБРАЖЕНИЕМ ===
+    async function sendToTelegramWithImage(message, imageData) {
+      try {
+        const payload = {
+          message: message || '',
+          imageData: imageData
+        };
+        
+        await fetch('https://radiogram-backend-production.up.railway.app/api/send-to-telegram', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        console.log('Message with image sent to Telegram');
       } catch (error) {
         console.error('Telegram error:', error);
       }
