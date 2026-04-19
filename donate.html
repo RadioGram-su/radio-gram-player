@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поддержать Radio Gram</title>
+    <style>
+        :root {
+            --primary-color: #ff4444;
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text-color: #ffffff;
+            --ton-color: #0098EA;
+        }
+
+        body {
+            background: transparent; /* Прозрачный фон для встройки в модалку */
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid #444;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 24px;
+        }
+
+        p {
+            color: #aaa;
+            margin-bottom: 1.5rem;
+            font-size: 14px;
+        }
+
+        .donate-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .donate-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #3a3a3a;
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .donate-btn:hover {
+            background: #444;
+            transform: translateY(-2px);
+            border-color: #555;
+        }
+
+        .donate-btn.primary {
+            background: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+        }
+
+        .donate-btn.primary:hover {
+            background: #ff5555;
+            box-shadow: 0 6px 20px rgba(255, 68, 68, 0.4);
+        }
+
+        .ton-btn {
+            background: linear-gradient(135deg, #0098EA 0%, #0077b5 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ton-btn:hover {
+            background: linear-gradient(135deg, #00aaff 0%, #0088cc 100%);
+        }
+
+        .icon {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .close-hint {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        /* Уведомление о копировании */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>❤️ Поддержать проект</h1>
+        <p>Ваша помощь развивает Radio Gram!</p>
+        
+        <div class="donate-list">
+            <!-- СБП Карта 1 -->
+            <a href="https://pressf.com/radiogram/donate" target="_blank" class="donate-btn primary">
+                <span class="icon">💳</span> СБП (Основная карта)
+            </a>
+            
+            <!-- СБП Карта 2 -->
+            <a href="https://web.tribute.tg/d/Iuo" target="_blank" class="donate-btn">
+                <span class="icon">💸</span> СБП (Альтернатива)
+            </a>
+            
+            <!-- TON Кошелек -->
+            <button onclick="copyTonWallet()" class="donate-btn ton-btn">
+                <span class="icon">💎</span> TON Кошелек (Копировать)
+            </button>
+        </div>
+
+        <div class="close-hint" onclick="window.parent.closeDonateModal()">
+            ✕ Закрыть окно
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Адрес скопирован в буфер!</div>
+
+    <script>
+        function copyTonWallet() {
+            const walletAddress = "UQDNJZb6MPyqP1P1JONmZ5Que0_UMA1n4k3ugAYcVEv7XH3Q";
+            
+            navigator.clipboard.writeText(walletAddress).then(() => {
+                showToast();
+            }).catch(err => {
+                // Фолбэк для старых браузеров
+                const textArea = document.createElement("textarea");
+                textArea.value = walletAddress;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("Copy");
+                textArea.remove();
+                showToast();
+            });
+        }
+
+        function showToast() {
+            const toast = document.getElementById("toast");
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+        // Сообщаем родительскому окну, что контент загружен
+        window.addEventListener('load', () => {
+            console.log('Donate page loaded');
+        });
+    </script>
+</body>
+</html>
