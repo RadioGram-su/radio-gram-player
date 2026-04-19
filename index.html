@@ -23,9 +23,7 @@
 
       ym(108652352, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
   </script>
-  <noscript><div><img src=" https://mc.yandex.ru/watch/108652352 " style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-  <!-- /Yandex.Metrika counter -->
-  <title>Radio Gram</title>
+  <noscript><div><img src=" https://mc.yandex.ru/watch/108652352 " style="position:absolute; left:-9999px;" alt="" /></div></noscript><!-- /Yandex.Metrika counter -->
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -348,6 +346,45 @@
       }
     }
     
+    /* Модальное окно для донатов */
+    .donate-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .donate-modal.show {
+      opacity: 1;
+    }
+    
+    .donate-modal-content {
+      background: transparent;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 450px;
+      max-height: 80vh;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+    
+    .donate-modal-content iframe {
+      width: 100%;
+      height: 100%;
+      min-height: 400px;
+      border: none;
+      display: block;
+    }
+    
     .sleep-timer-container {
       margin-top: 15px;
       display: flex;
@@ -660,7 +697,7 @@
   <div class="ocean-background" id="oceanBackground"></div>
   
   <!-- Счетчик уникальных пользователей -->
-  <div class="unique-users-counter" id="uniqueUsersCounter">👥 <span id="uniqueUsersCount">--</span><br><span class="counter-label">посетителей сегодня</span></div>
+  <div class="unique-users-counter" id="uniqueUsersCounter">👨 <span id="uniqueUsersCount">--</span><br><span class="counter-label">посетителей сегодня</span></div>
   
   <div class="player-wrapper">
     <button class="play-button paused" id="playBtn" aria-label="Play/Pause" aria-pressed="false" role="button" tabindex="0">
@@ -673,18 +710,18 @@
     <div class="main-title">GRAM</div>
     <div class="sub-title">RADIO STREAM</div>
     <div class="status" id="statusText" role="status" aria-live="polite">Нажми для старта</div>
-    <div class="listeners-count">🔊 Слушателей: <span id="listenerCount">0</span></div>
+    <div class="listeners-count">рџ”Љ Слушателей: <span id="listenerCount">0</span></div>
     
     <div class="social-icons" role="navigation" aria-label="Социальные сети">
-      <a href="https://www.youtube.com/@blogcheloveka" target="_blank" rel="noopener noreferrer" class="youtube" aria-label="YouTube канал">📺 YouTube</a>
-      <a href="https://t.me/blogchelovecka" target="_blank" rel="noopener noreferrer" class="telegram" aria-label="Личный Telegram">💬 Личный TG</a>
+      <a href="https://www.youtube.com/@blogcheloveka" target="_blank" rel="noopener noreferrer" class="youtube" aria-label="YouTube канал">рџ“є YouTube</a>
+      <a href="https://t.me/blogchelovecka" target="_blank" rel="noopener noreferrer" class="telegram" aria-label="Личный Telegram">рџ’¬ Личный TG</a>
       <a href="https://t.me/gramradiochill" target="_blank" rel="noopener noreferrer" class="telegram" aria-label="Telegram радио">🎵 Радио TG</a>
-      <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Веб-сайт">🌐 Веб-сайт</a>
+      <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Веб-сайт">рџЊђ Веб-сайт</a>
     </div>
     
-    <a href="https://pressf.com/radiogram/donate" target="_blank" rel="noopener noreferrer" class="donate-button" aria-label="Помочь разработчику">
+    <button onclick="openDonateModal()" class="donate-button" aria-label="Помочь разработчику">
       ❤️ Помочь разработчику
-    </a>
+    </button>
     
     <div class="sleep-timer-container">
       <button class="sleep-timer-btn" id="sleepTimerBtn" aria-label="Таймер сна">
@@ -700,18 +737,18 @@
   </div>
 
   <div class="chat-container" role="region" aria-label="Чат эфира">
-    <div class="chat-header">💬 ЧАТ ЭФИРА</div>
+    <div class="chat-header">рџ’¬ ЧАТ ЭФИРА</div>
     <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-relevant="additions">
       <div class="chat-message">
         <div class="message-nick">Система</div>
-        <div class="message-text">Добро пожаловать в эфир! 🔥</div>
+        <div class="message-text">Добро пожаловать в эфир! рџ”Ґ</div>
       </div>
     </div>
     <div class="chat-input-wrapper">
       <input type="text" id="chatInput" placeholder="Сообщение..." autocomplete="off" aria-label="Введите сообщение" maxlength="500">
       <div class="chat-input-actions">
-        <button type="button" class="chat-action-btn" id="emojiBtn" aria-label="Эмодзи">😀</button>
-        <button type="button" class="chat-action-btn" id="imageBtn" aria-label="Картинка">🖼️</button>
+        <button type="button" class="chat-action-btn" id="emojiBtn" aria-label="Эмодзи">🗿</button>
+        <button type="button" class="chat-action-btn" id="imageBtn" aria-label="Картинка">рџ–ј️</button>
       </div>
       <button onclick="sendMessage()" aria-label="Отправить сообщение">➤</button>
       <input type="file" id="imageInput" accept="image/*" style="display: none;">
@@ -830,7 +867,7 @@
         });
         audio.addEventListener('playing', () => {
           isBuffering = false;
-          statusText.textContent = '🔴 СЕЙЧАС ИГРАЕТ';
+          statusText.textContent = 'рџ”ґ СЕЙЧАС ИГРАЕТ';
           statusText.className = 'status success';
         });
         audio.addEventListener('stalled', handleAudioError);
@@ -845,7 +882,7 @@
       if (reconnectTimer) clearTimeout(reconnectTimer);
       reconnectTimer = setTimeout(() => {
         if (isPlaying && audio) {
-          statusText.textContent = '🔄 Переподключение...';
+          statusText.textContent = 'рџ”„ Переподключение...';
           statusText.className = 'status buffering';
           audio.src = CONSTANTS.STREAM_URL;
           console.log('Attempting to play:', CONSTANTS.STREAM_URL);
@@ -938,7 +975,7 @@
           playBtn.classList.remove('paused');
           playBtn.classList.add('playing');
           playBtn.setAttribute('aria-pressed', 'true');
-          statusText.textContent = '🔴 СЕЙЧАС ИГРАЕТ';
+          statusText.textContent = 'рџ”ґ СЕЙЧАС ИГРАЕТ';
           statusText.className = 'status success';
           isPlaying = true;
           
@@ -1002,7 +1039,7 @@
             listenersEl.className = 'listeners-count active';
           }
           if (isPlaying && !isBuffering) {
-            statusText.textContent = '🔴 СЕЙЧАС ИГРАЕТ';
+            statusText.textContent = 'рџ”ґ СЕЙЧАС ИГРАЕТ';
             statusText.className = 'status success';
           }
         } else {
@@ -1019,7 +1056,7 @@
     const statsInterval = setInterval(updateListenerCount, CONSTANTS.UPDATE_INTERVAL);
 
     // === ЭМОДЗИ АНИМАЦИЯ ===
-    const emojis = ['😊', '❤️', '👍', '', '✨', '', '💯', '🌟', '💪'];
+    const emojis = ['рџЉ', '❤️', 'рџ‘Ќ', '', '✨', '', 'рџ’Ї', 'рџЊџ', 'рџ’Є'];
     let emojiTimer = null;
     
     function showRandomEmoji() {
@@ -1091,7 +1128,7 @@
         if (sleepTimeRemaining <= 0) {
           clearInterval(sleepInterval);
           stopPlayback();
-          sleepTimerDisplay.textContent = '💤 Таймер выключил радио';
+          sleepTimerDisplay.textContent = 'рџ’¤ Таймер выключил радио';
           sleepTimerBtn.classList.remove('active');
           sleepTimeOptions.forEach(opt => opt.classList.remove('selected'));
           
@@ -1147,7 +1184,7 @@
     let selectedImage = null;
     
     // Эмодзи для выбора
-    const emojis = ['😀','😁','😂','🤣','😃','😄','😅','😆','😉','😊','😋','😎','😍','😘','🥰','😗','😙','😚','🙂','🤗','🤩','🤔','🤨','😐','😑','😶','🙄','😏','😣','😥','😮','🤐','😯','😪','😫','😴','😌','😛','😜','😝','🤤','😒','😓','😔','😕','🙃','🤑','😲','☹️','🙁','😖','😞','😟','😤','😢','😭','😦','😧','😨','😩','🤯','😬','😰','😱','😳','🤪','😵','😡','😠','🤬','😷','🤒','🤕','🤢','🤮','🤧','😇','🤠','🤡','🥳','🥴','🥺','🤥','🤫','🤭','🧐','🤓','😈','👿','👹','👺','💀','👻','👽','🤖','💩','😺','😸','😹','😻','😼','😽','🙀','😿','😾','🙈','🙉','🙊','🔥','⭐','✨','💫','🌟','⚡','💥','💢','💨','💦','💤','🎵','🎶','🎸','🎹','🎺','🎷','🥁','❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','☮️','✝️','☪️','🕉️','🔯','🪐','💫','⭐','🌟','⚡','☄️','💥','🔥','🌪️','🌈','☀️','🌤️','⛅','🌥️','☁️','🌦️','🌧️','⛈️','🌩️','🌨️','❄️','☃️','⛄','🌬️','💨','🌫️','🌊'];
+    const emojis = ['🗿','рџЃ','рџ‚','рџ¤Ј','рџѓ','рџ„','рџ…','рџ†','рџ‰','рџЉ','рџ‹','рџЋ','рџЌ','рџ','рџҐ°','рџ—','рџ™','рџљ','рџ™‚','рџ¤—','рџ¤©','рџ¤”','рџ¤Ё','рџђ','рџ‘','рџ¶','рџ™„','рџЏ','рџЈ','рџҐ','рџ®','рџ¤ђ','рџЇ','рџЄ','рџ«','рџґ','рџЊ','рџ›','рџњ','рџќ','рџ¤¤','рџ’','рџ“','рџ”','рџ•','рџ™ѓ','рџ¤‘','рџІ','☹️','рџ™Ѓ','рџ–','рџћ','рџџ','рџ¤','рџў','рџ­','рџ¦','рџ§','рџЁ','рџ©','рџ¤Ї','рџ¬','рџ°','рџ±','рџі','рџ¤Є','рџµ','рџЎ','рџ ','рџ¤¬','рџ·','рџ¤’','рџ¤•','рџ¤ў','рџ¤®','рџ¤§','рџ‡','рџ¤ ','рџ¤Ў','рџҐі','рџҐґ','рџҐє','рџ¤Ґ','рџ¤«','рџ¤­','рџ§ђ','рџ¤“','рџ€','рџ‘ї','рџ‘№','рџ‘є','рџ’Ђ','рџ‘»','рџ‘Ѕ','рџ¤–','рџ’©','рџє','рџё','рџ№','рџ»','рџј','рџЅ','рџ™Ђ','рџї','рџѕ','рџ™€','рџ™‰','рџ™Љ','рџ”Ґ','⭐','✨','рџ’«','рџЊџ','⚡','рџ’Ґ','рџ’ў','рџ’Ё','рџ’¦','рџ’¤','🎵','рџЋ¶','рџЋё','рџЋ№','рџЋє','рџЋ·','рџҐЃ','❤️','рџ§Ў','рџ’›','рџ’љ','рџ’™','рџ’њ','рџ–¤','рџ¤Ќ','рџ¤Ћ','рџ’”','❣️','рџ’•','рџ’ћ','рџ’“','рџ’—','рџ’–','рџ’','рџ’ќ','☮️','✝️','☪️','рџ•‰️','рџ”Ї','рџЄђ','рџ’«','⭐','рџЊџ','⚡','☄️','рџ’Ґ','рџ”Ґ','рџЊЄ️','рџЊ€','☀️','🌐️','⛅','рџЊҐ️','☁️','рџЊ¦️','рџЊ§️','⛈️','рџЊ©️','рџЊЁ️','❄️','☃️','⛄','рџЊ¬️','рџ’Ё','рџЊ«️','рџЊЉ'];
     
     // Инициализация пикера эмодзи
     function initEmojiPicker() {
@@ -1227,12 +1264,12 @@
         try {
           chatHistory = JSON.parse(saved);
           chatHistory.slice(-CONSTANTS.MAX_CHAT_HISTORY).forEach(msg => {
-            // ���������, ���� �� ����������� � �������
+            // ЏроверЯем, есть ли изображение в истории
             const imageData = msg.imageData || null;
             renderMessage(msg.nick, msg.text, msg.time, false, imageData);
           });
         } catch (e) {
-          console.error('������ �������� ������� ����:', e);
+          console.error('Ћшибка загрузки истории чата:', e);
         }
       }
     }
@@ -1321,8 +1358,8 @@
       }
 
       const nick = getCurrentNick();
-      const time = addMessageToHistory(nick, text || '📷 Изображение', selectedImage);
-      renderMessage(nick, text || '📷 Изображение', time, true, selectedImage);
+      const time = addMessageToHistory(nick, text || 'рџ“· Изображение', selectedImage);
+      renderMessage(nick, text || 'рџ“· Изображение', time, true, selectedImage);
       
       // Отправляем в Telegram с изображением
       sendToTelegramWithImage(text, selectedImage);
@@ -1359,7 +1396,7 @@
         if (data.messages && data.messages.length > 0) {
           for (const msg of data.messages) {
             if (!displayedMessageIds.has(msg.id)) {
-              // ���������, ���� �� ����������� � ���������
+              // ЏроверЯем, есть ли изображение в сообщении
               const imageData = msg.imageData || null;
               const time = addMessageToHistory(msg.user, msg.message, imageData);
               renderMessage(msg.user, msg.message, time, true, imageData);
@@ -1844,6 +1881,52 @@
     updateUniqueUsersCounter();
     setInterval(updateUniqueUsersCounter, 300000);
 
+    // Функции для модального окна донатов
+    function openDonateModal() {
+      const modal = document.getElementById('donateModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        setTimeout(() => {
+          modal.classList.add('show');
+        }, 10);
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeDonateModal() {
+      const modal = document.getElementById('donateModal');
+      if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => {
+          modal.style.display = 'none';
+        }, 300);
+        document.body.style.overflow = '';
+      }
+    }
+
+    // Закрытие по клику вне контента
+    window.addEventListener('click', function(event) {
+      const modal = document.getElementById('donateModal');
+      if (event.target === modal) {
+        closeDonateModal();
+      }
+    });
+
+    // Закрытие по Escape
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeDonateModal();
+      }
+    });
+
   </script>
+
+  <!-- Модальное окно для донатов -->
+  <div id="donateModal" class="donate-modal" style="display: none;">
+    <div class="donate-modal-content">
+      <iframe src="donate.html" frameborder="0" scrolling="no"></iframe>
+    </div>
+  </div>
+
 </body>
 </html>
