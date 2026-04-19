@@ -89,11 +89,11 @@
     /* Аквариумные рыбки */
     .fish {
       position: fixed;
-      width: 50px;
-      height: 35px;
-      pointer-events: auto;
-      cursor: pointer;
-      z-index: 999;
+      width: 60px;
+      height: 40px;
+      pointer-events: none;
+      cursor: default;
+      z-index: 50;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
       transition: filter 0.3s ease;
     }
@@ -242,7 +242,7 @@
       width: 40px;
       height: 40px;
       pointer-events: none;
-      z-index: 997;
+      z-index: 9999;
       font-size: 32px;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
@@ -250,17 +250,17 @@
     /* След улитки (слизь) */
     .snail-trail {
       position: fixed;
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 6px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, rgba(150, 200, 150, 0.4), rgba(100, 150, 100, 0.15));
       pointer-events: none;
-      z-index: 996;
+      z-index: 9998;
       opacity: 0;
-      animation: fadeTrail 3s ease-out forwards;
+      animation: fadeTrail 5s ease-out forwards;
     }
     @keyframes fadeTrail {
-      0% { opacity: 0.5; transform: scale(1); }
+      0% { opacity: 0.15; transform: scale(1); }
       100% { opacity: 0; transform: scale(0.5); }
     }
 
@@ -384,6 +384,7 @@
       transition: color 0.3s ease;
       display: inline-block;
       min-width: 180px;
+      position: relative;
     }
     .listeners-count.active {
       color: #5aabc9;
@@ -392,6 +393,39 @@
     .listeners-count.offline {
       color: #ff6600;
       text-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+    }
+    
+    /* Иконка будильника таймера сна под счетчиком слушателей */
+    .sleep-timer-icon {
+      position: absolute;
+      right: -30px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      border-radius: 50%;
+      background: rgba(74, 155, 201, 0.2);
+    }
+    .sleep-timer-icon:hover {
+      opacity: 1;
+      background: rgba(74, 155, 201, 0.4);
+      transform: translateY(-50%) scale(1.1);
+    }
+    .sleep-timer-icon.active {
+      opacity: 1;
+      background: rgba(74, 155, 201, 0.6);
+      animation: timerPulse 2s ease-in-out infinite;
+    }
+    @keyframes timerPulse {
+      0%, 100% { box-shadow: 0 0 5px rgba(74, 155, 201, 0.5); }
+      50% { box-shadow: 0 0 15px rgba(74, 155, 201, 0.8); }
     }
     .visualizer-container {
       display: none;
@@ -746,6 +780,42 @@
     .error-message.visible {
       display: block;
     }
+    @media (max-width: 768px) {
+      body { padding: 15px; }
+      .main-title { font-size: 28px; }
+      .play-button { width: 95px; height: 95px; }
+      .gram-icon { width: 42px; height: 42px; }
+      .pause-icon { width: 38px; height: 38px; }
+      .chat-messages { height: 210px; }
+      .chat-container { max-width: 100%; }
+      
+      /* Оптимизация кнопок для планшетов */
+      .social-icons .channels-btn {
+        padding: 8px 15px;
+        font-size: 11px;
+      }
+      .donate-button {
+        padding: 10px 22px;
+        font-size: 12px;
+      }
+      
+      /* Адаптация счетчика пользователей и таймера сна на планшетах */
+      .unique-users-counter {
+        top: 10px;
+        right: 50px;
+        padding: 5px 9px;
+        font-size: 10px;
+      }
+      .sleep-timer-btn-compact {
+        top: 10px;
+        right: 10px;
+      }
+      .sleep-timer-menu {
+        top: 42px;
+        right: 5px;
+      }
+    }
+    
     @media (max-width: 600px) {
       body { padding: 12px; }
       .main-title { font-size: 24px; }
@@ -779,6 +849,62 @@
       }
       .channels-menu.show {
         transform: translateX(-50%) translateY(10px);
+      }
+      
+      /* Адаптация счетчика пользователей и таймера сна на мобильных */
+      .unique-users-counter {
+        top: 8px;
+        right: 45px;
+        padding: 5px 8px;
+        font-size: 10px;
+        min-width: 80px;
+      }
+      .unique-users-counter .counter-label {
+        font-size: 8px;
+      }
+      
+      /* Таймер сна - компактная иконка на мобильных */
+      .sleep-timer-btn-compact {
+        top: 8px;
+        right: 8px;
+        width: 26px;
+        height: 26px;
+        font-size: 13px;
+      }
+      .sleep-timer-menu {
+        top: 40px;
+        right: 0px;
+        min-width: 130px;
+      }
+      
+      /* Адаптация лягушки на мобильных */
+      .pepe-on-chat {
+        top: 70px;
+        left: 10px;
+        width: 50px;
+        height: 38px;
+      }
+      
+      /* Адаптация диалога лягушки на мобильных */
+      .pepe-dialog {
+        font-size: 11px;
+        padding: 10px 14px;
+        max-width: 200px;
+        white-space: normal;
+        left: 60px !important;
+      }
+      
+      /* Адаптация рыбок на мобильных */
+      .fish {
+        width: 50px;
+        height: 35px;
+      }
+      
+      /* Адаптация улитки на мобильных */
+      .snail {
+        width: 35px;
+        height: 35px;
+        font-size: 28px;
       }
     }
     
@@ -996,12 +1122,20 @@
     <div class="main-title">GRAM</div>
     <div class="sub-title">RADIO STREAM</div>
     <div class="status" id="statusText" role="status" aria-live="polite">Нажми для старта</div>
-    <div class="listeners-count">🔉 Слушателей: <span id="listenerCount">0</span></div>
+    <div class="listeners-count">🔉 Слушателей: <span id="listenerCount">0</span>
+      <span class="sleep-timer-icon" id="sleepTimerIcon" aria-label="Таймер сна">⏰</span>
+    </div>
     
-    <!-- Кнопка таймера сна -->
-    <button onclick="toggleSleepTimer()" class="sleep-timer-btn" aria-label="Таймер сна">
-      ⏰ Таймер сна: <span id="sleepTimerDisplay">выкл</span>
-    </button>
+    <!-- Меню таймера сна (выпадающее под иконкой) -->
+    <div class="sleep-timer-menu" id="sleepTimerMenuIcon" style="top: auto; right: auto; left: 50%; transform: translateX(-50%);">
+      <div class="sleep-timer-menu-title">Таймер сна</div>
+      <button class="sleep-time-option-compact" data-minutes="15">15 мин</button>
+      <button class="sleep-time-option-compact" data-minutes="30">30 мин</button>
+      <button class="sleep-time-option-compact" data-minutes="45">45 мин</button>
+      <button class="sleep-time-option-compact" data-minutes="60">60 мин</button>
+      <button class="sleep-time-option-compact" data-minutes="0">Выкл</button>
+      <div class="sleep-timer-display-compact" id="sleepTimerDisplayIcon"></div>
+    </div>
     
     <div class="social-icons" role="navigation" aria-label="Социальные сети">
       <button onclick="toggleChannelsMenu()" class="channels-btn" aria-label="Наши каналы" aria-haspopup="true" aria-expanded="false">📢 Наши каналы</button>
@@ -1044,30 +1178,43 @@
   </div>
 
   <!-- Аквариумные рыбки -->
-  <a href="https://t.me/Gram_zonebot?start=679bcd47c630af4776e08ffb" target="_blank" rel="noopener noreferrer" class="fish" id="fish1" style="top: 20%; left: -50px;" aria-label="Играть с рыбкой">
-    <svg viewBox="0 0 50 35" xmlns="http://www.w3.org/2000/svg">
+  <div class="fish" id="fish1" style="top: 20%; left: -60px;">
+    <svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
       <g class="fish-body">
-        <ellipse cx="22" cy="17.5" rx="14" ry="10" fill="#ff6b6b"/>
-        <ellipse cx="34" cy="17.5" rx="10" ry="7" fill="#ff8787"/>
-        <polygon points="42,17.5 50,12 50,23" fill="#ff6b6b"/>
-        <circle cx="18" cy="14" r="3" fill="#fff"/>
-        <circle cx="18" cy="14" r="1.5" fill="#000"/>
-        <path d="M 22 17.5 Q 28 10 36 13" stroke="#ff8787" stroke-width="1.5" fill="none"/>
-        <ellipse cx="22" cy="22" rx="5" ry="3" fill="#ff6b6b" opacity="0.7"/>
+        <!-- Nemo-style: оранжевая с белыми полосами и черной окантовкой -->
+        <ellipse cx="28" cy="20" rx="18" ry="12" fill="#FF8C00"/>
+        <ellipse cx="42" cy="20" rx="12" ry="9" fill="#FFA500"/>
+        <polygon points="52,20 60,14 60,26" fill="#FF8C00" stroke="#000" stroke-width="1.5"/>
+        <circle cx="22" cy="16" r="4" fill="#fff" stroke="#000" stroke-width="0.5"/>
+        <circle cx="22" cy="16" r="2" fill="#000"/>
+        <!-- Белые полосы с черной окантовкой -->
+        <path d="M 20 8 Q 22 20 20 32" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M 20 8 Q 22 20 20 32" stroke="#000" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="4 100" stroke-dashoffset="2"/>
+        <path d="M 32 6 Q 34 20 32 34" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M 32 6 Q 34 20 32 34" stroke="#000" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="4 100" stroke-dashoffset="2"/>
+        <!-- Плавники с черной окантовкой -->
+        <ellipse cx="28" cy="28" rx="7" ry="4" fill="#FF8C00" stroke="#000" stroke-width="1" opacity="0.8"/>
+        <path d="M 15 20 Q 8 15 10 25 Q 15 22 15 20" fill="#FF8C00" stroke="#000" stroke-width="1"/>
       </g>
     </svg>
-  </a>
+  </div>
   <div class="fish-dialog" id="fishDialog">хочешь поиграть?</div>
-  <div class="fish" id="fish2" style="top: 70%; left: -50px;">
-    <svg viewBox="0 0 50 35" xmlns="http://www.w3.org/2000/svg">
+  <div class="fish" id="fish2" style="top: 70%; left: -60px;">
+    <svg viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg">
       <g class="fish-body">
-        <ellipse cx="22" cy="17.5" rx="14" ry="10" fill="#4ecdc4"/>
-        <ellipse cx="34" cy="17.5" rx="10" ry="7" fill="#6ee7df"/>
-        <polygon points="42,17.5 50,12 50,23" fill="#4ecdc4"/>
-        <circle cx="18" cy="14" r="3" fill="#fff"/>
-        <circle cx="18" cy="14" r="1.5" fill="#000"/>
-        <path d="M 22 17.5 Q 28 10 36 13" stroke="#6ee7df" stroke-width="1.5" fill="none"/>
-        <ellipse cx="22" cy="22" rx="5" ry="3" fill="#4ecdc4" opacity="0.7"/>
+        <!-- Dory-style: ярко-синяя с черными пятнами и желтым хвостом -->
+        <ellipse cx="28" cy="20" rx="18" ry="12" fill="#1E90FF"/>
+        <ellipse cx="42" cy="20" rx="12" ry="9" fill="#4169E1"/>
+        <polygon points="52,20 60,14 60,26" fill="#FFD700" stroke="#000" stroke-width="1"/>
+        <circle cx="22" cy="16" r="4" fill="#fff" stroke="#000" stroke-width="0.5"/>
+        <circle cx="22" cy="16" r="2" fill="#000"/>
+        <!-- Черные пятна -->
+        <ellipse cx="25" cy="18" rx="3" ry="2" fill="#000" opacity="0.7"/>
+        <ellipse cx="35" cy="22" rx="2" ry="1.5" fill="#000" opacity="0.6"/>
+        <ellipse cx="30" cy="14" rx="2" ry="1.5" fill="#000" opacity="0.5"/>
+        <!-- Плавники -->
+        <ellipse cx="28" cy="28" rx="7" ry="4" fill="#1E90FF" stroke="#000" stroke-width="1" opacity="0.8"/>
+        <path d="M 15 20 Q 8 15 10 25 Q 15 22 15 20" fill="#1E90FF" stroke="#000" stroke-width="1"/>
       </g>
     </svg>
   </div>
@@ -1880,86 +2027,62 @@
       const fishes = [fish1, fish2];
 
       fishes.forEach((fish, index) => {
-        let x = Math.random() * window.innerWidth;
+        let x = Math.random() * (window.innerWidth - 100) + 50;
         let y = Math.random() * (window.innerHeight - 100) + 50;
-        let baseSpeed = (Math.random() * 0.8 + 0.5) / 2;
+        // Медленная, расслабленная скорость (animation-duration: 15-25s эквивалент)
+        let baseSpeed = 0.3 + Math.random() * 0.3;
         let speedX = baseSpeed * (Math.random() > 0.5 ? 1 : -1);
-        let speedY = baseSpeed * 0.3 * (Math.random() > 0.5 ? 1 : -1);
+        let speedY = baseSpeed * 0.2 * (Math.random() > 0.5 ? 1 : -1);
         let direction = speedX > 0 ? 'right' : 'left';
-        let isAccelerating = false;
         let lastBubbleTime = Date.now();
         let tailAngle = 0;
-        let tailSpeed = 0.3 + Math.random() * 0.2;
+        let tailSpeed = 0.15 + Math.random() * 0.1;
         
-        // Переменные для непредсказуемого движения
+        // Переменные для плавного непредсказуемого движения
         let changeDirectionTimer = 0;
-        let randomTurnInterval = Math.random() * 200 + 100;
+        let randomTurnInterval = Math.random() * 300 + 200; // Меняем направление каждые 5-10 секунд (при 60fps)
+        let targetSpeedX = speedX;
+        let targetSpeedY = speedY;
 
         fish.style.left = x + 'px';
         fish.style.top = y + 'px';
 
         function swim() {
-          // Непредсказуемое изменение направления
+          // Плавное изменение направления каждые 5-10 секунд
           changeDirectionTimer++;
           if (changeDirectionTimer > randomTurnInterval) {
             changeDirectionTimer = 0;
-            randomTurnInterval = Math.random() * 300 + 50;
+            randomTurnInterval = Math.random() * 300 + 200; // 5-10 секунд при 60fps
             
-            // Случайное изменение скорости и направления
-            if (Math.random() < 0.7) {
-              speedX = (Math.random() * 1.5 + 0.3) * (Math.random() > 0.5 ? 1 : -1);
-            }
-            if (Math.random() < 0.6) {
-              speedY = (Math.random() * 1.2 + 0.2) * (Math.random() > 0.5 ? 1 : -1);
-            }
-            
-            // Иногда резкое ускорение
-            if (Math.random() < 0.15) {
-              speedX *= 2;
-              speedY *= 2;
-            }
+            // Плавно меняем целевое направление
+            targetSpeedX = (baseSpeed * 0.5 + Math.random() * baseSpeed) * (Math.random() > 0.5 ? 1 : -1);
+            targetSpeedY = (baseSpeed * 0.1 + Math.random() * baseSpeed * 0.2) * (Math.random() > 0.5 ? 1 : -1);
           }
           
-          // Плавное изменение вертикальной скорости для естественности
-          if (!isAccelerating) {
-            speedY *= 0.99;
-            if (Math.abs(speedY) < 0.02) speedY = 0;
-            
-            // Небольшое случайное движение вверх/вниз
-            if (Math.random() < 0.03) {
-              speedY += (Math.random() - 0.5) * 0.4;
-            }
-          }
+          // Плавная интерполяция к целевой скорости
+          speedX += (targetSpeedX - speedX) * 0.02;
+          speedY += (targetSpeedY - speedY) * 0.02;
 
           x += speedX;
           y += speedY;
 
-          // Слабая гравитация к центру (опционально)
-          if (!isAccelerating && Math.random() < 0.01) {
-            if (y < window.innerHeight / 2) {
-              speedY += 0.01;
-            } else if (y > window.innerHeight / 2) {
-              speedY -= 0.01;
-            }
-          }
-
           // Отскок от краев с плавным разворотом
-          if (x <= -60) {
-            x = -60;
-            speedX = Math.abs(speedX) * (0.8 + Math.random() * 0.4);
+          if (x <= -70) {
+            x = -70;
+            targetSpeedX = Math.abs(targetSpeedX);
             direction = 'right';
-          } else if (x >= window.innerWidth - 20) {
-            x = window.innerWidth - 20;
-            speedX = -Math.abs(speedX) * (0.8 + Math.random() * 0.4);
+          } else if (x >= window.innerWidth - 10) {
+            x = window.innerWidth - 10;
+            targetSpeedX = -Math.abs(targetSpeedX);
             direction = 'left';
           }
 
           if (y <= 40) {
             y = 40;
-            speedY = Math.abs(speedY) * 0.6 + Math.random() * 0.5;
-          } else if (y >= window.innerHeight - 40) {
-            y = window.innerHeight - 40;
-            speedY = -Math.abs(speedY) * 0.6 - Math.random() * 0.5;
+            targetSpeedY = Math.abs(targetSpeedY);
+          } else if (y >= window.innerHeight - 50) {
+            y = window.innerHeight - 50;
+            targetSpeedY = -Math.abs(targetSpeedY);
           }
 
           // Реалистичный разворот через замедление и ускорение
@@ -1969,11 +2092,11 @@
             fish.classList.remove('swimming-left');
           }
 
-          // Анимация хвоста
+          // Анимация хвоста - легкое покачивание (-5deg to 5deg)
           tailAngle += tailSpeed;
           const fishBody = fish.querySelector('.fish-body');
           if (fishBody) {
-            const tailWag = Math.sin(tailAngle) * 5 * (Math.abs(speedX) / baseSpeed);
+            const tailWag = Math.sin(tailAngle) * 5;
             fishBody.style.transform = `rotate(${tailWag}deg)`;
           }
 
@@ -1986,8 +2109,8 @@
           }
 
           // Пузырьки во время движения
-          if (!isAccelerating && Date.now() - lastBubbleTime > Math.random() * 4000 + 3000) {
-            createBubble(x + 25, y + 15);
+          if (Date.now() - lastBubbleTime > Math.random() * 6000 + 4000) {
+            createBubble(x + 30, y + 20);
             lastBubbleTime = Date.now();
           }
 
@@ -1995,27 +2118,7 @@
         }
 
         swim();
-
-        fish.addEventListener('click', (e) => {
-          // Для fish1 клик обрабатывается ссылкой, но можно добавить эффект
-          if (fish !== fish1) {
-            e.stopPropagation();
-            isAccelerating = true;
-
-            const boost = 4 + Math.random() * 3;
-            speedX = -speedX * boost;
-            speedY = (Math.random() - 0.5) * 5;
-            tailSpeed = 0.8;
-
-            setTimeout(() => {
-              isAccelerating = false;
-              baseSpeed = Math.random() * 0.8 + 0.5;
-              speedX = speedX > 0 ? baseSpeed : -baseSpeed;
-              speedY = baseSpeed * 0.3 * (Math.random() > 0.5 ? 1 : -1);
-              tailSpeed = 0.3 + Math.random() * 0.2;
-            }, 1500);
-          }
-        });
+      });
       });
 
       // Лягушка в верхнем левом углу (статично)
@@ -2058,97 +2161,66 @@
     function initSnail() {
       if (!snail) return;
       
-      // Проверяем, какой сегодня день (чётный или нечётный)
-      const dayOfMonth = new Date().getDate();
-      const isClockwise = dayOfMonth % 2 === 0; // Чётные дни - по часовой, нечётные - против
-      
+      const margin = 10; // Отступ от краев экрана
       let position = 0; // Позиция вдоль периметра
       const snailSize = 40;
-      const perimeter = window.innerWidth * 2 + window.innerHeight * 2;
+      // Периметр с учетом отступа и размера улитки
+      const width = window.innerWidth - snailSize - margin * 2;
+      const height = window.innerHeight - snailSize - margin * 2;
+      const perimeter = width * 2 + height * 2;
       // Скорость: 1 полный круг за 1 час (3600 секунд)
-      // perimeter пикселей за 3600 кадров (при 60fps) = perimeter / 3600 пикселей за кадр
-      // Но requestAnimationFrame вызывается ~60 раз в секунду
+      // requestAnimationFrame вызывается ~60 раз в секунду
       // Значит скорость = perimeter / (3600 * 60) пикселей за кадр
       const speed = perimeter / (3600 * 60);
       
       let lastTrailPosition = 0;
-      const trailInterval = 150; // Оставлять след каждые 150 пикселей
+      const trailInterval = 80; // Оставлять след каждые 80 пикселей
       
       function moveSnail() {
         let x, y;
         
-        if (isClockwise) {
-          // По часовой стрелке: верх -> право -> низ -> лево
-          const topEdge = window.innerWidth;
-          const rightEdge = window.innerWidth + window.innerHeight;
-          const bottomEdge = window.innerWidth * 2 + window.innerHeight;
-          
-          if (position < topEdge) {
-            // Верхняя грань
-            x = position;
-            y = 0;
-          } else if (position < rightEdge) {
-            // Правая грань
-            x = window.innerWidth - snailSize;
-            y = position - topEdge;
-          } else if (position < bottomEdge) {
-            // Нижняя грань
-            x = window.innerWidth - snailSize - (position - rightEdge);
-            y = window.innerHeight - snailSize;
-          } else {
-            // Левая грань
-            x = 0;
-            y = window.innerHeight - snailSize - (position - bottomEdge);
-          }
+        // Траектория: Начинает снизу-слева → вниз → вправо → вверх → влево →回到起点
+        // Но так как мы начинаем с позиции 0, то это будет левый край снизу
+        // Движение: низ -> право -> верх -> лево (по часовой стрелке начиная с низа-лево)
+        
+        const bottomEdge = width;
+        const rightEdge = width + height;
+        const topEdge = width * 2 + height;
+        
+        if (position < bottomEdge) {
+          // Нижняя грань: слева направо
+          x = margin + position;
+          y = window.innerHeight - snailSize - margin;
+        } else if (position < rightEdge) {
+          // Правая грань: снизу вверх
+          x = window.innerWidth - snailSize - margin;
+          y = window.innerHeight - snailSize - margin - (position - bottomEdge);
+        } else if (position < topEdge) {
+          // Верхняя грань: справа налево
+          x = window.innerWidth - snailSize - margin - (position - rightEdge);
+          y = margin;
         } else {
-          // Против часовой стрелки: верх -> лево -> низ -> право
-          const topEdge = window.innerWidth;
-          const leftEdge = window.innerWidth + window.innerHeight;
-          const bottomEdge = window.innerWidth * 2 + window.innerHeight;
-          
-          if (position < topEdge) {
-            // Верхняя грань (справа налево)
-            x = window.innerWidth - snailSize - position;
-            y = 0;
-          } else if (position < leftEdge) {
-            // Левая грань
-            x = 0;
-            y = position - topEdge;
-          } else if (position < bottomEdge) {
-            // Нижняя грань (слева направо)
-            x = position - leftEdge;
-            y = window.innerHeight - snailSize;
-          } else {
-            // Правая грань
-            x = window.innerWidth - snailSize;
-            y = window.innerHeight - snailSize - (position - bottomEdge);
-          }
+          // Левая грань: сверху вниз
+          x = margin;
+          y = margin + (position - topEdge);
         }
         
         snail.style.left = x + 'px';
         snail.style.top = y + 'px';
         
         // Поворот улитки в зависимости от направления
-        if (isClockwise) {
-          if (position < topEdge) {
-            snail.style.transform = 'scaleX(1)';
-          } else if (position < rightEdge) {
-            snail.style.transform = 'rotate(90deg) scaleX(1)';
-          } else if (position < bottomEdge) {
-            snail.style.transform = 'scaleX(-1)';
-          } else {
-            snail.style.transform = 'rotate(-90deg) scaleX(-1)';
-          }
+        if (position < bottomEdge) {
+          // Движение вправо
+          snail.style.transform = 'scaleX(1)';
+        } else if (position < rightEdge) {
+          // Движение вверх
+          snail.style.transform = 'rotate(-90deg) scaleX(1)';
+        } else if (position < topEdge) {
+          // Движение влево
+          snail.style.transform = 'scaleX(-1)';
         } else {
-          if (position < topEdge) {
-            snail.style.transform = 'scaleX(-1)';
-          } else if (position < leftEdge) {
-            snail.style.transform = 'rotate(-90deg) scaleX(-1)';
-          } else if (position < bottomEdge) {
-            snail.style.transform = 'scaleX(1)';
-          } else {
-            snail.style.transform = 'rotate(90deg) scaleX(1)';
-          }
+          // Движение вниз
+          snail.style.transform = 'rotate(90deg) scaleX(-1)';
         }
         
         // Оставляем след (слизь)
@@ -2173,14 +2245,14 @@
     function createSnailTrail(x, y) {
       const trail = document.createElement('div');
       trail.className = 'snail-trail';
-      trail.style.left = (x - 4) + 'px';
-      trail.style.top = (y - 4) + 'px';
+      trail.style.left = (x - 5) + 'px';
+      trail.style.top = (y - 3) + 'px';
       document.body.appendChild(trail);
       
       // Удаляем след после завершения анимации
       setTimeout(() => {
         trail.remove();
-      }, 3000);
+      }, 5000);
     }
     
     setTimeout(initSnail, 1500);
