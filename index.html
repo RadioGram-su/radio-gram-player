@@ -544,82 +544,6 @@
       display: block;
     }
     
-    .sleep-timer-container {
-      margin-top: 15px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-    .sleep-timer-btn {
-      padding: 10px 20px;
-      border-radius: 22px;
-      background: linear-gradient(135deg, #4a9bc9, #3a7ca5);
-      color: #fff;
-      border: none;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(74, 155, 201, 0.4);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      letter-spacing: 0.5px;
-    }
-    .sleep-timer-btn:hover {
-      background: linear-gradient(135deg, #5aabc9, #4a8cb5);
-      transform: translateY(-2px) scale(1.03);
-      box-shadow: 0 6px 20px rgba(74, 155, 201, 0.6);
-    }
-    .sleep-timer-btn.active {
-      background: linear-gradient(135deg, #3a7ca5, #2d5a87);
-      box-shadow: 0 0 20px rgba(58, 124, 165, 0.7);
-      animation: timerPulse 2s ease-in-out infinite;
-    }
-    @keyframes timerPulse {
-      0%, 100% { box-shadow: 0 0 15px rgba(58, 124, 165, 0.5); }
-      50% { box-shadow: 0 0 25px rgba(58, 124, 165, 0.8); }
-    }
-    .sleep-timer-options {
-      display: none;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 8px;
-    }
-    .sleep-timer-options.show {
-      display: flex;
-    }
-    .sleep-time-option {
-      padding: 8px 16px;
-      border-radius: 18px;
-      background: rgba(26, 26, 30, 0.8);
-      color: #fff;
-      border: 1px solid #4a9bc9;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(5px);
-    }
-    .sleep-time-option:hover {
-      background: rgba(74, 155, 201, 0.3);
-      border-color: #5aabc9;
-      transform: scale(1.05);
-    }
-    .sleep-time-option.selected {
-      background: linear-gradient(135deg, #4a9bc9, #3a7ca5);
-      border-color: #5aabc9;
-      box-shadow: 0 0 15px rgba(74, 155, 201, 0.6);
-    }
-    .sleep-timer-display {
-      font-size: 11px;
-      color: #4a9bc9;
-      min-height: 16px;
-      font-weight: 600;
-      text-shadow: 0 0 10px rgba(74, 155, 201, 0.5);
-    }
-    
     .chat-container {
       width: 100%; max-width: 380px; background: rgba(10, 10, 10, 0.85);
       border: 1px solid #333; border-radius: 16px; overflow: hidden;
@@ -691,39 +615,6 @@
       background: rgba(74, 155, 201, 0.4); 
       transform: scale(1.1);
       color: #5aabc9;
-    }
-    .emoji-picker {
-      position: absolute;
-      bottom: 100%;
-      right: 0;
-      background: rgba(20, 20, 30, 0.95);
-      border: 1px solid #333;
-      border-radius: 12px;
-      padding: 10px;
-      display: none;
-      grid-template-columns: repeat(8, 1fr);
-      gap: 4px;
-      max-width: 280px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-      z-index: 100;
-      margin-bottom: 8px;
-    }
-    .emoji-picker.show {
-      display: grid;
-    }
-    .emoji-btn {
-      background: transparent;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 4px;
-      transition: all 0.2s;
-    }
-    .emoji-btn:hover {
-      background: rgba(74, 155, 201, 0.3);
-      transform: scale(1.2);
     }
     .image-preview-container {
       position: absolute;
@@ -838,6 +729,150 @@
     .unique-users-counter:hover .counter-label {
       color: rgba(255, 255, 255, 0.7);
     }
+    
+    /* Кнопка таймера сна - компактная в виде будильника */
+    .sleep-timer-btn-compact {
+      position: fixed;
+      top: 12px;
+      right: 85px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(74, 155, 201, 0.3);
+      border: 1px solid rgba(74, 155, 201, 0.5);
+      cursor: pointer;
+      z-index: 10001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      opacity: 0.6;
+      animation: timerGlow 3s ease-in-out infinite;
+      padding: 0;
+    }
+    @keyframes timerGlow {
+      0%, 100% { 
+        box-shadow: 0 0 5px rgba(74, 155, 201, 0.3);
+        opacity: 0.6;
+      }
+      50% { 
+        box-shadow: 0 0 12px rgba(74, 155, 201, 0.6);
+        opacity: 0.9;
+      }
+    }
+    .sleep-timer-btn-compact:hover {
+      opacity: 1;
+      background: rgba(74, 155, 201, 0.5);
+      transform: scale(1.1);
+    }
+    .sleep-timer-btn-compact.active {
+      background: rgba(74, 155, 201, 0.7);
+      box-shadow: 0 0 15px rgba(74, 155, 201, 0.8);
+      animation: timerActive 1.5s ease-in-out infinite;
+    }
+    @keyframes timerActive {
+      0%, 100% { box-shadow: 0 0 10px rgba(74, 155, 201, 0.6); }
+      50% { box-shadow: 0 0 20px rgba(74, 155, 201, 0.9); }
+    }
+    
+    /* Меню таймера сна */
+    .sleep-timer-menu {
+      position: fixed;
+      top: 45px;
+      right: 75px;
+      background: rgba(20, 20, 20, 0.95);
+      border: 1px solid rgba(74, 155, 201, 0.4);
+      border-radius: 12px;
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 140px;
+      z-index: 10002;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+    }
+    .sleep-timer-menu.show {
+      display: flex;
+    }
+    .sleep-timer-menu-title {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    .sleep-time-option-compact {
+      padding: 6px 12px;
+      border-radius: 14px;
+      background: rgba(26, 26, 30, 0.8);
+      color: #fff;
+      border: 1px solid rgba(74, 155, 201, 0.4);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    .sleep-time-option-compact:hover {
+      background: rgba(74, 155, 201, 0.3);
+      border-color: rgba(74, 155, 201, 0.7);
+      transform: scale(1.02);
+    }
+    .sleep-time-option-compact.selected {
+      background: rgba(74, 155, 201, 0.5);
+      border-color: rgba(74, 155, 201, 0.8);
+      box-shadow: 0 0 10px rgba(74, 155, 201, 0.4);
+    }
+    .sleep-timer-display-compact {
+      font-size: 10px;
+      color: rgba(74, 155, 201, 0.8);
+      text-align: center;
+      min-height: 14px;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+    
+    /* Кнопка веб-сайта в виде планеты */
+    .website-planet-btn {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #4a9bc9, #1a3a5c);
+      border: none;
+      cursor: pointer;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      opacity: 0.7;
+      animation: planetGlow 4s ease-in-out infinite;
+      box-shadow: 0 0 15px rgba(74, 155, 201, 0.4), inset -4px -4px 8px rgba(0, 0, 0, 0.5);
+      padding: 0;
+    }
+    @keyframes planetGlow {
+      0%, 100% { 
+        box-shadow: 0 0 10px rgba(74, 155, 201, 0.3), inset -4px -4px 8px rgba(0, 0, 0, 0.5);
+        opacity: 0.7;
+        transform: rotate(0deg);
+      }
+      50% { 
+        box-shadow: 0 0 20px rgba(74, 155, 201, 0.6), inset -4px -4px 8px rgba(0, 0, 0, 0.5);
+        opacity: 0.9;
+        transform: rotate(10deg);
+      }
+    }
+    .website-planet-btn:hover {
+      opacity: 1;
+      transform: scale(1.15) rotate(15deg);
+      box-shadow: 0 0 25px rgba(74, 155, 201, 0.7), inset -4px -4px 8px rgba(0, 0, 0, 0.5);
+    }
+    
     @media (max-width: 600px) {
       .unique-users-counter {
         top: 8px;
@@ -857,6 +892,22 @@
   
   <!-- Счетчик уникальных пользователей -->
   <div class="unique-users-counter" id="uniqueUsersCounter">👨 <span id="uniqueUsersCount">--</span><br><span class="counter-label">посетителей сегодня</span></div>
+  
+  <!-- Кнопка таймера сна в виде будильника -->
+  <button class="sleep-timer-btn-compact" id="sleepTimerBtnCompact" aria-label="Таймер сна">⏰</button>
+  
+  <!-- Меню таймера сна -->
+  <div class="sleep-timer-menu" id="sleepTimerMenu">
+    <div class="sleep-timer-menu-title">Таймер сна</div>
+    <button class="sleep-time-option-compact" data-minutes="15">15 мин</button>
+    <button class="sleep-time-option-compact" data-minutes="30">30 мин</button>
+    <button class="sleep-time-option-compact" data-minutes="45">45 мин</button>
+    <button class="sleep-time-option-compact" data-minutes="60">60 мин</button>
+    <div class="sleep-timer-display-compact" id="sleepTimerDisplayCompact"></div>
+  </div>
+  
+  <!-- Кнопка веб-сайта в виде планеты -->
+  <a href="#" target="_blank" rel="noopener noreferrer" class="website-planet-btn" aria-label="Веб-сайт">🌍</a>
   
   <div class="player-wrapper">
     <button class="play-button paused" id="playBtn" aria-label="Play/Pause" aria-pressed="false" role="button" tabindex="0">
@@ -891,18 +942,6 @@
     <button onclick="openDonateModal()" class="donate-button" aria-label="Помочь разработчику">
       ❤️ Помочь разработчику
     </button>
-    
-    <div class="sleep-timer-container">
-      <button class="sleep-timer-btn" id="sleepTimerBtn" aria-label="Таймер сна">
-        ⏳ Таймер сна
-      </button>
-      <div class="sleep-timer-options" id="sleepTimerOptions">
-        <button class="sleep-time-option" data-minutes="15">15 мин</button>
-        <button class="sleep-time-option" data-minutes="30">30 мин</button>
-        <button class="sleep-time-option" data-minutes="60">60 мин</button>
-      </div>
-      <div class="sleep-timer-display" id="sleepTimerDisplay"></div>
-    </div>
   </div>
 
   <div class="chat-container" role="region" aria-label="Чат эфира">
@@ -916,13 +955,11 @@
     <div class="chat-input-wrapper">
       <input type="text" id="chatInput" placeholder="Сообщение..." autocomplete="off" aria-label="Введите сообщение" maxlength="500">
       <div class="chat-input-actions">
-        <button type="button" class="chat-action-btn" id="emojiBtn" aria-label="Эмодзи">🗿</button>
-        <button type="button" class="chat-action-btn" id="imageBtn" aria-label="Картинка">рџ–ј️</button>
+        <button type="button" class="chat-action-btn" id="imageBtn" aria-label="Прикрепить картинку">📎</button>
       </div>
       <button onclick="sendMessage()" aria-label="Отправить сообщение">➤</button>
       <input type="file" id="imageInput" accept="image/*" style="display: none;">
     </div>
-    <div class="emoji-picker" id="emojiPicker"></div>
     <div class="image-preview-container" id="imagePreviewContainer">
       <img src="" alt="Предпросмотр" class="image-preview" id="imagePreview">
       <div class="image-preview-actions">
@@ -1290,40 +1327,40 @@
     
     emojiTimer = setTimeout(scheduleNextEmoji, 5000);
 
-    // === ТАЙМЕР СНА ===
+    // === ТАЙМЕР СНА (компактный вверху справа) ===
     let sleepTimer = null;
     let sleepTimeRemaining = 0;
     let sleepInterval = null;
     
-    const sleepTimerBtn = document.getElementById('sleepTimerBtn');
-    const sleepTimerOptions = document.getElementById('sleepTimerOptions');
-    const sleepTimerDisplay = document.getElementById('sleepTimerDisplay');
-    const sleepTimeOptions = document.querySelectorAll('.sleep-time-option');
+    const sleepTimerBtnCompact = document.getElementById('sleepTimerBtnCompact');
+    const sleepTimerMenu = document.getElementById('sleepTimerMenu');
+    const sleepTimerDisplayCompact = document.getElementById('sleepTimerDisplayCompact');
+    const sleepTimeOptionsCompact = document.querySelectorAll('.sleep-time-option-compact');
     
-    sleepTimerBtn.addEventListener('click', () => {
-      sleepTimerOptions.classList.toggle('show');
-      sleepTimerBtn.classList.toggle('active');
+    sleepTimerBtnCompact.addEventListener('click', () => {
+      sleepTimerMenu.classList.toggle('show');
+      sleepTimerBtnCompact.classList.toggle('active');
     });
     
-    sleepTimeOptions.forEach(option => {
+    sleepTimeOptionsCompact.forEach(option => {
       option.addEventListener('click', () => {
         const minutes = parseInt(option.dataset.minutes);
-        setSleepTimer(minutes);
+        setSleepTimerCompact(minutes);
         
-        sleepTimeOptions.forEach(opt => opt.classList.remove('selected'));
+        sleepTimeOptionsCompact.forEach(opt => opt.classList.remove('selected'));
         option.classList.add('selected');
         
-        sleepTimerOptions.classList.remove('show');
+        sleepTimerMenu.classList.remove('show');
       });
     });
     
-    function setSleepTimer(minutes) {
+    function setSleepTimerCompact(minutes) {
       clearSleepTimer();
       
       sleepTimeRemaining = minutes * 60 * 1000;
       const endTime = Date.now() + sleepTimeRemaining;
       
-      updateSleepTimerDisplay(sleepTimeRemaining);
+      updateSleepTimerDisplayCompact(sleepTimeRemaining);
       
       sleepInterval = setInterval(() => {
         sleepTimeRemaining = endTime - Date.now();
@@ -1331,32 +1368,32 @@
         if (sleepTimeRemaining <= 0) {
           clearInterval(sleepInterval);
           stopPlayback();
-          sleepTimerDisplay.textContent = '💤 Таймер выключил радио';
-          sleepTimerBtn.classList.remove('active');
-          sleepTimeOptions.forEach(opt => opt.classList.remove('selected'));
+          sleepTimerDisplayCompact.textContent = '💤 Таймер выключил радио';
+          sleepTimerBtnCompact.classList.remove('active');
+          sleepTimeOptionsCompact.forEach(opt => opt.classList.remove('selected'));
           
           setTimeout(() => {
-            sleepTimerDisplay.textContent = '';
+            sleepTimerDisplayCompact.textContent = '';
           }, 5000);
         } else {
-          updateSleepTimerDisplay(sleepTimeRemaining);
+          updateSleepTimerDisplayCompact(sleepTimeRemaining);
         }
       }, 1000);
     }
     
-    function updateSleepTimerDisplay(ms) {
+    function updateSleepTimerDisplayCompact(ms) {
       const totalSeconds = Math.floor(ms / 1000);
       const hours = Math.floor(totalSeconds / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
       const seconds = totalSeconds % 60;
       
-      let display = '⏳ Осталось: ';
+      let display = '⏳ ';
       if (hours > 0) {
         display += `${hours}ч `;
       }
       display += `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       
-      sleepTimerDisplay.textContent = display;
+      sleepTimerDisplayCompact.textContent = display;
     }
     
     function clearSleepTimer() {
@@ -1375,10 +1412,8 @@
     const chatInput = document.getElementById('chatInput');
     const chatMessages = document.getElementById('chatMessages');
     const chatError = document.getElementById('chatError');
-    const emojiBtn = document.getElementById('emojiBtn');
     const imageBtn = document.getElementById('imageBtn');
     const imageInput = document.getElementById('imageInput');
-    const emojiPicker = document.getElementById('emojiPicker');
     const imagePreviewContainer = document.getElementById('imagePreviewContainer');
     const imagePreview = document.getElementById('imagePreview');
     const imageRemoveBtn = document.getElementById('imageRemoveBtn');
@@ -1386,36 +1421,10 @@
     let chatHistory = [];
     let selectedImage = null;
     
-    // Эмодзи для выбора
-    const emojiPickerList = ['🗿','😃','😂','🤣','😍','😎','😅','😇','😉','😊','😋','😌','😏','😘','😜','😝','😛','🤑','🤗','🤩','🤔','🤨','🐶','🐱','🐭','🙄','🤫','🤭','🤐','🤪','🤓','🧐','🤠','🥳','🥴','🥺','🤥','🤯','🥶','🥵','🥱','🤤','🤢','🤮','🤧','🥲','🤡','🤖','👻','👽','👾','💀','☠️','👹','👺','💩','🎃','🎄','🎆','🎇','🎈','🎉','🎊','🎋','🎍','🎎','🎏','🎐','🎑','🎒','🎓','🎨','🎭','🎮','🎯','🎰','🎱','🎲','🎳','🎴','🎵','🎶','🎷','🎸','🎹','🎺','🎻','🎼','🎽','🎾','🎿','🏀','🏁','🏂','🏃','🏄','🏅','🏆','🏇','🏈','🏉','🏊','🏋️','🏌️','🏍️','🏎️','🏏','🏐','🏑','🏒','🏓','🏔️','🏕️','🏖️','🏗️','🏘️','🏙️','🏚️','🏛️','🏜️','🏝️','🏞️','🏟️','🏠','🏡','🏢','🏣','🏤','🏥','🏦','🏧','🏨','🏩','🏪','🏫','🏬','🏭','🏮','🏯','🏰','❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','⭐','✨','💫','🌟','⚡','💥','💢','💨','💦','💤','🎵','🎶','🎸','🎹','🎺','🎷','🥁','🔥','⭐','🌟','⚡','☄️','💥','🔥','🌊','🌈','☀️','🌐','⛅','🌤️','☁️','🌦️','🌧️','⛈️','🌩️','🌨️','❄️','☃️','⛄','💨','💫','🌫️','🌬️'];
-    
-    // Инициализация пикера эмодзи
-    function initEmojiPicker() {
-      emojiPicker.innerHTML = '';
-      emojiPickerList.forEach(emoji => {
-        const btn = document.createElement('button');
-        btn.className = 'emoji-btn';
-        btn.textContent = emoji;
-        btn.onclick = () => selectEmoji(emoji);
-        emojiPicker.appendChild(btn);
-      });
-    }
-    
-    function toggleEmojiPicker() {
-      emojiPicker.classList.toggle('show');
-      imagePreviewContainer.classList.remove('show');
-    }
-    
-    function selectEmoji(emoji) {
-      chatInput.value += emoji;
-      chatInput.focus();
-      emojiPicker.classList.remove('show');
-    }
     
     // Обработка выбора изображения
     imageBtn.onclick = () => {
       imageInput.click();
-      emojiPicker.classList.remove('show');
     };
     
     imageInput.onchange = (e) => {
@@ -1431,7 +1440,6 @@
           selectedImage = event.target.result;
           imagePreview.src = selectedImage;
           imagePreviewContainer.classList.add('show');
-          emojiPicker.classList.remove('show');
         };
         reader.readAsDataURL(file);
       }
@@ -1444,22 +1452,12 @@
       imageInput.value = '';
     };
     
-    emojiBtn.onclick = (e) => {
-      e.stopPropagation();
-      toggleEmojiPicker();
-    };
-    
     // Закрытие пикеров при клике вне их
     document.addEventListener('click', (e) => {
-      if (!emojiPicker.contains(e.target) && e.target !== emojiBtn) {
-        emojiPicker.classList.remove('show');
-      }
       if (!imagePreviewContainer.contains(e.target) && e.target !== imageBtn) {
         // Не закрываем, если это превью
       }
     });
-    
-    initEmojiPicker();
 
     function loadChatHistory() {
       const saved = localStorage.getItem('radioGramChatHistory');
@@ -1727,6 +1725,16 @@
       if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
         menu.classList.remove('show');
         btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+    
+    // Закрыть меню таймера сна при клике вне его
+    document.addEventListener('click', function(e) {
+      const sleepMenu = document.getElementById('sleepTimerMenu');
+      const sleepBtn = document.getElementById('sleepTimerBtnCompact');
+      if (sleepMenu && sleepBtn && !sleepMenu.contains(e.target) && !sleepBtn.contains(e.target)) {
+        sleepMenu.classList.remove('show');
+        sleepBtn.classList.remove('active');
       }
     });
 
