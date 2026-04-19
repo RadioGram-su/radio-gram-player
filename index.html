@@ -188,7 +188,7 @@
       z-index: 1001;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
       transition: filter 0.3s ease, transform 0.3s ease;
-      top: 20px;
+      top: 80px;
       left: 20px;
     }
     .pepe-on-chat svg {
@@ -245,6 +245,23 @@
       z-index: 997;
       font-size: 32px;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+    
+    /* След улитки (слизь) */
+    .snail-trail {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(150, 200, 150, 0.4), rgba(100, 150, 100, 0.15));
+      pointer-events: none;
+      z-index: 996;
+      opacity: 0;
+      animation: fadeTrail 3s ease-out forwards;
+    }
+    @keyframes fadeTrail {
+      0% { opacity: 0.5; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.5); }
     }
 
     .player-wrapper { text-align: center; margin-bottom: 15px; position: relative; z-index: 10; }
@@ -495,6 +512,45 @@
       outline: 3px solid #fff;
       outline-offset: 3px;
     }
+    
+    /* Кнопка таймера сна */
+    .sleep-timer-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 20px;
+      border-radius: 20px;
+      background: rgba(26, 26, 26, 0.8);
+      color: #4a9bc9;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border: 1px solid #444;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+      text-shadow: 0 0 10px rgba(74, 155, 201, 0.5);
+    }
+    .sleep-timer-btn:hover {
+      background: linear-gradient(135deg, #4a9bc9, #3a7ca5);
+      border-color: #5aabc9;
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 4px 15px rgba(74, 155, 201, 0.4);
+      color: #fff;
+    }
+    .sleep-timer-btn:active {
+      transform: translateY(-1px) scale(1.02);
+    }
+    .sleep-timer-btn:focus-visible {
+      outline: 2px solid #4a9bc9;
+      outline-offset: 2px;
+    }
+    .sleep-timer-btn.active {
+      background: linear-gradient(135deg, #f093fb, #667eea);
+      border-color: #f093fb;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+    }
+    
     @keyframes gradientPulse {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -699,6 +755,31 @@
       .chat-messages { height: 200px; }
       .social-icons a { padding: 7px 14px; font-size: 11px; }
       .chat-container { max-width: 100%; }
+      
+      /* Оптимизация кнопок для мобильных */
+      .social-icons .channels-btn {
+        padding: 8px 14px;
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .donate-button {
+        padding: 10px 20px;
+        font-size: 12px;
+      }
+      .sleep-timer-btn {
+        padding: 6px 14px;
+        font-size: 10px;
+      }
+      
+      /* Меню каналов на мобильных */
+      .channels-menu {
+        min-width: 160px;
+        left: 50%;
+        transform: translateX(-50%) translateY(5px);
+      }
+      .channels-menu.show {
+        transform: translateX(-50%) translateY(10px);
+      }
     }
     
     /* Счетчик уникальных пользователей - ненавязчивый стиль */
@@ -850,6 +931,30 @@
       .unique-users-counter .counter-label {
         font-size: 8px;
       }
+      
+      /* Мобильная оптимизация для кнопки таймера сна */
+      .sleep-timer-btn {
+        padding: 6px 14px;
+        font-size: 10px;
+        margin-top: 8px;
+      }
+      
+      /* Адаптация лягушки на мобильных */
+      .pepe-on-chat {
+        top: 70px;
+        left: 10px;
+        width: 50px;
+        height: 38px;
+      }
+      
+      /* Адаптация диалога лягушки на мобильных */
+      .pepe-dialog {
+        font-size: 11px;
+        padding: 10px 14px;
+        max-width: 200px;
+        white-space: normal;
+        left: 60px !important;
+      }
     }
   </style>
 </head>
@@ -892,6 +997,11 @@
     <div class="sub-title">RADIO STREAM</div>
     <div class="status" id="statusText" role="status" aria-live="polite">Нажми для старта</div>
     <div class="listeners-count">🔉 Слушателей: <span id="listenerCount">0</span></div>
+    
+    <!-- Кнопка таймера сна -->
+    <button onclick="toggleSleepTimer()" class="sleep-timer-btn" aria-label="Таймер сна">
+      ⏰ Таймер сна: <span id="sleepTimerDisplay">выкл</span>
+    </button>
     
     <div class="social-icons" role="navigation" aria-label="Социальные сети">
       <button onclick="toggleChannelsMenu()" class="channels-btn" aria-label="Наши каналы" aria-haspopup="true" aria-expanded="false">📢 Наши каналы</button>
@@ -963,7 +1073,7 @@
   </div>
   
   <!-- Лягушка на чате -->
-  <a href="https://t.me/chatradiogram" target="_blank" rel="noopener noreferrer" class="pepe-on-chat" id="pepeFish" aria-label="Перейти в чат Telegram" style="top: 20px; left: 20px;">
+  <a href="https://t.me/chatradiogram" target="_blank" rel="noopener noreferrer" class="pepe-on-chat" id="pepeFish" aria-label="Перейти в чат Telegram">
     <svg viewBox="0 0 60 45" xmlns="http://www.w3.org/2000/svg">
       <ellipse cx="30" cy="23" rx="22" ry="15" fill="#4CAF50"/>
       <ellipse cx="30" cy="23" rx="17" ry="11" fill="#81C784"/>
@@ -1368,6 +1478,67 @@
         sleepInterval = null;
       }
       sleepTimeRemaining = 0;
+    }
+    
+    // === ТАЙМЕР СНА (НОВАЯ КНОПКА) ===
+    function toggleSleepTimer() {
+      const display = document.getElementById('sleepTimerDisplay');
+      const btn = document.querySelector('.sleep-timer-btn');
+      
+      if (sleepInterval) {
+        // Выключаем таймер
+        clearSleepTimer();
+        display.textContent = 'выкл';
+        btn.classList.remove('active');
+      } else {
+        // Включаем таймер на 1 час
+        setSleepTimerFull(60);
+        btn.classList.add('active');
+      }
+    }
+    
+    function setSleepTimerFull(minutes) {
+      clearSleepTimer();
+      
+      sleepTimeRemaining = minutes * 60 * 1000;
+      const endTime = Date.now() + sleepTimeRemaining;
+      
+      updateSleepTimerDisplayFull(sleepTimeRemaining);
+      
+      sleepInterval = setInterval(() => {
+        sleepTimeRemaining = endTime - Date.now();
+        
+        if (sleepTimeRemaining <= 0) {
+          clearInterval(sleepInterval);
+          stopPlayback();
+          const display = document.getElementById('sleepTimerDisplay');
+          display.textContent = '💤 выкл';
+          const btn = document.querySelector('.sleep-timer-btn');
+          btn.classList.remove('active');
+          
+          setTimeout(() => {
+            display.textContent = 'выкл';
+          }, 5000);
+        } else {
+          updateSleepTimerDisplayFull(sleepTimeRemaining);
+        }
+      }, 1000);
+    }
+    
+    function updateSleepTimerDisplayFull(ms) {
+      const display = document.getElementById('sleepTimerDisplay');
+      const totalSeconds = Math.floor(ms / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      
+      let displayText = '';
+      if (hours > 0) {
+        displayText += `${hours}ч `;
+      }
+      displayText += `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      display.textContent = displayText;
     }
     
     // === ЧАТ ===
@@ -1894,7 +2065,14 @@
       let position = 0; // Позиция вдоль периметра
       const snailSize = 40;
       const perimeter = window.innerWidth * 2 + window.innerHeight * 2;
-      const speed = 1.5; // Скорость улитки
+      // Скорость: 1 полный круг за 1 час (3600 секунд)
+      // perimeter пикселей за 3600 кадров (при 60fps) = perimeter / 3600 пикселей за кадр
+      // Но requestAnimationFrame вызывается ~60 раз в секунду
+      // Значит скорость = perimeter / (3600 * 60) пикселей за кадр
+      const speed = perimeter / (3600 * 60);
+      
+      let lastTrailPosition = 0;
+      const trailInterval = 150; // Оставлять след каждые 150 пикселей
       
       function moveSnail() {
         let x, y;
@@ -1973,15 +2151,36 @@
           }
         }
         
+        // Оставляем след (слизь)
+        if (position - lastTrailPosition >= trailInterval) {
+          createSnailTrail(x + snailSize / 2, y + snailSize / 2);
+          lastTrailPosition = position;
+        }
+        
         position += speed;
         if (position >= perimeter) {
           position = 0;
+          lastTrailPosition = 0;
         }
         
         requestAnimationFrame(moveSnail);
       }
       
       moveSnail();
+    }
+    
+    // Создание следа улитки
+    function createSnailTrail(x, y) {
+      const trail = document.createElement('div');
+      trail.className = 'snail-trail';
+      trail.style.left = (x - 4) + 'px';
+      trail.style.top = (y - 4) + 'px';
+      document.body.appendChild(trail);
+      
+      // Удаляем след после завершения анимации
+      setTimeout(() => {
+        trail.remove();
+      }, 3000);
     }
     
     setTimeout(initSnail, 1500);
