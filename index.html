@@ -745,13 +745,13 @@
     <div class="main-title">GRAM</div>
     <div class="sub-title">RADIO STREAM</div>
     <div class="status" id="statusText" role="status" aria-live="polite">Нажми для старта</div>
-    <div class="listeners-count">рџ”Љ Слушателей: <span id="listenerCount">0</span></div>
+    <div class="listeners-count">🔉 Слушателей: <span id="listenerCount">0</span></div>
     
     <div class="social-icons" role="navigation" aria-label="Социальные сети">
-      <a href="https://www.youtube.com/@blogcheloveka" target="_blank" rel="noopener noreferrer" class="youtube" aria-label="YouTube канал">рџ“є YouTube</a>
-      <a href="https://t.me/blogchelovecka" target="_blank" rel="noopener noreferrer" class="telegram" aria-label="Личный Telegram">рџ’¬ Личный TG</a>
+      <a href="https://www.youtube.com/@blogcheloveka" target="_blank" rel="noopener noreferrer" class="youtube" aria-label="YouTube канал">📺 YouTube</a>
+      <a href="https://t.me/blogchelovecka" target="_blank" rel="noopener noreferrer" class="telegram" aria-label="Личный Telegram">💬 Личный TG</a>
       <a href="https://t.me/gramradiochill" target="_blank" rel="noopener noreferrer" class="telegram" aria-label="Telegram радио">🎵 Радио TG</a>
-      <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Веб-сайт">рџЊђ Веб-сайт</a>
+      <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Веб-сайт">🌐 Веб-сайт</a>
     </div>
     
     <button onclick="openDonateModal()" class="donate-button" aria-label="Помочь разработчику">
@@ -772,7 +772,7 @@
   </div>
 
   <div class="chat-container" role="region" aria-label="Чат эфира">
-    <div class="chat-header">рџ’¬ ЧАТ ЭФИРА</div>
+    <div class="chat-header">💬 ЧАТ ЭФИРА</div>
     <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-relevant="additions">
       <div class="chat-message">
         <div class="message-nick">Система</div>
@@ -903,7 +903,7 @@
         });
         audio.addEventListener('playing', () => {
           isBuffering = false;
-          statusText.textContent = 'рџ”ґ СЕЙЧАС ИГРАЕТ';
+          statusText.textContent = '▶️ СЕЙЧАС ИГРАЕТ';
           statusText.className = 'status success';
         });
         audio.addEventListener('stalled', handleAudioError);
@@ -1030,7 +1030,7 @@
           playBtn.classList.remove('paused');
           playBtn.classList.add('playing');
           playBtn.setAttribute('aria-pressed', 'true');
-          statusText.textContent = 'рџ”ґ СЕЙЧАС ИГРАЕТ';
+          statusText.textContent = '▶️ СЕЙЧАС ИГРАЕТ';
           statusText.className = 'status success';
           isPlaying = true;
           updateVisualizer();
@@ -1107,7 +1107,7 @@
             listenersEl.className = 'listeners-count active';
           }
           if (isPlaying && !isBuffering) {
-            statusText.textContent = 'рџ”ґ СЕЙЧАС ИГРАЕТ';
+            statusText.textContent = '▶️ СЕЙЧАС ИГРАЕТ';
             statusText.className = 'status success';
           }
         } else {
@@ -1124,7 +1124,7 @@
     const statsInterval = setInterval(updateListenerCount, CONSTANTS.UPDATE_INTERVAL);
 
     // === ЭМОДЗИ АНИМАЦИЯ ===
-    const emojis = ['рџЉ', '❤️', 'рџ‘Ќ', '', '✨', '', 'рџ’Ї', 'рџЊџ', 'рџ’Є'];
+    const emojis = ['🎉', '❤️', '👍', '🔥', '✨', '💯', '💎', '🌟', '💫'];
     let emojiTimer = null;
     
     function showRandomEmoji() {
@@ -1196,7 +1196,7 @@
         if (sleepTimeRemaining <= 0) {
           clearInterval(sleepInterval);
           stopPlayback();
-          sleepTimerDisplay.textContent = 'рџ’¤ Таймер выключил радио';
+          sleepTimerDisplay.textContent = '💤 Таймер выключил радио';
           sleepTimerBtn.classList.remove('active');
           sleepTimeOptions.forEach(opt => opt.classList.remove('selected'));
           
@@ -1252,7 +1252,7 @@
     let selectedImage = null;
     
     // Эмодзи для выбора
-    const emojiPickerList = ['🗿','рџЃ','рџ‚','рџ¤Ј','рџѓ','рџ„','рџ…','рџ†','рџ‰','рџЉ','рџ‹','рџЋ','рџЌ','рџ','рџҐ°','рџ—','рџ™','рџљ','рџ™‚','рџ¤—','рџ¤©','рџ¤”','рџ¤Ё','рџђ','рџ‘','рџ¶','рџ™„','рџЏ','рџЈ','рџҐ','рџ®','рџ¤ђ','рџЇ','рџЄ','рџ«','рџґ','рџЊ','рџ›','рџњ','рџќ','рџ¤¤','рџ’','рџ“','рџ”','рџ•','рџ™ѓ','рџ¤‘','рџІ','☹️','рџ™Ѓ','рџ–','рџћ','рџџ','рџ¤','рџў','рџ­','рџ¦','рџ§','рџЁ','рџ©','рџ¤Ї','рџ¬','рџ°','рџ±','рџі','рџ¤Є','рџµ','рџЎ','рџ ','рџ¤¬','рџ·','рџ¤’','рџ¤•','рџ¤ў','рџ¤®','рџ¤§','рџ‡','рџ¤ ','рџ¤Ў','рџҐі','рџҐґ','рџҐє','рџ¤Ґ','рџ¤«','рџ¤­','рџ§ђ','рџ¤“','рџ€','рџ‘ї','рџ‘№','рџ‘є','рџ’Ђ','рџ‘»','рџ‘Ѕ','рџ¤–','рџ’©','рџє','рџё','рџ№','рџ»','рџј','рџЅ','рџ™Ђ','рџї','рџѕ','рџ™€','рџ™‰','рџ™Љ','рџ”Ґ','⭐','✨','рџ’«','рџЊџ','⚡','рџ’Ґ','рџ’ў','рџ’Ё','рџ’¦','рџ’¤','🎵','рџЋ¶','рџЋё','рџЋ№','рџЋє','рџЋ·','рџҐЃ','❤️','рџ§Ў','рџ’›','рџ’љ','рџ’™','рџ’њ','рџ–¤','рџ¤Ќ','рџ¤Ћ','рџ’”','❣️','рџ’•','рџ’ћ','рџ’“','рџ’—','рџ’–','рџ’','рџ’ќ','☮️','✝️','☪️','рџ•‰️','рџ”Ї','рџЄђ','рџ’«','⭐','рџЊџ','⚡','☄️','рџ’Ґ','рџ”Ґ','рџЊЄ️','рџЊ€','☀️','🌐️','⛅','рџЊҐ️','☁️','рџЊ¦️','рџЊ§️','⛈️','рџЊ©️','рџЊЁ️','❄️','☃️','⛄','рџЊ¬️','рџ’Ё','рџЊ«️','рџЊЉ'];
+    const emojiPickerList = ['🗿','😃','😂','🤣','😍','😎','😅','😇','😉','😊','😋','😌','😏','😘','😜','😝','😛','🤑','🤗','🤩','🤔','🤨','🐶','🐱','🐭','🙄','🤫','🤭','🤐','🤪','🤓','🧐','🤠','🥳','🥴','🥺','🤥','🤯','🥶','🥵','🥱','🤤','🤢','🤮','🤧','🥲','🤡','🤖','👻','👽','👾','💀','☠️','👹','👺','💩','🎃','🎄','🎆','🎇','🎈','🎉','🎊','🎋','🎍','🎎','🎏','🎐','🎑','🎒','🎓','🎨','🎭','🎮','🎯','🎰','🎱','🎲','🎳','🎴','🎵','🎶','🎷','🎸','🎹','🎺','🎻','🎼','🎽','🎾','🎿','🏀','🏁','🏂','🏃','🏄','🏅','🏆','🏇','🏈','🏉','🏊','🏋️','🏌️','🏍️','🏎️','🏏','🏐','🏑','🏒','🏓','🏔️','🏕️','🏖️','🏗️','🏘️','🏙️','🏚️','🏛️','🏜️','🏝️','🏞️','🏟️','🏠','🏡','🏢','🏣','🏤','🏥','🏦','🏧','🏨','🏩','🏪','🏫','🏬','🏭','🏮','🏯','🏰','❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','⭐','✨','💫','🌟','⚡','💥','💢','💨','💦','💤','🎵','🎶','🎸','🎹','🎺','🎷','🥁','🔥','⭐','🌟','⚡','☄️','💥','🔥','🌊','🌈','☀️','🌐','⛅','🌤️','☁️','🌦️','🌧️','⛈️','🌩️','🌨️','❄️','☃️','⛄','💨','💫','🌫️','🌬️'];
     
     // Инициализация пикера эмодзи
     function initEmojiPicker() {
