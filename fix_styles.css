@@ -1,0 +1,283 @@
+<style>
+/* === МОБИЛЬНАЯ ВЕРСТКА - ПЕРВЫМ БЛОКОМ === */
+@media (max-width: 768px) {
+  html, body { overflow-x: hidden; }
+  body { padding: 10px; }
+  .main-title { font-size: 24px; }
+  .play-button { width: 90px; height: 90px; }
+  .gram-icon { width: 40px; height: 40px; }
+  .pause-icon { width: 36px; height: 36px; }
+  
+  /* Чат эфира на мобильных */
+  .chat-container {
+    max-width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+  .chat-messages {
+    height: 28vh;
+    max-height: 40vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .chat-input-area {
+    position: sticky;
+    bottom: 0;
+    background: rgba(20, 20, 30, 0.98);
+    padding: 8px;
+  }
+  
+  /* Кнопки и интерактивные зоны не меньше 44x44px */
+  .play-button, .chat-action-btn, .channels-btn, .donate-button, .sleep-timer-btn-compact {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Шрифты кнопок 14px */
+  .channels-btn, .donate-button { font-size: 14px; padding: 10px 16px; }
+  
+  /* Отступы padding: 10px */
+  .player-wrapper { margin-bottom: 10px; }
+  .social-icons { gap: 8px; margin-top: 10px; }
+  
+  /* Исправление наложения элементов */
+  .unique-users-counter {
+    top: 8px;
+    right: 45px;
+    font-size: 9px;
+    padding: 4px 8px;
+  }
+  .sleep-timer-btn-compact {
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+  .sleep-timer-menu {
+    top: 45px;
+    right: 5px;
+    min-width: 120px;
+  }
+  
+  /* Улитка на мобильных */
+  .snail {
+    width: 35px;
+    height: 35px;
+    font-size: 28px;
+  }
+  
+  /* Рыбки на мобильных */
+  .fish {
+    width: 50px;
+    height: 35px;
+  }
+  
+  /* Лягушка на мобильных */
+  .pepe-on-chat {
+    top: 70px;
+    left: 10px;
+    width: 50px;
+    height: 38px;
+  }
+}
+
+/* === ОБНОВЛЕННЫЕ СТИЛИ УЛИТКИ === */
+.snail {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  z-index: 9998;
+  font-size: 32px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  will-change: left, top, transform;
+}
+
+.snail-trail {
+  position: fixed;
+  width: 12px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, rgba(150, 200, 150, 0.12), rgba(100, 150, 100, 0.06));
+  box-shadow: 0 0 6px rgba(150, 200, 150, 0.08);
+  pointer-events: none;
+  z-index: 9997;
+  opacity: 0;
+  animation: fadeTrail 4.5s ease-out forwards;
+}
+
+@keyframes fadeTrail {
+  0% { opacity: 0.12; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.6); }
+}
+
+/* === ОБНОВЛЕННЫЕ СТИЛИ РЫБОК === */
+.fish {
+  position: fixed;
+  width: 60px;
+  height: 40px;
+  pointer-events: none;
+  cursor: default;
+  z-index: 50;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  transition: filter 0.3s ease;
+  will-change: left, top, transform;
+}
+
+.fish svg {
+  width: 100%;
+  height: 100%;
+}
+
+.fish.swimming-left {
+  transform: scaleX(-1);
+}
+
+.fish:hover {
+  filter: drop-shadow(0 4px 8px rgba(100, 200, 255, 0.5));
+}
+
+.fish-body {
+  transform-origin: center;
+}
+
+/* === ИКОНКА ТАЙМЕРА СНА ПОД СЧЕТЧИКОМ === */
+.sleep-timer-icon {
+  position: absolute;
+  right: -28px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border-radius: 50%;
+  background: rgba(74, 155, 201, 0.15);
+  z-index: 10;
+}
+
+.sleep-timer-icon:hover {
+  opacity: 1;
+  background: rgba(74, 155, 201, 0.35);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.sleep-timer-icon.active {
+  opacity: 1;
+  background: rgba(74, 155, 201, 0.5);
+  animation: timerPulse 2s ease-in-out infinite;
+}
+
+@keyframes timerPulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(74, 155, 201, 0.5); }
+  50% { box-shadow: 0 0 16px rgba(74, 155, 201, 0.8); }
+}
+
+/* Меню таймера сна */
+.sleep-timer-menu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  background: rgba(20, 20, 20, 0.98);
+  border: 1px solid rgba(74, 155, 201, 0.4);
+  border-radius: 12px;
+  padding: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 130px;
+  z-index: 1000;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+.sleep-timer-menu.show {
+  display: flex;
+}
+
+.sleep-timer-menu-title {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.sleep-time-option {
+  padding: 7px 12px;
+  border-radius: 14px;
+  background: rgba(26, 26, 30, 0.8);
+  color: #fff;
+  border: 1px solid rgba(74, 155, 201, 0.4);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  min-height: 36px;
+}
+
+.sleep-time-option:hover {
+  background: rgba(74, 155, 201, 0.3);
+  border-color: rgba(74, 155, 201, 0.7);
+  transform: scale(1.02);
+}
+
+.sleep-time-option.selected {
+  background: rgba(74, 155, 201, 0.5);
+  border-color: rgba(74, 155, 201, 0.8);
+  box-shadow: 0 0 10px rgba(74, 155, 201, 0.4);
+}
+
+.sleep-timer-display {
+  font-size: 10px;
+  color: rgba(74, 155, 201, 0.8);
+  text-align: center;
+  min-height: 14px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* Компактная кнопка таймера вверху справа */
+.sleep-timer-btn-compact {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(74, 155, 201, 0.25);
+  border: 1px solid rgba(74, 155, 201, 0.4);
+  cursor: pointer;
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+}
+
+.sleep-timer-btn-compact:hover {
+  opacity: 1;
+  background: rgba(74, 155, 201, 0.45);
+  transform: scale(1.1);
+}
+
+.sleep-timer-btn-compact.active {
+  background: rgba(74, 155, 201, 0.65);
+  box-shadow: 0 0 15px rgba(74, 155, 201, 0.7);
+}
+</style>
