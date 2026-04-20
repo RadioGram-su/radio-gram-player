@@ -10,7 +10,7 @@
   <meta name="keywords" content="Radio Gram, deep house radio, melodic techno, electronic music, radio online">
   <meta name="yandex-verification" content="4c925eb59e9dc5dc" />
   
-  <!-- Yandex.Metrika -->
+  <!-- Yandex.Metrika counter -->
   <script type="text/javascript">
       (function(m,e,t,r,i,k,a){
           m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
@@ -18,9 +18,11 @@
           for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
           k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
       })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=108652352', 'ym');
+
       ym(108652352, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
   </script>
   <noscript><div><img src="https://mc.yandex.ru/watch/108652352" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
 
   <!-- Open Graph -->
   <meta property="og:title" content="Radio Gram — Deep House Radio">
@@ -188,6 +190,15 @@
     .main-title { font-size: 28px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .sub-title { font-size: 11px; letter-spacing: 3px; color: rgba(255,255,255,0.7); margin-bottom: 5px; }
     .status { font-size: 12px; color: #4a9bc9; font-weight: 600; min-height: 18px; }
+    .track-info { 
+      font-size: 13px; 
+      color: rgba(255,255,255,0.9); 
+      margin: 5px 0;
+      font-weight: 500;
+      max-width: 90%;
+      word-wrap: break-word;
+      line-height: 1.4;
+    }
     .listeners-count { font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 10px; }
 
     /* Кнопки */
@@ -382,7 +393,7 @@
       color: #00bfff;
     }
 
-    /* === РЫБКИ И УЛИТКА === */
+    /* === РЫБКА (ОДНА) === */
     .fish {
       position: fixed;
       width: 50px;
@@ -404,15 +415,17 @@
       position: fixed;
       background: linear-gradient(135deg, #fff, #f0f0f0);
       color: #333;
-      padding: 10px 16px;
-      border-radius: 20px;
+      padding: 8px 12px;
+      border-radius: 15px;
       font-family: 'Comic Sans MS', cursive, sans-serif;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: bold;
-      white-space: nowrap;
+      white-space: normal;
+      max-width: 150px;
+      word-wrap: break-word;
       pointer-events: none;
       z-index: 1000;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(255, 107, 107, 0.4);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       opacity: 0;
       transform: translateY(10px) scale(0.9);
       transition: opacity 0.3s ease, transform 0.3s ease;
@@ -420,10 +433,10 @@
     .fish-dialog::after {
       content: '';
       position: absolute;
-      bottom: -8px;
+      bottom: -6px;
       left: 50%;
       transform: translateX(-50%);
-      border-width: 8px 8px 0;
+      border-width: 6px 6px 0;
       border-style: solid;
       border-color: #fff transparent transparent transparent;
     }
@@ -432,6 +445,7 @@
       transform: translateY(0) scale(1);
     }
 
+    /* === УЛИТКА === */
     .snail {
       position: fixed;
       bottom: 20px;
@@ -465,17 +479,18 @@
       position: fixed;
       background: rgba(255, 255, 255, 0.95);
       color: #333;
-      padding: 12px 18px;
+      padding: 10px 15px;
       border-radius: 15px;
-      font-size: 13px;
+      font-size: 12px;
       font-family: 'Comic Sans MS', cursive, sans-serif;
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       z-index: 10000;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s;
-      max-width: 200px;
+      max-width: 180px;
       text-align: center;
+      word-wrap: break-word;
     }
     .snail-dialog::after {
       content: '';
@@ -501,6 +516,8 @@
       .btn { max-width: 220px; padding: 10px 20px; font-size: 13px; }
       .frog-link { padding: 8px 15px; font-size: 13px; }
       .donate-content { padding: 20px; }
+      .fish-dialog { max-width: 120px; font-size: 10px; padding: 6px 10px; }
+      .snail-dialog { max-width: 150px; font-size: 11px; }
     }
   </style>
 </head>
@@ -540,6 +557,7 @@
     <div class="main-title">GRAM</div>
     <div class="sub-title">RADIO STREAM</div>
     <div class="status" id="status">Нажми Play ▶️</div>
+    <div class="track-info" id="track-info">Загрузка...</div>
     <div class="listeners-count">🔊 Слушателей: <span id="listener-count">0</span></div>
 
     <!-- Кнопка каналов -->
@@ -600,15 +618,11 @@
     </div>
   </div>
 
-  <!-- Рыбки -->
+  <!-- Рыбка (ОДНА со ссылкой) -->
   <a href="https://t.me/Gram_zonebot?start=679bcd47c630af4776e08ffb" class="fish" id="fish1" style="top: 15%; left: -50px;">
     <svg viewBox="0 0 50 35"><g class="fish-body"><ellipse cx="22" cy="17.5" rx="14" ry="10" fill="#ff6b35"/><ellipse cx="34" cy="17.5" rx="10" ry="7" fill="#ff8c42"/><polygon points="42,17.5 50,12 50,23" fill="#ff6b35"/><circle cx="18" cy="14" r="3" fill="#fff"/><circle cx="18" cy="14" r="1.5" fill="#000"/><path d="M 22 17.5 Q 28 10 36 13" stroke="#ff8c42" stroke-width="1.5" fill="none"/></g></svg>
   </a>
   <div class="fish-dialog" id="fishDialog">хочешь поиграть?</div>
-
-  <div class="fish" id="fish2" style="top: 70%; left: -50px;">
-    <svg viewBox="0 0 50 35"><g class="fish-body"><ellipse cx="22" cy="17.5" rx="14" ry="10" fill="#0077be"/><ellipse cx="34" cy="17.5" rx="10" ry="7" fill="#1e90ff"/><polygon points="42,17.5 50,12 50,23" fill="#0077be"/><circle cx="18" cy="14" r="3" fill="#fff"/><circle cx="18" cy="14" r="1.5" fill="#000"/><circle cx="30" cy="20" r="2" fill="#000080"/><path d="M 22 17.5 Q 28 10 36 13" stroke="#1e90ff" stroke-width="1.5" fill="none"/></g></svg>
-  </div>
 
   <!-- Улитка -->
   <div class="snail" id="snail" onclick="snailTalk()">🐌</div>
@@ -621,8 +635,26 @@
     const playBtn = document.getElementById('play-btn');
     const status = document.getElementById('status');
     const eq = document.getElementById('equalizer');
+    const trackInfo = document.getElementById('track-info');
 
-    function togglePlay() {
+    // Обработка ошибок аудио для ПК
+    audio.addEventListener('error', function(e) {
+      console.error('Audio error:', e);
+      status.textContent = '⚠️ Ошибка потока';
+      setTimeout(() => {
+        if (isPlaying) {
+          status.textContent = '🔄 Переподключение...';
+          audio.load();
+          audio.play().catch(() => {});
+        }
+      }, 3000);
+    });
+
+    audio.addEventListener('playing', function() {
+      status.textContent = '▶️ Сейчас играет';
+    });
+
+    async function togglePlay() {
       if (isPlaying) {
         audio.pause();
         playBtn.innerHTML = '<svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
@@ -630,14 +662,51 @@
         eq.classList.remove('active');
         status.textContent = 'Нажми Play ▶️';
       } else {
-        audio.play();
-        playBtn.innerHTML = '<svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
-        playBtn.classList.add('playing');
-        eq.classList.add('active');
-        status.textContent = '▶️ Сейчас играет';
+        try {
+          await audio.play();
+          playBtn.innerHTML = '<svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+          playBtn.classList.add('playing');
+          eq.classList.add('active');
+          status.textContent = '▶️ Сейчас играет';
+        } catch (err) {
+          console.error('Play error:', err);
+          status.textContent = '❌ Нажмите ещё раз';
+        }
       }
       isPlaying = !isPlaying;
     }
+
+    // === ПОЛУЧЕНИЕ ИНФОРМАЦИИ О ТРЕКЕ ===
+    async function updateTrackInfo() {
+      try {
+        const res = await fetch('https://radiogram.su/api/nowplaying/radio_gram');
+        const data = await res.json();
+        
+        if (data.now_playing && data.now_playing.song) {
+          const song = data.now_playing.song;
+          const title = song.title || 'Неизвестный трек';
+          const artist = song.artist || '';
+          trackInfo.textContent = artist ? `${artist} — ${title}` : title;
+        } else {
+          trackInfo.textContent = 'Deep House Mix';
+        }
+      } catch(e) {
+        trackInfo.textContent = 'Загрузка...';
+      }
+    }
+    setInterval(updateTrackInfo, 10000);
+    updateTrackInfo();
+
+    // === СЧЁТЧИК СЛУШАТЕЛЕЙ ===
+    async function updateStats() {
+      try {
+        const res = await fetch('https://radiogram.su/api/nowplaying/radio_gram');
+        const data = await res.json();
+        document.getElementById('listener-count').textContent = data.listeners?.unique || 0;
+      } catch(e) {}
+    }
+    setInterval(updateStats, 30000);
+    updateStats();
 
     // === КАНАЛЫ ===
     function toggleChannels() {
@@ -699,17 +768,7 @@
     let imgIndex = (hour >= 5 && hour < 12) ? 0 : (hour >= 12 && hour < 17) ? 1 : 2;
     bg.style.backgroundImage = `url('${images[imgIndex]}')`;
 
-    // === СЧЁТЧИКИ ===
-    async function updateStats() {
-      try {
-        const res = await fetch('https://radiogram.su/api/nowplaying/radio_gram');
-        const data = await res.json();
-        document.getElementById('listener-count').textContent = data.listeners?.unique || 0;
-      } catch(e) {}
-    }
-    setInterval(updateStats, 30000);
-    updateStats();
-
+    // === СЧЁТЧИК ПОСЕТИТЕЛЕЙ ===
     const visitorsEl = document.getElementById('visitor-count');
     const stored = localStorage.getItem('visitors');
     const today = new Date().toDateString();
@@ -719,12 +778,11 @@
     localStorage.setItem('visitors', JSON.stringify(count));
     visitorsEl.textContent = count.count;
 
-    // === РЫБКИ ===
+    // === РЫБКА (ОДНА) ===
     const fish1 = document.getElementById('fish1');
-    const fish2 = document.getElementById('fish2');
     const fishDialog = document.getElementById('fishDialog');
     
-    function animateFish(fish, startX, startY, showDialog = false) {
+    function animateFish(fish, startX, startY) {
       let x = startX;
       let y = startY;
       let speedX = 0.5;
@@ -735,33 +793,33 @@
         x += speedX;
         y += speedY + Math.sin(Date.now() / 1000) * 0.3;
         
+        // Отскок от краёв с запасом
         if (x <= -60 || x >= window.innerWidth - 20) speedX *= -1;
-        if (y <= 40 || y >= window.innerHeight - 40) speedY *= -1;
+        if (y <= 40 || y >= window.innerHeight - 150) speedY *= -1;
         
         fish.style.left = x + 'px';
         fish.style.top = y + 'px';
         fish.style.transform = `scaleX(${speedX > 0 ? 1 : -1})`;
         
-        if (showDialog && fish === fish1 && fishDialog) {
-          const now = Date.now();
-          if (now - lastDialogTime > 15000 && Math.random() < 0.001) {
-            fishDialog.style.left = (x + 25) + 'px';
-            fishDialog.style.top = (y - 40) + 'px';
-            fishDialog.classList.add('visible');
-            lastDialogTime = now;
-            setTimeout(() => fishDialog.classList.remove('visible'), 3000);
-          }
-          if (fishDialog.classList.contains('visible')) {
-            fishDialog.style.left = (x + 25) + 'px';
-            fishDialog.style.top = (y - 40) + 'px';
-          }
+        // Диалог с проверкой границ экрана
+        const now = Date.now();
+        if (now - lastDialogTime > 15000 && Math.random() < 0.001) {
+          fishDialog.style.left = Math.min(x + 25, window.innerWidth - 160) + 'px';
+          fishDialog.style.top = Math.max(y - 50, 10) + 'px';
+          fishDialog.classList.add('visible');
+          lastDialogTime = now;
+          setTimeout(() => fishDialog.classList.remove('visible'), 3000);
         }
+        if (fishDialog.classList.contains('visible')) {
+          fishDialog.style.left = Math.min(x + 25, window.innerWidth - 160) + 'px';
+          fishDialog.style.top = Math.max(y - 50, 10) + 'px';
+        }
+        
         requestAnimationFrame(swim);
       }
       swim();
     }
-    animateFish(fish1, Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.3, true);
-    animateFish(fish2, Math.random() * window.innerWidth, window.innerHeight * 0.6 + Math.random() * 100, false);
+    animateFish(fish1, Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.3);
 
     // === УЛИТКА ===
     const snail = document.getElementById('snail');
@@ -804,8 +862,10 @@
       function updateDialogPos() {
         if (snailDialog.classList.contains('show')) {
           const rect = snail.getBoundingClientRect();
-          snailDialog.style.left = (rect.left + rect.width / 2) + 'px';
-          snailDialog.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
+          const dialogX = Math.min(rect.left + rect.width / 2, window.innerWidth - 190);
+          const dialogY = Math.max(rect.top - 60, 10);
+          snailDialog.style.left = dialogX + 'px';
+          snailDialog.style.top = dialogY + 'px';
           requestAnimationFrame(updateDialogPos);
         }
       }
