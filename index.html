@@ -4,13 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
-  <!-- === SEO META TAGS (Для Яндекса и Google) === -->
+  <!-- === SEO META TAGS === -->
   <title>Radio Gram — Deep House, Techno, Lo-Fi, Reggae & Chill Music 24/7</title>
   <meta name="description" content="🎧 Radio Gram (Грам) — атмосферное радио Deep House, Techno, Lo-Fi, Reggae и Lounge. Музыка для работы, кодинга, учёбы и отдыха 24/7. GramCoin сообщество.">
   <meta name="keywords" content="Radio Gram, Грам, gram radio, deep house, techno, lo-fi hip hop, reggae, lounge, chillout, coding music, music for work, music for programming, study music, relax radio, gramcoin, грамкоин, радио онлайн, музыка для медитации">
   <meta name="author" content="Radio Gram">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://player.radiogram.su">
+  
+  <!-- === FAVICON (Иконки сайта) === -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
   
   <!-- Yandex Verification -->
   <meta name="yandex-verification" content="4c925eb59e9dc5dc" />
@@ -29,7 +35,7 @@
   <noscript><div><img src="https://mc.yandex.ru/watch/108652352" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
   <!-- /Yandex.Metrika counter -->
 
-  <!-- === OPEN GRAPH (Для соцсетей и мессенджеров) === -->
+  <!-- === OPEN GRAPH === -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://player.radiogram.su/">
   <meta property="og:title" content="Radio Gram — Deep House, Techno, Lo-Fi & Chill 24/7">
@@ -45,7 +51,7 @@
   <meta name="twitter:title" content="Radio Gram — Music for Work & Relax">
   <meta name="twitter:description" content="Deep House, Techno, Lo-Fi, Reggae, Lounge & Chillout 24/7.">
   
-  <!-- Structured Data (JSON-LD) - Самое важное для Google/Яндекс -->
+  <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -53,7 +59,7 @@
     "name": "Radio Gram",
     "alternateName": ["Gram", "Грам", "Gram Radio", "Radio Gram Chill"],
     "url": "https://player.radiogram.su",
-    "logo": "https://player.radiogram.su/images/logo.png",
+    "logo": "https://player.radiogram.su/apple-touch-icon.png",
     "image": "https://player.radiogram.su/images/i.jpg",
     "description": "Атмосферное интернет-радио Deep House, Techno, Lo-Fi, Reggae и Lounge. Музыка для работы, кодинга, учёбы и отдыха 24/7.",
     "genre": ["Deep House", "Melodic Techno", "Lo-Fi Hip Hop", "Reggae", "Lounge", "Chillout", "Coding Music", "Study Music", "Relax"],
@@ -71,7 +77,6 @@
   }
   </script>
   
-  <!-- WebSite Schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -87,7 +92,6 @@
   </script>
 
   <style>
-    /* === СБРОС И БАЗА === */
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     
     body {
@@ -104,7 +108,6 @@
       padding: 20px;
     }
 
-    /* === ФОН === */
     .ocean-background {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -120,7 +123,6 @@
       background: rgba(0, 0, 0, 0.3);
     }
 
-    /* === ВЕРХНИЙ ПРАВЫЙ УГОЛ === */
     .top-widgets {
       position: fixed;
       top: 10px;
@@ -179,7 +181,6 @@
     }
     .sleep-timer-display { font-size: 10px; color: #4a9bc9; margin-top: 2px; }
 
-    /* === ЦЕНТРАЛЬНЫЙ КОНТЕЙНЕР === */
     .player-wrapper {
       text-align: center;
       width: 100%;
@@ -191,7 +192,6 @@
       gap: 15px;
     }
 
-    /* Кнопка Play */
     .play-button {
       width: 110px;
       height: 110px;
@@ -220,7 +220,6 @@
     .play-icon { width: 45px; height: 45px; fill: #fff; margin-left: 5px; }
     .pause-icon { width: 40px; height: 40px; fill: #fff; }
 
-    /* Эквалайзер */
     .equalizer {
       display: none;
       align-items: flex-end;
@@ -241,7 +240,6 @@
     .eq-bar:nth-child(3) { height: 12px; animation-delay: 0.5s; }
     @keyframes bounce { 0% { transform: scaleY(0.5); } 100% { transform: scaleY(1.2); } }
 
-    /* Тексты */
     .main-title { font-size: 28px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .sub-title { font-size: 11px; letter-spacing: 3px; color: rgba(255,255,255,0.7); margin-bottom: 5px; }
     .status { font-size: 12px; color: #4a9bc9; font-weight: 600; min-height: 18px; }
@@ -256,7 +254,6 @@
     }
     .listeners-count { font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 10px; }
 
-    /* Кнопки */
     .btn {
       padding: 12px 24px;
       border-radius: 25px;
@@ -285,7 +282,6 @@
     }
     .btn-donate:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5); }
 
-    /* === ЛЯГУШКА === */
     .frog-link {
       display: flex;
       align-items: center;
@@ -308,7 +304,6 @@
     }
     .frog-icon { width: 24px; height: 24px; fill: #4caf50; }
 
-    /* === МЕНЮ КАНАЛОВ === */
     .channels-popup {
       display: none;
       position: absolute;
@@ -338,7 +333,6 @@
     }
     .channel-link:hover { background: rgba(255,255,255,0.15); }
 
-    /* === МОДАЛЬНОЕ ОКНО ДОНАТОВ === */
     .donate-modal {
       display: none;
       position: fixed;
@@ -448,7 +442,6 @@
       color: #00bfff;
     }
 
-    /* === РЫБКА (ОДНА) === */
     .fish {
       position: fixed;
       width: 50px;
@@ -500,7 +493,6 @@
       transform: translateY(0) scale(1);
     }
 
-    /* === УЛИТКА === */
     .snail {
       position: fixed;
       bottom: 20px;
@@ -564,7 +556,6 @@
       pointer-events: auto;
     }
 
-    /* Адаптив */
     @media (max-width: 480px) {
       .play-button { width: 90px; height: 90px; }
       .main-title { font-size: 24px; }
@@ -578,10 +569,8 @@
 </head>
 <body>
 
-  <!-- Фон -->
   <div class="ocean-background" id="bg"></div>
 
-  <!-- Верхний правый угол -->
   <div class="top-widgets">
     <div class="widget-item">
       👥 <span id="visitor-count">--</span>
@@ -598,7 +587,6 @@
     </div>
   </div>
 
-  <!-- Основной блок -->
   <div class="player-wrapper">
     
     <button class="play-button" id="play-btn" onclick="togglePlay()">
@@ -615,7 +603,6 @@
     <div class="track-info" id="track-info">Загрузка...</div>
     <div class="listeners-count">🔊 Слушателей: <span id="listener-count">0</span></div>
 
-    <!-- Кнопка каналов -->
     <div style="position:relative; width:100%; display:flex; justify-content:center;">
       <button class="btn btn-channels" onclick="toggleChannels()">📢 Наши каналы</button>
       <div class="channels-popup" id="channels-popup">
@@ -625,12 +612,10 @@
       </div>
     </div>
 
-    <!-- Кнопка доната -->
     <button class="btn btn-donate" onclick="openDonateModal()">
       ❤️ Помочь разработчику
     </button>
 
-    <!-- ЛЯГУШКА -->
     <a href="https://t.me/chatradiogram" target="_blank" class="frog-link">
       <svg class="frog-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
       <span>Перейти в чат</span>
@@ -638,13 +623,11 @@
 
   </div>
 
-  <!-- SEO Footer (Скрытый текст для роботов, но видимый для людей) -->
   <div style="margin-top: 50px; font-size: 10px; color: rgba(255,255,255,0.3); text-align: center; max-width: 400px;">
     Radio Gram: Deep House, Techno, Lo-Fi, Reggae, Lounge & Chillout.
     Музыка для кодинга, работы, учёбы и медитации 24/7. GramCoin.
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО ДОНАТОВ -->
   <div class="donate-modal" id="donateModal" onclick="closeDonateModalOutside(event)">
     <div class="donate-content" onclick="event.stopPropagation()">
       <button class="donate-close" onclick="closeDonateModal()">×</button>
@@ -679,18 +662,15 @@
     </div>
   </div>
 
-  <!-- Рыбка (ОДНА со ссылкой) -->
   <a href="https://t.me/Gram_zonebot?start=679bcd47c630af4776e08ffb" class="fish" id="fish1" style="top: 15%; left: -50px;">
     <svg viewBox="0 0 50 35"><g class="fish-body"><ellipse cx="22" cy="17.5" rx="14" ry="10" fill="#ff6b35"/><ellipse cx="34" cy="17.5" rx="10" ry="7" fill="#ff8c42"/><polygon points="42,17.5 50,12 50,23" fill="#ff6b35"/><circle cx="18" cy="14" r="3" fill="#fff"/><circle cx="18" cy="14" r="1.5" fill="#000"/><path d="M 22 17.5 Q 28 10 36 13" stroke="#ff8c42" stroke-width="1.5" fill="none"/></g></svg>
   </a>
   <div class="fish-dialog" id="fishDialog">хочешь поиграть?</div>
 
-  <!-- Улитка -->
   <div class="snail" id="snail" onclick="snailTalk()">🐌</div>
   <div class="snail-dialog" id="snailDialog"></div>
 
   <script>
-    // === ПЛЕЕР ===
     const audio = new Audio('https://radiogram.su/listen/radio_gram/radio.mp3');
     let isPlaying = false;
     const playBtn = document.getElementById('play-btn');
@@ -698,7 +678,6 @@
     const eq = document.getElementById('equalizer');
     const trackInfo = document.getElementById('track-info');
 
-    // Обработка ошибок аудио для ПК
     audio.addEventListener('error', function(e) {
       console.error('Audio error:', e);
       status.textContent = '⚠️ Ошибка потока';
@@ -737,7 +716,6 @@
       isPlaying = !isPlaying;
     }
 
-    // === ПОЛУЧЕНИЕ ИНФОРМАЦИИ О ТРЕКЕ ===
     async function updateTrackInfo() {
       try {
         const res = await fetch('https://radiogram.su/api/nowplaying/radio_gram');
@@ -758,7 +736,6 @@
     setInterval(updateTrackInfo, 10000);
     updateTrackInfo();
 
-    // === СЧЁТЧИК СЛУШАТЕЛЕЙ ===
     async function updateStats() {
       try {
         const res = await fetch('https://radiogram.su/api/nowplaying/radio_gram');
@@ -769,7 +746,6 @@
     setInterval(updateStats, 30000);
     updateStats();
 
-    // === КАНАЛЫ ===
     function toggleChannels() {
       document.getElementById('channels-popup').classList.toggle('show');
     }
@@ -779,7 +755,6 @@
       }
     });
 
-    // === ТАЙМЕР СНА ===
     let timerInterval;
     function toggleSleepMenu() {
       document.getElementById('sleep-menu').classList.toggle('show');
@@ -801,7 +776,6 @@
       }, 1000);
     }
 
-    // === МОДАЛЬНОЕ ОКНО ДОНАТОВ ===
     function openDonateModal() {
       document.getElementById('donateModal').classList.add('show');
       document.getElementById('tonWallet').style.display = 'none';
@@ -822,14 +796,12 @@
       });
     }
 
-    // === ФОН ===
     const images = ['images/i.jpg', 'images/8i.jpg', 'images/i2.jpg'];
     const bg = document.getElementById('bg');
     const hour = new Date().getHours();
     let imgIndex = (hour >= 5 && hour < 12) ? 0 : (hour >= 12 && hour < 17) ? 1 : 2;
     bg.style.backgroundImage = `url('${images[imgIndex]}')`;
 
-    // === СЧЁТЧИК ПОСЕТИТЕЛЕЙ ===
     const visitorsEl = document.getElementById('visitor-count');
     const stored = localStorage.getItem('visitors');
     const today = new Date().toDateString();
@@ -839,7 +811,6 @@
     localStorage.setItem('visitors', JSON.stringify(count));
     visitorsEl.textContent = count.count;
 
-    // === РЫБКА (ОДНА) ===
     const fish1 = document.getElementById('fish1');
     const fishDialog = document.getElementById('fishDialog');
     
@@ -854,7 +825,6 @@
         x += speedX;
         y += speedY + Math.sin(Date.now() / 1000) * 0.3;
         
-        // Отскок от краёв с запасом
         if (x <= -60 || x >= window.innerWidth - 20) speedX *= -1;
         if (y <= 40 || y >= window.innerHeight - 150) speedY *= -1;
         
@@ -862,7 +832,6 @@
         fish.style.top = y + 'px';
         fish.style.transform = `scaleX(${speedX > 0 ? 1 : -1})`;
         
-        // Диалог с проверкой границ экрана
         const now = Date.now();
         if (now - lastDialogTime > 15000 && Math.random() < 0.001) {
           fishDialog.style.left = Math.min(x + 25, window.innerWidth - 160) + 'px';
@@ -882,7 +851,6 @@
     }
     animateFish(fish1, Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.3);
 
-    // === УЛИТКА ===
     const snail = document.getElementById('snail');
     const snailDialog = document.getElementById('snailDialog');
     const snailPhrases = ['не трогай меня! Я просто ползу 🐌', 'я устала, я ухожу! 😴', 'на что я трачу свою жизнь ((( 💭'];
