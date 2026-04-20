@@ -60,10 +60,10 @@
       content: '';
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.3); /* Затемнение фона */
+      background: rgba(0, 0, 0, 0.3);
     }
 
-    /* === ВЕРХНИЙ ПРАВЫЙ УГОЛ (Виджеты) === */
+    /* === ВЕРХНИЙ ПРАВЫЙ УГОЛ === */
     .top-widgets {
       position: fixed;
       top: 10px;
@@ -219,7 +219,7 @@
     }
     .btn-donate:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5); }
 
-    /* === ЛЯГУШКА (Ссылка на чат) === */
+    /* === ЛЯГУШКА === */
     .frog-link {
       display: flex;
       align-items: center;
@@ -242,7 +242,7 @@
     }
     .frog-icon { width: 24px; height: 24px; fill: #4caf50; }
 
-    /* === МЕНЮ КАНАЛОВ (Выпадающее) === */
+    /* === МЕНЮ КАНАЛОВ === */
     .channels-popup {
       display: none;
       position: absolute;
@@ -272,19 +272,235 @@
     }
     .channel-link:hover { background: rgba(255,255,255,0.15); }
 
-    /* === ДЕКОР (Рыбки, Улитка) === */
-    .fish, .snail { position: fixed; z-index: 500; pointer-events: auto; cursor: pointer; }
-    .fish { width: 40px; transition: transform 0.3s; }
-    .fish:hover { transform: scale(1.2); }
-    .snail { width: 35px; bottom: 20px; left: 20px; font-size: 30px; transition: transform 0.3s; }
-    .snail:hover { transform: scale(1.2) rotate(-10deg); }
+    /* === МОДАЛЬНОЕ ОКНО ДОНАТОВ === */
+    .donate-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      z-index: 3000;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .donate-modal.show {
+      display: flex;
+      opacity: 1;
+    }
+    .donate-content {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 25px;
+      max-width: 320px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      position: relative;
+    }
+    .donate-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      font-size: 24px;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+    .donate-close:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+    .donate-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+    .donate-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 12px 15px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: white;
+    }
+    .donate-option:hover {
+      background: rgba(255,255,255,0.1);
+      transform: translateX(5px);
+    }
+    .donate-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .donate-icon.sbp { background: linear-gradient(135deg, #00d4aa, #00b894); }
+    .donate-icon.ton { background: linear-gradient(135deg, #0088cc, #0099ff); }
+    .donate-text {
+      flex: 1;
+      text-align: left;
+    }
+    .donate-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .donate-hint {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+    }
+    .ton-wallet {
+      background: rgba(0, 136, 204, 0.1);
+      border: 1px solid rgba(0, 136, 204, 0.3);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+      font-family: monospace;
+      font-size: 11px;
+      word-break: break-all;
+      color: #00bfff;
+    }
 
-    /* Адаптив под мобилки */
+    /* === РЫБКИ И УЛИТКА === */
+    .fish {
+      position: fixed;
+      width: 50px;
+      height: 35px;
+      pointer-events: auto;
+      cursor: pointer;
+      z-index: 999;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      transition: transform 0.3s;
+    }
+    .fish:hover {
+      filter: drop-shadow(0 4px 8px rgba(100, 200, 255, 0.5));
+      transform: scale(1.1);
+    }
+    .fish-body {
+      transform-origin: center;
+    }
+    .fish-dialog {
+      position: fixed;
+      background: linear-gradient(135deg, #fff, #f0f0f0);
+      color: #333;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(255, 107, 107, 0.4);
+      opacity: 0;
+      transform: translateY(10px) scale(0.9);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .fish-dialog::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 8px 8px 0;
+      border-style: solid;
+      border-color: #fff transparent transparent transparent;
+    }
+    .fish-dialog.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .snail {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      pointer-events: auto;
+      cursor: pointer;
+      z-index: 9998;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      transition: transform 0.3s;
+      font-size: 35px;
+    }
+    .snail:hover {
+      transform: scale(1.2);
+    }
+    .snail-trail {
+      position: fixed;
+      width: 15px;
+      height: 5px;
+      background: rgba(200, 220, 200, 0.15);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9997;
+      animation: fadeTrail 5s forwards;
+    }
+    @keyframes fadeTrail {
+      to { opacity: 0; transform: scale(0.5); }
+    }
+    .snail-dialog {
+      position: fixed;
+      background: rgba(255, 255, 255, 0.95);
+      color: #333;
+      padding: 12px 18px;
+      border-radius: 15px;
+      font-size: 13px;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      max-width: 200px;
+      text-align: center;
+    }
+    .snail-dialog::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid rgba(255, 255, 255, 0.95);
+    }
+    .snail-dialog.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Адаптив */
     @media (max-width: 480px) {
       .play-button { width: 90px; height: 90px; }
       .main-title { font-size: 24px; }
       .btn { max-width: 220px; padding: 10px 20px; font-size: 13px; }
       .frog-link { padding: 8px 15px; font-size: 13px; }
+      .donate-content { padding: 20px; }
     }
   </style>
 </head>
@@ -337,11 +553,11 @@
     </div>
 
     <!-- Кнопка доната -->
-    <button class="btn btn-donate" onclick="window.open('https://pressf.com/radiogram/donate', '_blank')">
+    <button class="btn btn-donate" onclick="openDonateModal()">
       ❤️ Помочь разработчику
     </button>
 
-    <!-- ЛЯГУШКА (Ссылка на чат) -->
+    <!-- ЛЯГУШКА -->
     <a href="https://t.me/chatradiogram" target="_blank" class="frog-link">
       <svg class="frog-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
       <span>Перейти в чат</span>
@@ -349,20 +565,57 @@
 
   </div>
 
-  <!-- Декор: Рыбки -->
-  <a href="https://t.me/Gram_zonebot?start=679bcd47c630af4776e08ffb" class="fish" id="fish1" style="top: 15%; left: 10%;">
-    <svg viewBox="0 0 50 35"><g><ellipse cx="22" cy="17.5" rx="14" ry="10" fill="#ff6b35"/><polygon points="36,17.5 50,10 50,25" fill="#ff6b35"/><circle cx="16" cy="14" r="3" fill="#fff"/><circle cx="16" cy="14" r="1.5" fill="#000"/></g></svg>
-  </a>
-  <div class="fish" id="fish2" style="bottom: 20%; right: 15%;">
-    <svg viewBox="0 0 50 35"><g><ellipse cx="22" cy="17.5" rx="14" ry="10" fill="#4ecdc4"/><polygon points="36,17.5 50,10 50,25" fill="#4ecdc4"/><circle cx="16" cy="14" r="3" fill="#fff"/><circle cx="16" cy="14" r="1.5" fill="#000"/></g></svg>
+  <!-- МОДАЛЬНОЕ ОКНО ДОНАТОВ -->
+  <div class="donate-modal" id="donateModal" onclick="closeDonateModalOutside(event)">
+    <div class="donate-content" onclick="event.stopPropagation()">
+      <button class="donate-close" onclick="closeDonateModal()">×</button>
+      <div class="donate-title">💝 Поддержать проект</div>
+      
+      <a href="https://web.tribute.tg/d/Iuo" target="_blank" class="donate-option">
+        <div class="donate-icon sbp">💳</div>
+        <div class="donate-text">
+          <div class="donate-label">СБП (Tribute)</div>
+          <div class="donate-hint">Быстрый перевод</div>
+        </div>
+      </a>
+
+      <a href="https://pressf.com/radiogram/donate" target="_blank" class="donate-option">
+        <div class="donate-icon sbp">🎯</div>
+        <div class="donate-text">
+          <div class="donate-label">СБП (Press F)</div>
+          <div class="donate-hint">Альтернативный способ</div>
+        </div>
+      </a>
+
+      <div class="donate-option" onclick="copyTonWallet()">
+        <div class="donate-icon ton">💎</div>
+        <div class="donate-text">
+          <div class="donate-label">TON Кошелёк</div>
+          <div class="donate-hint">Нажмите чтобы скопировать</div>
+        </div>
+      </div>
+      <div class="ton-wallet" id="tonWallet" style="display:none;">
+        UQDNJZb6MPyqP1P1JONmZ5Que0_UMA1n4k3ugAYcVEv7XH3Q
+      </div>
+    </div>
   </div>
 
-  <!-- Декор: Улитка -->
+  <!-- Рыбки -->
+  <a href="https://t.me/Gram_zonebot?start=679bcd47c630af4776e08ffb" class="fish" id="fish1" style="top: 15%; left: -50px;">
+    <svg viewBox="0 0 50 35"><g class="fish-body"><ellipse cx="22" cy="17.5" rx="14" ry="10" fill="#ff6b35"/><ellipse cx="34" cy="17.5" rx="10" ry="7" fill="#ff8c42"/><polygon points="42,17.5 50,12 50,23" fill="#ff6b35"/><circle cx="18" cy="14" r="3" fill="#fff"/><circle cx="18" cy="14" r="1.5" fill="#000"/><path d="M 22 17.5 Q 28 10 36 13" stroke="#ff8c42" stroke-width="1.5" fill="none"/></g></svg>
+  </a>
+  <div class="fish-dialog" id="fishDialog">хочешь поиграть?</div>
+
+  <div class="fish" id="fish2" style="top: 70%; left: -50px;">
+    <svg viewBox="0 0 50 35"><g class="fish-body"><ellipse cx="22" cy="17.5" rx="14" ry="10" fill="#0077be"/><ellipse cx="34" cy="17.5" rx="10" ry="7" fill="#1e90ff"/><polygon points="42,17.5 50,12 50,23" fill="#0077be"/><circle cx="18" cy="14" r="3" fill="#fff"/><circle cx="18" cy="14" r="1.5" fill="#000"/><circle cx="30" cy="20" r="2" fill="#000080"/><path d="M 22 17.5 Q 28 10 36 13" stroke="#1e90ff" stroke-width="1.5" fill="none"/></g></svg>
+  </div>
+
+  <!-- Улитка -->
   <div class="snail" id="snail" onclick="snailTalk()">🐌</div>
-  <div id="snail-speech" style="position:fixed; bottom:60px; left:20px; background:white; color:#333; padding:5px 10px; border-radius:10px; font-size:12px; display:none; z-index:600;"></div>
+  <div class="snail-dialog" id="snailDialog"></div>
 
   <script>
-    // === ЛОГИКА ПЛЕЕРА ===
+    // === ПЛЕЕР ===
     const audio = new Audio('https://radiogram.su/listen/radio_gram/radio.mp3');
     let isPlaying = false;
     const playBtn = document.getElementById('play-btn');
@@ -412,10 +665,31 @@
         document.getElementById('timer-display').textContent = `💤 Осталось: ${m}:${s < 10 ? '0'+s : s}`;
         if (sec <= 0) {
           clearInterval(timerInterval);
-          togglePlay(); // Выключаем радио
+          togglePlay();
           document.getElementById('timer-display').textContent = '💤 Спокойной ночи!';
         }
       }, 1000);
+    }
+
+    // === МОДАЛЬНОЕ ОКНО ДОНАТОВ ===
+    function openDonateModal() {
+      document.getElementById('donateModal').classList.add('show');
+      document.getElementById('tonWallet').style.display = 'none';
+    }
+    function closeDonateModal() {
+      document.getElementById('donateModal').classList.remove('show');
+    }
+    function closeDonateModalOutside(e) {
+      if (e.target.id === 'donateModal') closeDonateModal();
+    }
+    function copyTonWallet() {
+      const wallet = 'UQDNJZb6MPyqP1P1JONmZ5Que0_UMA1n4k3ugAYcVEv7XH3Q';
+      navigator.clipboard.writeText(wallet).then(() => {
+        document.getElementById('tonWallet').style.display = 'block';
+        setTimeout(() => {
+          document.getElementById('tonWallet').style.display = 'none';
+        }, 3000);
+      });
     }
 
     // === ФОН ===
@@ -425,7 +699,7 @@
     let imgIndex = (hour >= 5 && hour < 12) ? 0 : (hour >= 12 && hour < 17) ? 1 : 2;
     bg.style.backgroundImage = `url('${images[imgIndex]}')`;
 
-    // === СЧЕТЧИК СЛУШАТЕЛЕЙ ===
+    // === СЧЁТЧИКИ ===
     async function updateStats() {
       try {
         const res = await fetch('https://radiogram.su/api/nowplaying/radio_gram');
@@ -436,7 +710,6 @@
     setInterval(updateStats, 30000);
     updateStats();
 
-    // === СЧЕТЧИК ПОСЕТИТЕЛЕЙ (Локальный) ===
     const visitorsEl = document.getElementById('visitor-count');
     const stored = localStorage.getItem('visitors');
     const today = new Date().toDateString();
@@ -446,14 +719,100 @@
     localStorage.setItem('visitors', JSON.stringify(count));
     visitorsEl.textContent = count.count;
 
-    // === УЛИТКА ===
-    const phrases = ["Не спеши!", "Я устал...", "Слушай музыку!"];
-    function snailTalk() {
-      const speech = document.getElementById('snail-speech');
-      speech.textContent = phrases[Math.floor(Math.random() * phrases.length)];
-      speech.style.display = 'block';
-      setTimeout(() => speech.style.display = 'none', 2000);
+    // === РЫБКИ ===
+    const fish1 = document.getElementById('fish1');
+    const fish2 = document.getElementById('fish2');
+    const fishDialog = document.getElementById('fishDialog');
+    
+    function animateFish(fish, startX, startY, showDialog = false) {
+      let x = startX;
+      let y = startY;
+      let speedX = 0.5;
+      let speedY = 0.2;
+      let lastDialogTime = Date.now();
+      
+      function swim() {
+        x += speedX;
+        y += speedY + Math.sin(Date.now() / 1000) * 0.3;
+        
+        if (x <= -60 || x >= window.innerWidth - 20) speedX *= -1;
+        if (y <= 40 || y >= window.innerHeight - 40) speedY *= -1;
+        
+        fish.style.left = x + 'px';
+        fish.style.top = y + 'px';
+        fish.style.transform = `scaleX(${speedX > 0 ? 1 : -1})`;
+        
+        if (showDialog && fish === fish1 && fishDialog) {
+          const now = Date.now();
+          if (now - lastDialogTime > 15000 && Math.random() < 0.001) {
+            fishDialog.style.left = (x + 25) + 'px';
+            fishDialog.style.top = (y - 40) + 'px';
+            fishDialog.classList.add('visible');
+            lastDialogTime = now;
+            setTimeout(() => fishDialog.classList.remove('visible'), 3000);
+          }
+          if (fishDialog.classList.contains('visible')) {
+            fishDialog.style.left = (x + 25) + 'px';
+            fishDialog.style.top = (y - 40) + 'px';
+          }
+        }
+        requestAnimationFrame(swim);
+      }
+      swim();
     }
+    animateFish(fish1, Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.3, true);
+    animateFish(fish2, Math.random() * window.innerWidth, window.innerHeight * 0.6 + Math.random() * 100, false);
+
+    // === УЛИТКА ===
+    const snail = document.getElementById('snail');
+    const snailDialog = document.getElementById('snailDialog');
+    const snailPhrases = ['не трогай меня! Я просто ползу 🐌', 'я устала, я ухожу! 😴', 'на что я трачу свою жизнь ((( 💭'];
+    let snailX = 20, snailY = window.innerHeight - 60, snailDirection = 0, lastTrailTime = Date.now();
+    
+    function moveSnail() {
+      const speed = 0.3;
+      const margin = 20;
+      const maxX = window.innerWidth - 60;
+      const maxY = window.innerHeight - 60;
+      switch(snailDirection) {
+        case 0: snailX += speed; if (snailX >= maxX) snailDirection = 1; break;
+        case 1: snailY -= speed; if (snailY <= margin) snailDirection = 2; break;
+        case 2: snailX -= speed; if (snailX <= margin) snailDirection = 3; break;
+        case 3: snailY += speed; if (snailY >= maxY) snailDirection = 0; break;
+      }
+      snail.style.left = snailX + 'px';
+      snail.style.bottom = (window.innerHeight - snailY - 40) + 'px';
+      const now = Date.now();
+      if (now - lastTrailTime > 5000) {
+        createSnailTrail(snailX + 20, snailY + 20);
+        lastTrailTime = now;
+      }
+      requestAnimationFrame(moveSnail);
+    }
+    function createSnailTrail(x, y) {
+      const trail = document.createElement('div');
+      trail.className = 'snail-trail';
+      trail.style.left = x + 'px';
+      trail.style.top = y + 'px';
+      document.body.appendChild(trail);
+      setTimeout(() => trail.remove(), 5000);
+    }
+    function snailTalk() {
+      const phrase = snailPhrases[Math.floor(Math.random() * snailPhrases.length)];
+      snailDialog.textContent = phrase;
+      snailDialog.classList.add('show');
+      function updateDialogPos() {
+        if (snailDialog.classList.contains('show')) {
+          const rect = snail.getBoundingClientRect();
+          snailDialog.style.left = (rect.left + rect.width / 2) + 'px';
+          snailDialog.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
+          requestAnimationFrame(updateDialogPos);
+        }
+      }
+      updateDialogPos();
+      setTimeout(() => snailDialog.classList.remove('show'), 3000);
+    }
+    moveSnail();
   </script>
 </body>
 </html>
