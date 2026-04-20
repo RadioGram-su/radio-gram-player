@@ -6,6 +6,20 @@
   <title>Radio Gram — Deep House & Melodic Techno Radio</title>
   <meta name="description" content="Слушай атмосферное радио Radio Gram. Электронная музыка: Deep House, Tech House, Chillout. Идеально для работы, кодинга и отдыха. Эфир 24/7.">
   
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript">
+      (function(m,e,t,r,i,k,a){
+          m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+          m[i].l=1*new Date();
+          for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+      })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=108652352', 'ym');
+
+      ym(108652352, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/108652352" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
+  
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
@@ -43,7 +57,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(0, 0, 0, 0.3);
     }
 
     /* Рыбки */
@@ -105,8 +119,9 @@
     /* Лягушка */
     .frog-container {
       position: fixed;
-      bottom: 150px;
-      left: 20px;
+      top: 50%;
+      left: calc(50% - 180px);
+      transform: translateY(-50%);
       width: 60px;
       height: 45px;
       pointer-events: auto;
@@ -117,7 +132,7 @@
     }
 
     .frog-container:hover {
-      transform: scale(1.1);
+      transform: translateY(-50%) scale(1.1);
       filter: drop-shadow(0 4px 8px rgba(100, 255, 100, 0.6));
     }
 
@@ -231,51 +246,96 @@
     }
 
     .play-button {
-      width: 100px;
-      height: 100px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
-      background: radial-gradient(circle at 50% 50%, #1a1a1a, #000000);
-      border: none;
+      background: radial-gradient(circle at 30% 30%, #2a2a2a, #0a0a0a);
+      border: 3px solid rgba(255, 255, 255, 0.1);
       cursor: pointer;
       margin: 0 auto 20px;
-      transition: all 0.3s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
       position: relative;
-      overflow: hidden;
+      overflow: visible;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease;
     }
 
     .play-button:hover {
       transform: scale(1.05);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
     }
 
     .play-button.playing {
-      box-shadow: 0 0 35px rgba(255, 60, 60, 0.6);
-      animation: pulse 2s infinite;
+      animation: colorPulse 4s ease-in-out infinite;
     }
 
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 30px rgba(255, 60, 60, 0.5); }
-      50% { box-shadow: 0 0 50px rgba(255, 80, 80, 0.8); }
+    @keyframes colorPulse {
+      0%, 100% { 
+        box-shadow: 0 0 30px rgba(255, 107, 107, 0.4), 0 10px 40px rgba(0, 0, 0, 0.5);
+        border-color: rgba(255, 107, 107, 0.3);
+      }
+      25% { 
+        box-shadow: 0 0 30px rgba(255, 193, 7, 0.4), 0 10px 40px rgba(0, 0, 0, 0.5);
+        border-color: rgba(255, 193, 7, 0.3);
+      }
+      50% { 
+        box-shadow: 0 0 30px rgba(76, 175, 80, 0.4), 0 10px 40px rgba(0, 0, 0, 0.5);
+        border-color: rgba(76, 175, 80, 0.3);
+      }
+      75% { 
+        box-shadow: 0 0 30px rgba(33, 150, 243, 0.4), 0 10px 40px rgba(0, 0, 0, 0.5);
+        border-color: rgba(33, 150, 243, 0.3);
+      }
     }
 
-    .gram-icon {
-      width: 45px;
-      height: 45px;
-      fill: none;
-      stroke: #ffffff;
-      stroke-width: 6;
-      stroke-linecap: round;
-      stroke-linejoin: round;
+    .play-icon {
+      width: 50px;
+      height: 50px;
+      fill: #ffffff;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      transition: all 0.3s;
     }
 
     .pause-icon {
-      width: 40px;
-      height: 40px;
+      width: 45px;
+      height: 45px;
       fill: #ffffff;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+
+    /* Эквалайзер */
+    .equalizer {
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 4px;
+      height: 40px;
+      margin: 15px auto 0;
+      padding: 0 10px;
+    }
+
+    .equalizer.active {
+      display: flex;
+    }
+
+    .equalizer-bar {
+      width: 6px;
+      background: linear-gradient(to top, #ff6b6b, #ffa500, #4ecdc4);
+      border-radius: 3px;
+      animation: equalize 0.8s ease-in-out infinite;
+      box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+    }
+
+    .equalizer-bar:nth-child(1) { animation-delay: 0s; height: 20px; }
+    .equalizer-bar:nth-child(2) { animation-delay: 0.1s; height: 30px; }
+    .equalizer-bar:nth-child(3) { animation-delay: 0.2s; height: 25px; }
+    .equalizer-bar:nth-child(4) { animation-delay: 0.3s; height: 35px; }
+    .equalizer-bar:nth-child(5) { animation-delay: 0.4s; height: 22px; }
+
+    @keyframes equalize {
+      0%, 100% { transform: scaleY(0.5); opacity: 0.7; }
+      50% { transform: scaleY(1); opacity: 1; }
     }
 
     .main-title {
@@ -284,11 +344,12 @@
       letter-spacing: 3px;
       margin-bottom: 6px;
       color: #fff;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
 
     .sub-title {
       font-size: 10px;
-      color: #888;
+      color: rgba(255,255,255,0.7);
       letter-spacing: 2px;
       margin-bottom: 15px;
     }
@@ -302,7 +363,7 @@
     }
 
     .listeners-count {
-      color: #4a9bc9;
+      color: rgba(255,255,255,0.8);
       font-size: 11px;
       margin-bottom: 15px;
       font-weight: bold;
@@ -317,25 +378,64 @@
       margin-top: 15px;
     }
 
-    .social-icons a,
     .social-icons button {
-      padding: 8px 16px;
-      border-radius: 20px;
+      padding: 10px 20px;
+      border-radius: 25px;
       background: rgba(26, 26, 26, 0.8);
       color: #fff;
-      text-decoration: none;
-      border: 1px solid #444;
+      border: 1px solid rgba(255,255,255,0.2);
       cursor: pointer;
       transition: all 0.3s;
-      font-size: 12px;
+      font-size: 13px;
       backdrop-filter: blur(5px);
     }
 
-    .social-icons a:hover,
     .social-icons button:hover {
       background: linear-gradient(135deg, #4a9bc9, #3a7ca5);
       border-color: #5aabc9;
       transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(74, 155, 201, 0.4);
+    }
+
+    /* Меню каналов */
+    .channels-menu {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: rgba(20, 20, 30, 0.95);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 15px;
+      padding: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 200px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+    }
+
+    .channels-menu.show {
+      display: flex;
+    }
+
+    .channels-menu a {
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      text-decoration: none;
+      transition: all 0.3s;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .channels-menu a:hover {
+      background: linear-gradient(135deg, #4a9bc9, #3a7ca5);
+      transform: translateX(5px);
     }
 
     .donate-button {
@@ -424,13 +524,14 @@
       width: 100%;
       max-width: 380px;
       background: rgba(10, 10, 10, 0.85);
-      border: 1px solid #333;
+      border: 1px solid rgba(255,255,255,0.1);
       border-radius: 16px;
       overflow: hidden;
       position: relative;
       z-index: 10;
       backdrop-filter: blur(10px);
       margin-top: 15px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     }
 
     .chat-header {
@@ -440,7 +541,7 @@
       font-size: 12px;
       font-weight: 700;
       letter-spacing: 2px;
-      border-bottom: 1px solid #333;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
       color: #4a9bc9;
     }
 
@@ -479,18 +580,22 @@
       background: rgba(17, 17, 17, 0.8);
       display: flex;
       gap: 6px;
-      border-top: 1px solid #333;
+      border-top: 1px solid rgba(255,255,255,0.1);
     }
 
     .chat-input-wrapper input {
       flex: 1;
       padding: 8px 12px;
       border-radius: 18px;
-      border: 1px solid #444;
+      border: 1px solid rgba(255,255,255,0.2);
       background: rgba(10, 10, 10, 0.6);
       color: #fff;
       font-size: 12px;
       outline: none;
+    }
+
+    .chat-input-wrapper input:focus {
+      border-color: #4a9bc9;
     }
 
     .chat-input-wrapper button {
@@ -535,10 +640,10 @@
     @media (max-width: 600px) {
       body { padding: 12px; }
       .main-title { font-size: 24px; }
-      .play-button { width: 90px; height: 90px; }
+      .play-button { width: 100px; height: 100px; }
       .chat-messages { height: 200px; }
       .chat-container { max-width: 100%; }
-      .frog-container { bottom: 120px; left: 10px; }
+      .frog-container { left: calc(50% - 150px); }
       .snail { bottom: 15px; left: 15px; font-size: 30px; }
     }
   </style>
@@ -562,12 +667,18 @@
 
   <div class="player-wrapper">
     <button class="play-button" id="playBtn" aria-label="Play/Pause">
-      <svg class="gram-icon" viewBox="0 0 64 64">
-        <path d="M 14 22 L 32 52 L 50 22" />
-        <path d="M 14 22 L 50 22" />
-        <path d="M 32 22 L 32 37" />
+      <svg class="play-icon" viewBox="0 0 64 64">
+        <path d="M 20 12 L 52 32 L 20 52 Z" />
       </svg>
     </button>
+    
+    <div class="equalizer" id="equalizer">
+      <div class="equalizer-bar"></div>
+      <div class="equalizer-bar"></div>
+      <div class="equalizer-bar"></div>
+      <div class="equalizer-bar"></div>
+      <div class="equalizer-bar"></div>
+    </div>
     
     <div class="main-title">GRAM</div>
     <div class="sub-title">RADIO STREAM</div>
@@ -575,11 +686,12 @@
     <div class="listeners-count">🔉 Слушателей: <span id="listenerCount">0</span></div>
 
     <div class="social-icons">
-      <a href="https://www.youtube.com/@blogcheloveka" target="_blank">📺 YouTube</a>
-      <a href="https://t.me/blogchelovecka" target="_blank">💬 Личный TG</a>
-      <a href="https://t.me/gramradiochill" target="_blank">🎵 Радио TG</a>
-      <button onclick="alert('Каналы доступны в описании')">📢 Наши каналы</button>
-      <a href="https://radiogram.su" target="_blank">🌐 Веб-сайт</a>
+      <button onclick="toggleChannelsMenu()">📢 Наши каналы</button>
+      <div class="channels-menu" id="channelsMenu">
+        <a href="https://www.youtube.com/@blogcheloveka" target="_blank">📺 YouTube</a>
+        <a href="https://t.me/blogchelovecka" target="_blank">💬 Личный TG</a>
+        <a href="https://t.me/gramradiochill" target="_blank">🎵 Радио TG</a>
+      </div>
     </div>
 
     <button onclick="openDonateModal()" class="donate-button">❤️ Помочь разработчику</button>
@@ -654,7 +766,11 @@
     let isPlaying = false;
     const playBtn = document.getElementById('playBtn');
     const statusText = document.getElementById('statusText');
+    const equalizer = document.getElementById('equalizer');
     const STREAM_URL = 'https://radiogram.su/listen/radio_gram/radio.mp3';
+
+    const playIconSVG = '<svg class="play-icon" viewBox="0 0 64 64"><path d="M 20 12 L 52 32 L 20 52 Z" /></svg>';
+    const pauseIconSVG = '<svg class="pause-icon" viewBox="0 0 64 64"><rect x="20" y="14" width="10" height="36" rx="2"/><rect x="34" y="14" width="10" height="36" rx="2"/></svg>';
 
     playBtn.addEventListener('click', togglePlayback);
 
@@ -669,7 +785,8 @@
           await audio.play();
           isPlaying = true;
           playBtn.classList.add('playing');
-          playBtn.innerHTML = '<rect class="pause-icon" x="22" y="14" width="8" height="36" rx="2"/><rect class="pause-icon" x="34" y="14" width="8" height="36" rx="2"/>';
+          playBtn.innerHTML = pauseIconSVG;
+          equalizer.classList.add('active');
           statusText.textContent = '▶️ СЕЙЧАС ИГРАЕТ';
         } catch (err) {
           statusText.textContent = '❌ Ошибка подключения';
@@ -678,10 +795,26 @@
         audio.pause();
         isPlaying = false;
         playBtn.classList.remove('playing');
-        playBtn.innerHTML = '<svg class="gram-icon" viewBox="0 0 64 64"><path d="M 14 22 L 32 52 L 50 22" /><path d="M 14 22 L 50 22" /><path d="M 32 22 L 32 37" /></svg>';
+        playBtn.innerHTML = playIconSVG;
+        equalizer.classList.remove('active');
         statusText.textContent = '⏸ ПАУЗА';
       }
     }
+
+    // Меню каналов
+    function toggleChannelsMenu() {
+      const menu = document.getElementById('channelsMenu');
+      menu.classList.toggle('show');
+    }
+
+    // Закрыть меню при клике вне его
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('channelsMenu');
+      const btn = e.target.closest('button[onclick="toggleChannelsMenu()"]');
+      if (!btn && !menu.contains(e.target)) {
+        menu.classList.remove('show');
+      }
+    });
 
     // Счетчик слушателей
     async function updateListenerCount() {
@@ -738,7 +871,6 @@
         fish.style.top = y + 'px';
         fish.style.transform = `scaleX(${speedX > 0 ? 1 : -1})`;
         
-        // Показываем диалог для первой рыбки
         if (showDialog && fish === fish1 && fishDialog) {
           const now = Date.now();
           if (now - lastDialogTime > 15000 && Math.random() < 0.001) {
@@ -752,7 +884,6 @@
             }, 3000);
           }
           
-          // Обновляем позицию диалога если он виден
           if (fishDialog.classList.contains('visible')) {
             fishDialog.style.left = (x + 25) + 'px';
             fishDialog.style.top = (y - 40) + 'px';
@@ -778,7 +909,7 @@
     
     let snailX = 20;
     let snailY = window.innerHeight - 60;
-    let snailDirection = 0; // 0: right, 1: up, 2: left, 3: down
+    let snailDirection = 0;
     let lastTrailTime = Date.now();
     
     function moveSnail() {
@@ -787,21 +918,20 @@
       const maxX = window.innerWidth - 60;
       const maxY = window.innerHeight - 60;
       
-      // Движение по периметру
       switch(snailDirection) {
-        case 0: // вправо
+        case 0:
           snailX += speed;
           if (snailX >= maxX) snailDirection = 1;
           break;
-        case 1: // вверх
+        case 1:
           snailY -= speed;
           if (snailY <= margin) snailDirection = 2;
           break;
-        case 2: // влево
+        case 2:
           snailX -= speed;
           if (snailX <= margin) snailDirection = 3;
           break;
-        case 3: // вниз
+        case 3:
           snailY += speed;
           if (snailY >= maxY) snailDirection = 0;
           break;
@@ -810,7 +940,6 @@
       snail.style.left = snailX + 'px';
       snail.style.bottom = (window.innerHeight - snailY - 40) + 'px';
       
-      // Создаем след
       const now = Date.now();
       if (now - lastTrailTime > 5000) {
         createSnailTrail(snailX + 20, snailY + 20);
@@ -826,11 +955,9 @@
       trail.style.left = x + 'px';
       trail.style.top = y + 'px';
       document.body.appendChild(trail);
-      
       setTimeout(() => trail.remove(), 5000);
     }
     
-    // Клик по улитке
     snail.addEventListener('click', () => {
       const phrase = snailPhrases[Math.floor(Math.random() * snailPhrases.length)];
       snailDialog.textContent = phrase;
@@ -905,7 +1032,6 @@
         clearInterval(sleepInterval);
         sleepInterval = null;
       }
-      sleepTimeRemaining = 0;
     }
 
     // Динамический фон
@@ -927,6 +1053,9 @@
       const img = new Image();
       img.onload = () => {
         bg.style.backgroundImage = `url('${beachImages[index]}')`;
+      };
+      img.onerror = () => {
+        bg.style.background = 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)';
       };
       img.src = beachImages[index];
     }
