@@ -1085,8 +1085,10 @@
           playBtn.classList.add('playing');
           eq.classList.add('active');
           status.textContent = '▶️ Сейчас играет';
-          // Запуск аудио контекста для визуализатора
-          initAudioContext();
+          // Инициализация аудио контекста при первом запуске
+          if (vizMode === 'visual') {
+            initAudioContext();
+          }
         } catch (err) {
           console.error('Play error:', err);
           status.textContent = '❌ Нажмите ещё раз';
@@ -1335,23 +1337,27 @@
     let speed = 1;
     let particles = [];
     let animationId = null;
+    let audioContextInitialized = false;
 
-    // Инициализация Audio Context (требует действия пользователя)
+    // Инициализация Audio Context (только один раз!)
     function initAudioContext() {
-      if (audioContext) return;
+      if (audioContextInitialized) return;
       
       try {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioContext.createAnalyser();
         analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.8;
         
+        // Создаем источник ТОЛЬКО ОДИН РАЗ
         source = audioContext.createMediaElementSource(audio);
         source.connect(analyser);
         analyser.connect(audioContext.destination);
         
         dataArray = new Uint8Array(analyser.frequencyBinCount);
+        audioContextInitialized = true;
         
-        console.log('Audio context initialized');
+        console.log('Audio context initialized successfully');
       } catch(e) {
         console.error('Audio context error:', e);
       }
@@ -1371,7 +1377,11 @@
       
       if (mode === 'visual') {
         resizeCanvas();
-        if (isPlaying && analyser) {
+        // Инициализируем аудио контекст при переключении в визуальный режим
+        if (isPlaying && !audioContextInitialized) {
+          initAudioContext();
+        }
+        if (isPlaying && audioContextInitialized) {
           startVisualization();
         }
       } else {
@@ -1390,6 +1400,10 @@
     // Запуск визуализации
     function startVisualization() {
       if (animationId) return;
+      
+      if (!audioContextInitialized) {
+        initAudioContext();
+      }
       
       if (vizType === 'particles') {
         initParticles();
