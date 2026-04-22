@@ -126,6 +126,190 @@
       background: rgba(0, 0, 0, 0.3);
     }
 
+    /* === ВИЗУАЛИЗАТОР CANVAS === */
+    #visualizer-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      pointer-events: none;
+    }
+    #visualizer-canvas.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Затемнение фона при визуализаторе */
+    .ocean-background.visualizer-active::before {
+      background: rgba(0, 0, 0, 0.85);
+    }
+
+    /* Переключатель режимов */
+    .mode-switcher {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 2001;
+      display: flex;
+      gap: 6px;
+    }
+
+    .mode-btn {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .mode-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+    .mode-btn.active {
+      background: linear-gradient(135deg, #4a9bc9, #3a7ca5);
+      color: white;
+      border-color: rgba(74, 155, 201, 0.5);
+    }
+
+    /* Панель настроек визуализатора */
+    .viz-settings {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 10, 20, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 16px;
+      padding: 16px 20px;
+      z-index: 2002;
+      min-width: 280px;
+      max-width: 90vw;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    .viz-settings.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .viz-settings-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      text-align: center;
+      color: #4a9bc9;
+    }
+
+    .viz-setting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .viz-setting-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+    }
+    .viz-setting-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .viz-slider {
+      -webkit-appearance: none;
+      width: 100px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.2);
+      outline: none;
+    }
+    .viz-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #4a9bc9;
+      cursor: pointer;
+    }
+
+    .color-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .color-btn:hover, .color-btn.active {
+      border-color: white;
+      transform: scale(1.2);
+    }
+
+    .viz-modes {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 12px;
+    }
+    .viz-mode-btn {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .viz-mode-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    .viz-mode-btn.active {
+      background: #4a9bc9;
+      border-color: #4a9bc9;
+    }
+
+    /* Кнопка настроек */
+    .settings-toggle {
+      position: fixed;
+      bottom: 80px;
+      right: 70px;
+      z-index: 2001;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.7);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: none;
+    }
+    .settings-toggle.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .settings-toggle:hover {
+      background: rgba(255,255,255,0.15);
+      color: white;
+    }
+
+    /* === ОСТАЛЬНЫЕ СТИЛИ === */
     .top-widgets {
       position: fixed;
       top: 10px;
@@ -662,13 +846,84 @@
         font-size: 10px;
         padding: 6px 10px;
       }
+      .mode-switcher {
+        top: 8px;
+        left: 8px;
+      }
+      .mode-btn {
+        padding: 4px 8px;
+        font-size: 10px;
+      }
+      .viz-settings {
+        bottom: 70px;
+        padding: 12px 16px;
+        min-width: 240px;
+      }
+      .settings-toggle {
+        bottom: 70px;
+        right: 60px;
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+      }
     }
   </style>
 </head>
 <body>
 
+  <!-- ФОН -->
   <div class="ocean-background" id="bg"></div>
 
+  <!-- CANVAS ВИЗУАЛИЗАТОРА -->
+  <canvas id="visualizer-canvas"></canvas>
+
+  <!-- ПЕРЕКЛЮЧАТЕЛЬ РЕЖИМОВ -->
+  <div class="mode-switcher">
+    <button class="mode-btn active" id="mode-normal" onclick="setMode('normal')">🎵 Обычный</button>
+    <button class="mode-btn" id="mode-visual" onclick="setMode('visual')">🎨 Визуал</button>
+  </div>
+
+  <!-- КНОПКА НАСТРОЕК ВИЗУАЛИЗАТОРА -->
+  <button class="settings-toggle" id="settings-toggle" onclick="toggleVizSettings()">⚙️</button>
+
+  <!-- ПАНЕЛЬ НАСТРОЕК ВИЗУАЛИЗАТОРА -->
+  <div class="viz-settings" id="viz-settings">
+    <div class="viz-settings-title">⚙️ Настройки визуализатора</div>
+    
+    <div class="viz-setting">
+      <span class="viz-setting-label">Чувствительность</span>
+      <div class="viz-setting-control">
+        <input type="range" class="viz-slider" id="sensitivity-slider" min="0.5" max="3" step="0.1" value="1.5" oninput="updateSensitivity(this.value)">
+      </div>
+    </div>
+    
+    <div class="viz-setting">
+      <span class="viz-setting-label">Скорость</span>
+      <div class="viz-setting-control">
+        <input type="range" class="viz-slider" id="speed-slider" min="0.5" max="2" step="0.1" value="1" oninput="updateSpeed(this.value)">
+      </div>
+    </div>
+
+    <div class="viz-setting">
+      <span class="viz-setting-label">Цвет</span>
+      <div class="viz-setting-control">
+        <button class="color-btn active" style="background: #4a9bc9;" onclick="setColor('#4a9bc9', this)"></button>
+        <button class="color-btn" style="background: #ff6b6b;" onclick="setColor('#ff6b6b', this)"></button>
+        <button class="color-btn" style="background: #a855f7;" onclick="setColor('#a855f7', this)"></button>
+        <button class="color-btn" style="background: #22c55e;" onclick="setColor('#22c55e', this)"></button>
+        <button class="color-btn" style="background: #f59e0b;" onclick="setColor('#f59e0b', this)"></button>
+      </div>
+    </div>
+
+    <div class="viz-modes">
+      <button class="viz-mode-btn active" onclick="setVizMode('bars', this)">Столбики</button>
+      <button class="viz-mode-btn" onclick="setVizMode('waves', this)">Волны</button>
+      <button class="viz-mode-btn" onclick="setVizMode('circular', this)">Круг</button>
+      <button class="viz-mode-btn" onclick="setVizMode('particles', this)">Частицы</button>
+    </div>
+  </div>
+
+  <!-- ВЕРХНИЙ ПРАВЫЙ УГОЛ -->
   <div class="top-widgets">
     <div class="widget-item">
       👥 <span id="visitor-count">--</span>
@@ -685,6 +940,7 @@
     </div>
   </div>
 
+  <!-- ОСНОВНОЙ БЛОК -->
   <div class="player-wrapper">
     
     <button class="play-button" id="play-btn" onclick="togglePlay()">
@@ -750,6 +1006,7 @@
     OnlineRadioHub
   </a>
 
+  <!-- МОДАЛЬНОЕ ОКНО ДОНАТОВ -->
   <div class="donate-modal" id="donateModal" onclick="closeDonateModalOutside(event)">
     <div class="donate-content" onclick="event.stopPropagation()">
       <button class="donate-close" onclick="closeDonateModal()">×</button>
@@ -776,15 +1033,18 @@
     </div>
   </div>
 
+  <!-- Рыбка -->
   <a href="https://t.me/Gram_zonebot?start=679bcd47c630af4776e08ffb" class="fish" id="fish1" style="top: 15%; left: -50px;">
     <svg viewBox="0 0 50 35"><g class="fish-body"><ellipse cx="22" cy="17.5" rx="14" ry="10" fill="#ff6b35"/><ellipse cx="34" cy="17.5" rx="10" ry="7" fill="#ff8c42"/><polygon points="42,17.5 50,12 50,23" fill="#ff6b35"/><circle cx="18" cy="14" r="3" fill="#fff"/><circle cx="18" cy="14" r="1.5" fill="#000"/><path d="M 22 17.5 Q 28 10 36 13" stroke="#ff8c42" stroke-width="1.5" fill="none"/></g></svg>
   </a>
   <div class="fish-dialog" id="fishDialog">хочешь поиграть?</div>
 
+  <!-- Улитка -->
   <div class="snail" id="snail" onclick="snailTalk()">🐌</div>
   <div class="snail-dialog" id="snailDialog"></div>
 
   <script>
+    // === ПЛЕЕР ===
     const audio = new Audio('https://radiogram.su/listen/radio_gram/radio.mp3');
     let isPlaying = false;
     let previousTrack = '';
@@ -825,6 +1085,8 @@
           playBtn.classList.add('playing');
           eq.classList.add('active');
           status.textContent = '▶️ Сейчас играет';
+          // Запуск аудио контекста для визуализатора
+          initAudioContext();
         } catch (err) {
           console.error('Play error:', err);
           status.textContent = '❌ Нажмите ещё раз';
@@ -833,6 +1095,7 @@
       isPlaying = !isPlaying;
     }
 
+    // === ТРЕКИ ===
     async function updateTrackInfo() {
       try {
         const res = await fetch('https://radiogram.su/api/nowplaying/radio_gram');
@@ -847,7 +1110,6 @@
           trackName = artist ? `${artist} — ${title}` : title;
         }
         
-        // Если трек изменился
         if (trackName !== currentTrack && trackName !== 'Deep House Mix') {
           previousTrack = currentTrack;
           currentTrack = trackName;
@@ -873,6 +1135,7 @@
     setInterval(updateTrackInfo, 10000);
     updateTrackInfo();
 
+    // === СЛУШАТЕЛИ ===
     async function updateStats() {
       try {
         const res = await fetch('https://radiogram.su/api/nowplaying/radio_gram');
@@ -883,6 +1146,7 @@
     setInterval(updateStats, 30000);
     updateStats();
 
+    // === КАНАЛЫ ===
     function toggleChannels() {
       document.getElementById('channels-popup').classList.toggle('show');
     }
@@ -900,6 +1164,7 @@
       }
     });
 
+    // === ТАЙМЕР СНА ===
     let timerInterval;
     function toggleSleepMenu() {
       document.getElementById('sleep-menu').classList.toggle('show');
@@ -921,6 +1186,7 @@
       }, 1000);
     }
 
+    // === ДОНАТЫ ===
     function openDonateModal() {
       document.getElementById('donateModal').classList.add('show');
       document.getElementById('tonWallet').style.display = 'none';
@@ -941,12 +1207,14 @@
       });
     }
 
+    // === ФОН ===
     const images = ['images/i.jpg', 'images/8i.jpg', 'images/i2.jpg'];
     const bg = document.getElementById('bg');
     const hour = new Date().getHours();
     let imgIndex = (hour >= 5 && hour < 12) ? 0 : (hour >= 12 && hour < 17) ? 1 : 2;
     bg.style.backgroundImage = `url('${images[imgIndex]}')`;
 
+    // === СЧЁТЧИК ПОСЕТИТЕЛЕЙ ===
     const visitorsEl = document.getElementById('visitor-count');
     const stored = localStorage.getItem('visitors');
     const today = new Date().toDateString();
@@ -956,6 +1224,7 @@
     localStorage.setItem('visitors', JSON.stringify(count));
     visitorsEl.textContent = count.count;
 
+    // === РЫБКА ===
     const fish1 = document.getElementById('fish1');
     const fishDialog = document.getElementById('fishDialog');
     
@@ -996,6 +1265,7 @@
     }
     animateFish(fish1, Math.random() * window.innerWidth, Math.random() * window.innerHeight * 0.3);
 
+    // === УЛИТКА ===
     const snail = document.getElementById('snail');
     const snailDialog = document.getElementById('snailDialog');
     const snailPhrases = ['не трогай меня! Я просто ползу 🐌', 'я устала, я ухожу! 😴', 'на что я трачу свою жизнь ((( 💭'];
@@ -1047,6 +1317,362 @@
       setTimeout(() => snailDialog.classList.remove('show'), 3000);
     }
     moveSnail();
+
+    // ==========================================
+    // === ВИЗУАЛИЗАТОР АУДИО ===
+    // ==========================================
+    
+    let audioContext = null;
+    let analyser = null;
+    let dataArray = null;
+    let source = null;
+    let canvas = document.getElementById('visualizer-canvas');
+    let ctx = canvas.getContext('2d');
+    let vizMode = 'normal'; // 'normal' или 'visual'
+    let vizType = 'bars'; // 'bars', 'waves', 'circular', 'particles'
+    let vizColor = '#4a9bc9';
+    let sensitivity = 1.5;
+    let speed = 1;
+    let particles = [];
+    let animationId = null;
+
+    // Инициализация Audio Context (требует действия пользователя)
+    function initAudioContext() {
+      if (audioContext) return;
+      
+      try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        
+        source = audioContext.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+        
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+        
+        console.log('Audio context initialized');
+      } catch(e) {
+        console.error('Audio context error:', e);
+      }
+    }
+
+    // Переключение режимов
+    function setMode(mode) {
+      vizMode = mode;
+      
+      document.getElementById('mode-normal').classList.toggle('active', mode === 'normal');
+      document.getElementById('mode-visual').classList.toggle('active', mode === 'visual');
+      
+      canvas.classList.toggle('active', mode === 'visual');
+      bg.classList.toggle('visualizer-active', mode === 'visual');
+      
+      document.getElementById('settings-toggle').classList.toggle('show', mode === 'visual');
+      
+      if (mode === 'visual') {
+        resizeCanvas();
+        if (isPlaying && analyser) {
+          startVisualization();
+        }
+      } else {
+        stopVisualization();
+      }
+    }
+
+    // Ресайз canvas
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Запуск визуализации
+    function startVisualization() {
+      if (animationId) return;
+      
+      if (vizType === 'particles') {
+        initParticles();
+      }
+      
+      function animate() {
+        if (!analyser || vizMode !== 'visual') {
+          animationId = null;
+          return;
+        }
+        
+        analyser.getByteFrequencyData(dataArray);
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        switch(vizType) {
+          case 'bars':
+            drawBars();
+            break;
+          case 'waves':
+            drawWaves();
+            break;
+          case 'circular':
+            drawCircular();
+            break;
+          case 'particles':
+            drawParticles();
+            break;
+        }
+        
+        animationId = requestAnimationFrame(animate);
+      }
+      
+      animate();
+    }
+
+    function stopVisualization() {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // === РЕЖИМ: СТОЛБИКИ (Neon Bars) ===
+    function drawBars() {
+      const barCount = 64;
+      const barWidth = canvas.width / barCount;
+      const gap = 2;
+      
+      for (let i = 0; i < barCount; i++) {
+        const dataIndex = Math.floor(i * (dataArray.length / barCount));
+        const value = dataArray[dataIndex] * sensitivity;
+        const barHeight = (value / 255) * canvas.height * 0.8;
+        
+        const x = i * barWidth;
+        const y = canvas.height - barHeight;
+        
+        // Градиент
+        const gradient = ctx.createLinearGradient(x, y, x, canvas.height);
+        gradient.addColorStop(0, vizColor);
+        gradient.addColorStop(0.5, vizColor + '80');
+        gradient.addColorStop(1, vizColor + '20');
+        
+        ctx.fillStyle = gradient;
+        
+        // Скруглённые столбики
+        const radius = Math.min(barWidth / 2 - gap / 2, 5);
+        ctx.beginPath();
+        ctx.roundRect(x + gap / 2, y, barWidth - gap, barHeight, [radius, radius, 0, 0]);
+        ctx.fill();
+        
+        // Свечение
+        ctx.shadowColor = vizColor;
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+        // Отражение
+        const reflGradient = ctx.createLinearGradient(x, canvas.height, x, canvas.height + barHeight * 0.3);
+        reflGradient.addColorStop(0, vizColor + '40');
+        reflGradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = reflGradient;
+        ctx.fillRect(x + gap / 2, canvas.height, barWidth - gap, barHeight * 0.3);
+      }
+    }
+
+    // === РЕЖИМ: ВОЛНЫ (Waveform) ===
+    function drawWaves() {
+      const waveCount = 3;
+      const centerY = canvas.height / 2;
+      
+      for (let w = 0; w < waveCount; w++) {
+        const offset = w * 20;
+        const amplitude = (dataArray.reduce((a, b) => a + b, 0) / dataArray.length) * sensitivity * 0.5;
+        
+        ctx.beginPath();
+        ctx.strokeStyle = vizColor;
+        ctx.lineWidth = 3 - w * 0.5;
+        ctx.globalAlpha = 1 - w * 0.25;
+        
+        for (let x = 0; x < canvas.width; x++) {
+          const dataIndex = Math.floor((x / canvas.width) * dataArray.length);
+          const value = dataArray[dataIndex] || 0;
+          const y = centerY + Math.sin((x + offset + Date.now() * speed * 0.002) * 0.02) * amplitude * (1 + value / 255);
+          
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+      
+      // Точки на волне
+      for (let i = 0; i < 50; i++) {
+        const dataIndex = Math.floor(i * (dataArray.length / 50));
+        const value = dataArray[dataIndex] * sensitivity;
+        const x = (i / 50) * canvas.width;
+        const y = centerY + Math.sin((x + Date.now() * speed * 0.002) * 0.02) * (value / 255) * 100;
+        
+        ctx.beginPath();
+        ctx.arc(x, y, 2 + (value / 255) * 3, 0, Math.PI * 2);
+        ctx.fillStyle = vizColor;
+        ctx.fill();
+      }
+    }
+
+    // === РЕЖИМ: КРУГ (Circular) ===
+    function drawCircular() {
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const baseRadius = Math.min(canvas.width, canvas.height) * 0.2;
+      const barCount = 128;
+      
+      for (let i = 0; i < barCount; i++) {
+        const angle = (i / barCount) * Math.PI * 2;
+        const dataIndex = Math.floor(i * (dataArray.length / barCount));
+        const value = dataArray[dataIndex] * sensitivity;
+        const barLength = (value / 255) * 150;
+        
+        const x1 = centerX + Math.cos(angle) * baseRadius;
+        const y1 = centerY + Math.sin(angle) * baseRadius;
+        const x2 = centerX + Math.cos(angle) * (baseRadius + barLength);
+        const y2 = centerY + Math.sin(angle) * (baseRadius + barLength);
+        
+        ctx.beginPath();
+        ctx.strokeStyle = vizColor;
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = 0.5 + (value / 255) * 0.5;
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+      
+      // Центральный круг
+      const avgValue = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+      const pulseRadius = baseRadius * 0.8 + (avgValue / 255) * 20 * sensitivity;
+      
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, pulseRadius, 0, Math.PI * 2);
+      ctx.strokeStyle = vizColor;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Внутренний круг
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, pulseRadius * 0.5, 0, Math.PI * 2);
+      ctx.fillStyle = vizColor + '30';
+      ctx.fill();
+    }
+
+    // === РЕЖИМ: ЧАСТИЦЫ (Particles) ===
+    function initParticles() {
+      particles = [];
+      const count = 100;
+      
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2,
+          size: Math.random() * 3 + 1,
+          alpha: Math.random() * 0.5 + 0.5
+        });
+      }
+    }
+
+    function drawParticles() {
+      const avgValue = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+      const energy = (avgValue / 255) * sensitivity;
+      
+      particles.forEach((p, i) => {
+        // Движение зависит от энергии музыки
+        p.x += p.vx * speed * (1 + energy * 3);
+        p.y += p.vy * speed * (1 + energy * 3);
+        
+        // Отскок от краёв
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        
+        // Размер зависит от частоты
+        const dataIndex = Math.floor((i / particles.length) * dataArray.length);
+        const value = dataArray[dataIndex] || 0;
+        const size = p.size + (value / 255) * 5 * sensitivity;
+        
+        // Рисование частицы
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+        ctx.fillStyle = vizColor;
+        ctx.globalAlpha = p.alpha * (0.3 + energy * 0.7);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        
+        // Свечение для высоких значений
+        if (value > 128) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, size * 2, 0, Math.PI * 2);
+          ctx.fillStyle = vizColor + '30';
+          ctx.fill();
+        }
+        
+        // Соединительные линии между близкими частицами
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          if (dist < 100) {
+            ctx.beginPath();
+            ctx.strokeStyle = vizColor;
+            ctx.globalAlpha = (1 - dist / 100) * 0.3 * energy;
+            ctx.lineWidth = 1;
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+        }
+      });
+    }
+
+    // === НАСТРОЙКИ ВИЗУАЛИЗАТОРА ===
+    function toggleVizSettings() {
+      document.getElementById('viz-settings').classList.toggle('show');
+    }
+
+    function updateSensitivity(val) {
+      sensitivity = parseFloat(val);
+    }
+
+    function updateSpeed(val) {
+      speed = parseFloat(val);
+    }
+
+    function setColor(color, btn) {
+      vizColor = color;
+      document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function setVizMode(mode, btn) {
+      vizType = mode;
+      document.querySelectorAll('.viz-mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      if (mode === 'particles') {
+        initParticles();
+      }
+    }
+
+    // Закрытие настроек при клике вне
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.viz-settings') && !e.target.closest('.settings-toggle')) {
+        document.getElementById('viz-settings').classList.remove('show');
+      }
+    });
   </script>
 </body>
 </html>
