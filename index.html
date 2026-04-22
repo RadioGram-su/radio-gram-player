@@ -1045,7 +1045,10 @@
 
   <script>
     // === ПЛЕЕР ===
+    // ВАЖНО: crossOrigin="anonymous" обязателен для Web Audio API
     const audio = new Audio('https://radiogram.su/listen/radio_gram/radio.mp3');
+    audio.crossOrigin = "anonymous";
+    
     let isPlaying = false;
     let previousTrack = '';
     let currentTrack = '';
@@ -1081,13 +1084,17 @@
       } else {
         try {
           await audio.play();
+          // Инициализация аудио-контекста при первом запуске
+          if (!audioContextInitialized) {
+            await setupAudioVisualization();
+          }
           playBtn.innerHTML = '<svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
           playBtn.classList.add('playing');
           eq.classList.add('active');
           status.textContent = '▶️ Сейчас играет';
-          // Инициализация аудио контекста при первом запуске
-          if (vizMode === 'visual') {
-            initAudioContext();
+          
+          if (vizMode === 'visual' && audioContextInitialized) {
+            startVisualization();
           }
         } catch (err) {
           console.error('Play error:', err);
@@ -1321,7 +1328,7 @@
     moveSnail();
 
     // ==========================================
-    // === ВИЗУАЛИЗАТОР АУДИО ===
+    // === ВИЗУАЛИЗАТОР АУДИО (ИСПРАВЛЕННЫЙ) ===
     // ==========================================
     
     let audioContext = null;
@@ -1330,8 +1337,8 @@
     let source = null;
     let canvas = document.getElementById('visualizer-canvas');
     let ctx = canvas.getContext('2d');
-    let vizMode = 'normal'; // 'normal' или 'visual'
-    let vizType = 'bars'; // 'bars', 'waves', 'circular', 'particles'
+    let vizMode = 'normal';
+    let vizType = 'bars';
     let vizColor = '#4a9bc9';
     let sensitivity = 1.5;
     let speed = 1;
@@ -1339,12 +1346,18 @@
     let animationId = null;
     let audioContextInitialized = false;
 
-    // Инициализация Audio Context (только один раз!)
-    function initAudioContext() {
+    // Безопасная инициализация Web Audio API
+    async function setupAudioVisualization() {
       if (audioContextInitialized) return;
       
       try {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Браузеры часто создают контекст в состоянии 'suspended'
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume();
+        }
+        
         analyser = audioContext.createAnalyser();
         analyser.fftSize = 256;
         analyser.smoothingTimeConstant = 0.8;
@@ -1357,9 +1370,11 @@
         dataArray = new Uint8Array(analyser.frequencyBinCount);
         audioContextInitialized = true;
         
-        console.log('Audio context initialized successfully');
-      } catch(e) {
-        console.error('Audio context error:', e);
+        console.log('✅ Audio visualization ready');
+      } catch (e) {
+        console.error('❌ Audio context setup failed:', e);
+        // Если CORS блокирует, визуализатор не запустится, но музыка продолжит играть
+        status.textContent = '🎵 Музыка играет (визуал недоступен из-за CORS)';
       }
     }
 
@@ -1377,10 +1392,6 @@
       
       if (mode === 'visual') {
         resizeCanvas();
-        // Инициализируем аудио контекст при переключении в визуальный режим
-        if (isPlaying && !audioContextInitialized) {
-          initAudioContext();
-        }
         if (isPlaying && audioContextInitialized) {
           startVisualization();
         }
@@ -1399,11 +1410,7 @@
 
     // Запуск визуализации
     function startVisualization() {
-      if (animationId) return;
-      
-      if (!audioContextInitialized) {
-        initAudioContext();
-      }
+      if (animationId || !audioContextInitialized) return;
       
       if (vizType === 'particles') {
         initParticles();
@@ -1416,27 +1423,17 @@
         }
         
         analyser.getByteFrequencyData(dataArray);
-        
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         switch(vizType) {
-          case 'bars':
-            drawBars();
-            break;
-          case 'waves':
-            drawWaves();
-            break;
-          case 'circular':
-            drawCircular();
-            break;
-          case 'particles':
-            drawParticles();
-            break;
+          case 'bars': drawBars(); break;
+          case 'waves': drawWaves(); break;
+          case 'circular': drawCircular(); break;
+          case 'particles': drawParticles(); break;
         }
         
         animationId = requestAnimationFrame(animate);
       }
-      
       animate();
     }
 
@@ -1448,7 +1445,7 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    // === РЕЖИМ: СТОЛБИКИ (Neon Bars) ===
+    // === РЕЖИМ: СТОЛБИКИ ===
     function drawBars() {
       const barCount = 64;
       const barWidth = canvas.width / barCount;
@@ -1462,27 +1459,22 @@
         const x = i * barWidth;
         const y = canvas.height - barHeight;
         
-        // Градиент
         const gradient = ctx.createLinearGradient(x, y, x, canvas.height);
         gradient.addColorStop(0, vizColor);
         gradient.addColorStop(0.5, vizColor + '80');
         gradient.addColorStop(1, vizColor + '20');
         
         ctx.fillStyle = gradient;
-        
-        // Скруглённые столбики
         const radius = Math.min(barWidth / 2 - gap / 2, 5);
         ctx.beginPath();
         ctx.roundRect(x + gap / 2, y, barWidth - gap, barHeight, [radius, radius, 0, 0]);
         ctx.fill();
         
-        // Свечение
         ctx.shadowColor = vizColor;
         ctx.shadowBlur = 10;
         ctx.fill();
         ctx.shadowBlur = 0;
         
-        // Отражение
         const reflGradient = ctx.createLinearGradient(x, canvas.height, x, canvas.height + barHeight * 0.3);
         reflGradient.addColorStop(0, vizColor + '40');
         reflGradient.addColorStop(1, 'transparent');
@@ -1491,7 +1483,7 @@
       }
     }
 
-    // === РЕЖИМ: ВОЛНЫ (Waveform) ===
+    // === РЕЖИМ: ВОЛНЫ ===
     function drawWaves() {
       const waveCount = 3;
       const centerY = canvas.height / 2;
@@ -1510,18 +1502,13 @@
           const value = dataArray[dataIndex] || 0;
           const y = centerY + Math.sin((x + offset + Date.now() * speed * 0.002) * 0.02) * amplitude * (1 + value / 255);
           
-          if (x === 0) {
-            ctx.moveTo(x, y);
-          } else {
-            ctx.lineTo(x, y);
-          }
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
         }
-        
         ctx.stroke();
         ctx.globalAlpha = 1;
       }
       
-      // Точки на волне
       for (let i = 0; i < 50; i++) {
         const dataIndex = Math.floor(i * (dataArray.length / 50));
         const value = dataArray[dataIndex] * sensitivity;
@@ -1535,7 +1522,7 @@
       }
     }
 
-    // === РЕЖИМ: КРУГ (Circular) ===
+    // === РЕЖИМ: КРУГ ===
     function drawCircular() {
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
@@ -1563,7 +1550,6 @@
         ctx.globalAlpha = 1;
       }
       
-      // Центральный круг
       const avgValue = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
       const pulseRadius = baseRadius * 0.8 + (avgValue / 255) * 20 * sensitivity;
       
@@ -1573,18 +1559,16 @@
       ctx.lineWidth = 2;
       ctx.stroke();
       
-      // Внутренний круг
       ctx.beginPath();
       ctx.arc(centerX, centerY, pulseRadius * 0.5, 0, Math.PI * 2);
       ctx.fillStyle = vizColor + '30';
       ctx.fill();
     }
 
-    // === РЕЖИМ: ЧАСТИЦЫ (Particles) ===
+    // === РЕЖИМ: ЧАСТИЦЫ ===
     function initParticles() {
       particles = [];
       const count = 100;
-      
       for (let i = 0; i < count; i++) {
         particles.push({
           x: Math.random() * canvas.width,
@@ -1602,20 +1586,16 @@
       const energy = (avgValue / 255) * sensitivity;
       
       particles.forEach((p, i) => {
-        // Движение зависит от энергии музыки
         p.x += p.vx * speed * (1 + energy * 3);
         p.y += p.vy * speed * (1 + energy * 3);
         
-        // Отскок от краёв
         if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
         
-        // Размер зависит от частоты
         const dataIndex = Math.floor((i / particles.length) * dataArray.length);
         const value = dataArray[dataIndex] || 0;
         const size = p.size + (value / 255) * 5 * sensitivity;
         
-        // Рисование частицы
         ctx.beginPath();
         ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
         ctx.fillStyle = vizColor;
@@ -1623,7 +1603,6 @@
         ctx.fill();
         ctx.globalAlpha = 1;
         
-        // Свечение для высоких значений
         if (value > 128) {
           ctx.beginPath();
           ctx.arc(p.x, p.y, size * 2, 0, Math.PI * 2);
@@ -1631,7 +1610,6 @@
           ctx.fill();
         }
         
-        // Соединительные линии между близкими частицами
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dx = p.x - p2.x;
@@ -1656,32 +1634,20 @@
     function toggleVizSettings() {
       document.getElementById('viz-settings').classList.toggle('show');
     }
-
-    function updateSensitivity(val) {
-      sensitivity = parseFloat(val);
-    }
-
-    function updateSpeed(val) {
-      speed = parseFloat(val);
-    }
-
+    function updateSensitivity(val) { sensitivity = parseFloat(val); }
+    function updateSpeed(val) { speed = parseFloat(val); }
     function setColor(color, btn) {
       vizColor = color;
       document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
     }
-
     function setVizMode(mode, btn) {
       vizType = mode;
       document.querySelectorAll('.viz-mode-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      
-      if (mode === 'particles') {
-        initParticles();
-      }
+      if (mode === 'particles') initParticles();
     }
 
-    // Закрытие настроек при клике вне
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.viz-settings') && !e.target.closest('.settings-toggle')) {
         document.getElementById('viz-settings').classList.remove('show');
