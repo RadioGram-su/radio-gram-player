@@ -12,12 +12,11 @@
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://player.radiogram.su">
   
-  <!-- === ИКОНКИ ПРИЛОЖЕНИЯ (Сюда подставится твой логотип) === -->
+  <!-- === ИКОНКИ ПРИЛОЖЕНИЯ === -->
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
-  <!-- Цвет браузера будет черным, как приложение -->
   <meta name="theme-color" content="#000000">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -286,6 +285,13 @@
     }
     .btn-donate:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5); }
 
+    .btn-partners {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    .btn-partners:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5); }
+
     .frog-link {
       display: flex;
       align-items: center;
@@ -308,7 +314,7 @@
     }
     .frog-icon { width: 24px; height: 24px; fill: #4caf50; }
 
-    .channels-popup {
+    .channels-popup, .partners-popup {
       display: none;
       position: absolute;
       top: 100%;
@@ -322,9 +328,10 @@
       gap: 8px;
       z-index: 100;
       backdrop-filter: blur(10px);
+      min-width: 200px;
     }
-    .channels-popup.show { display: flex; }
-    .channel-link {
+    .channels-popup.show, .partners-popup.show { display: flex; }
+    .channel-link, .partner-link {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -334,8 +341,12 @@
       border-radius: 8px;
       font-size: 13px;
       background: rgba(255,255,255,0.05);
+      transition: all 0.3s;
     }
-    .channel-link:hover { background: rgba(255,255,255,0.15); }
+    .channel-link:hover, .partner-link:hover { 
+      background: rgba(255,255,255,0.15);
+      transform: translateX(5px);
+    }
 
     .donate-modal {
       display: none;
@@ -560,6 +571,37 @@
       pointer-events: auto;
     }
 
+    /* Партнёрская ссылка внизу справа */
+    .partner-badge {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(102, 126, 234, 0.9);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      z-index: 9999;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .partner-badge:hover {
+      background: rgba(102, 126, 234, 1);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    .partner-badge::before {
+      content: '🔗';
+      font-size: 14px;
+    }
+
     @media (max-width: 480px) {
       .play-button { width: 90px; height: 90px; }
       .main-title { font-size: 24px; }
@@ -568,6 +610,12 @@
       .donate-content { padding: 20px; }
       .fish-dialog { max-width: 120px; font-size: 10px; padding: 6px 10px; }
       .snail-dialog { max-width: 150px; font-size: 11px; }
+      .partner-badge { 
+        bottom: 15px; 
+        right: 15px; 
+        padding: 8px 12px;
+        font-size: 11px;
+      }
     }
   </style>
 </head>
@@ -620,6 +668,13 @@
       ❤️ Помочь разработчику
     </button>
 
+    <div style="position:relative; width:100%; display:flex; justify-content:center;">
+      <button class="btn btn-partners" onclick="togglePartners()">🤝 Наши Партнёры</button>
+      <div class="partners-popup" id="partners-popup">
+        <a href="https://onlineradiohub.ru/" target="_blank" class="partner-link"> OnlineRadioHub.ru</a>
+      </div>
+    </div>
+
     <a href="https://t.me/chatradiogram" target="_blank" class="frog-link">
       <svg class="frog-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
       <span>Перейти в чат</span>
@@ -631,6 +686,11 @@
     Radio Gram: Deep House, Techno, Lo-Fi, Reggae, Lounge & Chillout.
     Музыка для кодинга, работы, учёбы и медитации 24/7. GramCoin.
   </div>
+
+  <!-- Партнёрская ссылка внизу справа -->
+  <a href="https://onlineradiohub.ru/" target="_blank" class="partner-badge" title="OnlineRadioHub.ru">
+    OnlineRadioHub
+  </a>
 
   <div class="donate-modal" id="donateModal" onclick="closeDonateModalOutside(event)">
     <div class="donate-content" onclick="event.stopPropagation()">
@@ -753,9 +813,17 @@
     function toggleChannels() {
       document.getElementById('channels-popup').classList.toggle('show');
     }
+
+    function togglePartners() {
+      document.getElementById('partners-popup').classList.toggle('show');
+    }
+
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.btn-channels')) {
         document.getElementById('channels-popup').classList.remove('show');
+      }
+      if (!e.target.closest('.btn-partners')) {
+        document.getElementById('partners-popup').classList.remove('show');
       }
     });
 
