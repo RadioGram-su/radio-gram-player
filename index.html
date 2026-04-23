@@ -109,6 +109,7 @@
       overflow-x: hidden;
       position: relative;
       padding: 20px;
+      transition: background 0.8s ease;
     }
 
     .ocean-background {
@@ -117,13 +118,14 @@
       z-index: -1;
       background-size: cover;
       background-position: center;
-      transition: opacity 2s ease-in-out;
+      transition: opacity 1s ease;
     }
     .ocean-background::before {
       content: '';
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.3);
+      transition: background 0.8s ease;
     }
 
     /* === ВИЗУАЛИЗАТОР CANVAS === */
@@ -168,10 +170,7 @@
       align-items: center;
       gap: 4px;
     }
-    .mode-btn:hover {
-      background: rgba(255,255,255,0.1);
-      color: white;
-    }
+    .mode-btn:hover { background: rgba(255,255,255,0.1); color: white; }
     .mode-btn.active {
       background: linear-gradient(135deg, #4a9bc9, #3a7ca5);
       color: white;
@@ -195,10 +194,7 @@
       pointer-events: none;
       transition: all 0.3s ease;
     }
-    .viz-settings.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .viz-settings.show { opacity: 1; pointer-events: auto; }
 
     .viz-settings-title {
       font-size: 14px;
@@ -214,15 +210,8 @@
       justify-content: space-between;
       margin-bottom: 10px;
     }
-    .viz-setting-label {
-      font-size: 12px;
-      color: rgba(255,255,255,0.7);
-    }
-    .viz-setting-control {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .viz-setting-label { font-size: 12px; color: rgba(255,255,255,0.7); }
+    .viz-setting-control { display: flex; align-items: center; gap: 8px; }
 
     .viz-slider {
       -webkit-appearance: none;
@@ -249,10 +238,7 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .color-btn:hover, .color-btn.active {
-      border-color: white;
-      transform: scale(1.2);
-    }
+    .color-btn:hover, .color-btn.active { border-color: white; transform: scale(1.2); }
 
     .viz-modes {
       display: flex;
@@ -270,13 +256,48 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .viz-mode-btn:hover {
-      background: rgba(255,255,255,0.2);
+    .viz-mode-btn:hover { background: rgba(255,255,255,0.2); }
+    .viz-mode-btn.active { background: #4a9bc9; border-color: #4a9bc9; }
+
+    .btn-immersive {
+      margin-top: 15px;
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
-    .viz-mode-btn.active {
-      background: #4a9bc9;
-      border-color: #4a9bc9;
+    .btn-immersive:hover { background: linear-gradient(135deg, #2a2a4e, #26315e); transform: scale(1.02); }
+
+    .btn-exit-immersive {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
+    .btn-exit-immersive:hover { background: rgba(255,255,255,0.15); transform: scale(1.05); }
 
     .settings-toggle {
       position: fixed;
@@ -295,15 +316,8 @@
       transition: all 0.3s;
       display: none;
     }
-    .settings-toggle.show {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .settings-toggle:hover {
-      background: rgba(255,255,255,0.15);
-      color: white;
-    }
+    .settings-toggle.show { display: flex; align-items: center; justify-content: center; }
+    .settings-toggle:hover { background: rgba(255,255,255,0.15); color: white; }
 
     .top-widgets {
       position: fixed;
@@ -447,10 +461,7 @@
       white-space: nowrap;
     }
     
-    .track-box.previous {
-      background: rgba(30, 30, 40, 0.5);
-      opacity: 0.7;
-    }
+    .track-box.previous { background: rgba(30, 30, 40, 0.5); opacity: 0.7; }
     
     .track-box.current {
       background: linear-gradient(135deg, rgba(74, 155, 201, 0.3), rgba(58, 124, 165, 0.3));
@@ -458,20 +469,8 @@
       font-weight: 600;
     }
     
-    .track-label {
-      font-size: 9px;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 3px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    
-    .track-title {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    
+    .track-label { font-size: 9px; color: rgba(255,255,255,0.5); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .track-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .listeners-count { font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 10px; }
 
     .btn {
@@ -524,11 +523,7 @@
       backdrop-filter: blur(5px);
       transition: all 0.3s;
     }
-    .frog-link:hover {
-      background: rgba(46, 125, 50, 0.4);
-      transform: scale(1.02);
-      color: #a5d6a7;
-    }
+    .frog-link:hover { background: rgba(46, 125, 50, 0.4); transform: scale(1.02); color: #a5d6a7; }
     .frog-icon { width: 24px; height: 24px; fill: #4caf50; }
 
     .channels-popup, .partners-popup {
@@ -560,10 +555,7 @@
       background: rgba(255,255,255,0.05);
       transition: all 0.3s;
     }
-    .channel-link:hover, .partner-link:hover { 
-      background: rgba(255,255,255,0.15);
-      transform: translateX(5px);
-    }
+    .channel-link:hover, .partner-link:hover { background: rgba(255,255,255,0.15); transform: translateX(5px); }
 
     .donate-modal {
       display: none;
@@ -578,10 +570,7 @@
       opacity: 0;
       transition: opacity 0.3s;
     }
-    .donate-modal.show {
-      display: flex;
-      opacity: 1;
-    }
+    .donate-modal.show { display: flex; opacity: 1; }
     .donate-content {
       background: linear-gradient(135deg, #1a1a2e, #16213e);
       border: 1px solid rgba(255,255,255,0.1);
@@ -610,16 +599,8 @@
       border-radius: 50%;
       transition: all 0.2s;
     }
-    .donate-close:hover {
-      background: rgba(255,255,255,0.1);
-      color: white;
-    }
-    .donate-title {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 20px;
-      color: #fff;
-    }
+    .donate-close:hover { background: rgba(255,255,255,0.1); color: white; }
+    .donate-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; color: #fff; }
     .donate-option {
       display: flex;
       align-items: center;
@@ -634,10 +615,7 @@
       text-decoration: none;
       color: white;
     }
-    .donate-option:hover {
-      background: rgba(255,255,255,0.1);
-      transform: translateX(5px);
-    }
+    .donate-option:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); }
     .donate-icon {
       width: 32px;
       height: 32px;
@@ -649,19 +627,9 @@
     }
     .donate-icon.sbp { background: linear-gradient(135deg, #00d4aa, #00b894); }
     .donate-icon.ton { background: linear-gradient(135deg, #0088cc, #0099ff); }
-    .donate-text {
-      flex: 1;
-      text-align: left;
-    }
-    .donate-label {
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-    .donate-hint {
-      font-size: 11px;
-      color: rgba(255,255,255,0.6);
-    }
+    .donate-text { flex: 1; text-align: left; }
+    .donate-label { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .donate-hint { font-size: 11px; color: rgba(255,255,255,0.6); }
     .ton-wallet {
       background: rgba(0, 136, 204, 0.1);
       border: 1px solid rgba(0, 136, 204, 0.3);
@@ -684,13 +652,8 @@
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
       transition: transform 0.3s;
     }
-    .fish:hover {
-      filter: drop-shadow(0 4px 8px rgba(100, 200, 255, 0.5));
-      transform: scale(1.1);
-    }
-    .fish-body {
-      transform-origin: center;
-    }
+    .fish:hover { filter: drop-shadow(0 4px 8px rgba(100, 200, 255, 0.5)); transform: scale(1.1); }
+    .fish-body { transform-origin: center; }
     .fish-dialog {
       position: fixed;
       background: linear-gradient(135deg, #fff, #f0f0f0);
@@ -720,10 +683,7 @@
       border-style: solid;
       border-color: #fff transparent transparent transparent;
     }
-    .fish-dialog.visible {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
+    .fish-dialog.visible { opacity: 1; transform: translateY(0) scale(1); }
 
     .snail {
       position: fixed;
@@ -738,9 +698,7 @@
       transition: transform 0.3s;
       font-size: 35px;
     }
-    .snail:hover {
-      transform: scale(1.2);
-    }
+    .snail:hover { transform: scale(1.2); }
     .snail-trail {
       position: fixed;
       width: 15px;
@@ -751,9 +709,7 @@
       z-index: 9997;
       animation: fadeTrail 5s forwards;
     }
-    @keyframes fadeTrail {
-      to { opacity: 0; transform: scale(0.5); }
-    }
+    @keyframes fadeTrail { to { opacity: 0; transform: scale(0.5); } }
     .snail-dialog {
       position: fixed;
       background: rgba(255, 255, 255, 0.95);
@@ -783,10 +739,7 @@
       border-right: 10px solid transparent;
       border-top: 10px solid rgba(255, 255, 255, 0.95);
     }
-    .snail-dialog.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .snail-dialog.show { opacity: 1; pointer-events: auto; }
 
     .partner-badge {
       position: fixed;
@@ -808,14 +761,37 @@
       align-items: center;
       gap: 8px;
     }
-    .partner-badge:hover {
-      background: rgba(102, 126, 234, 1);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    .partner-badge:hover { background: rgba(102, 126, 234, 1); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6); }
+    .partner-badge::before { content: '🔗'; font-size: 14px; }
+
+    /* === РЕЖИМ ПОГРУЖЕНИЯ === */
+    body.immersive-mode .player-wrapper,
+    body.immersive-mode .top-widgets,
+    body.immersive-mode .mode-switcher,
+    body.immersive-mode .partner-badge,
+    body.immersive-mode .settings-toggle,
+    body.immersive-mode .viz-settings,
+    body.immersive-mode .fish,
+    body.immersive-mode .snail,
+    body.immersive-mode .ocean-background {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.6s ease;
     }
-    .partner-badge::before {
-      content: '🔗';
-      font-size: 14px;
+
+    body.immersive-mode {
+      background: radial-gradient(ellipse at bottom, #0f1420 0%, #05070a 100%);
+    }
+
+    body.immersive-mode #visualizer-canvas {
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      z-index: 100;
+    }
+
+    body.immersive-mode .btn-exit-immersive {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     @media (max-width: 480px) {
@@ -826,40 +802,14 @@
       .donate-content { padding: 20px; }
       .fish-dialog { max-width: 120px; font-size: 10px; padding: 6px 10px; }
       .snail-dialog { max-width: 150px; font-size: 11px; }
-      .partner-badge { 
-        bottom: 15px; 
-        right: 15px; 
-        padding: 8px 12px;
-        font-size: 11px;
-      }
-      .track-boxes {
-        flex-direction: column;
-        gap: 6px;
-      }
-      .track-box {
-        font-size: 10px;
-        padding: 6px 10px;
-      }
-      .mode-switcher {
-        top: 8px;
-        left: 8px;
-      }
-      .mode-btn {
-        padding: 4px 8px;
-        font-size: 10px;
-      }
-      .viz-settings {
-        bottom: 70px;
-        padding: 12px 16px;
-        min-width: 240px;
-      }
-      .settings-toggle {
-        bottom: 70px;
-        right: 60px;
-        width: 36px;
-        height: 36px;
-        font-size: 16px;
-      }
+      .partner-badge { bottom: 15px; right: 15px; padding: 8px 12px; font-size: 11px; }
+      .track-boxes { flex-direction: column; gap: 6px; }
+      .track-box { font-size: 10px; padding: 6px 10px; }
+      .mode-switcher { top: 8px; left: 8px; }
+      .mode-btn { padding: 4px 8px; font-size: 10px; }
+      .viz-settings { bottom: 70px; padding: 12px 16px; min-width: 240px; }
+      .settings-toggle { bottom: 70px; right: 60px; width: 36px; height: 36px; font-size: 16px; }
+      .btn-exit-immersive { top: 15px; right: 15px; padding: 8px 16px; font-size: 13px; }
     }
   </style>
 </head>
@@ -909,7 +859,11 @@
       <button class="viz-mode-btn" onclick="setVizMode('circular', this)">Круг</button>
       <button class="viz-mode-btn active" onclick="setVizMode('particles', this)">Частицы</button>
     </div>
+
+    <button class="btn-immersive" id="btn-immersive" onclick="toggleImmersive()">🌌 Режим погружения</button>
   </div>
+
+  <button class="btn-exit-immersive" id="btn-exit-immersive" onclick="toggleImmersive()">✕ Выйти</button>
 
   <div class="top-widgets">
     <div class="widget-item">
@@ -1031,6 +985,7 @@
     let isPlaying = false;
     let previousTrack = '';
     let currentTrack = '';
+    let isImmersive = false;
     const playBtn = document.getElementById('play-btn');
     const status = document.getElementById('status');
     const eq = document.getElementById('equalizer');
@@ -1063,17 +1018,12 @@
       } else {
         try {
           await audio.play();
-          if (!audioContextInitialized) {
-            await setupAudioVisualization();
-          }
+          if (!audioContextInitialized) await setupAudioVisualization();
           playBtn.innerHTML = '<svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
           playBtn.classList.add('playing');
           eq.classList.add('active');
           status.textContent = '▶️ Сейчас играет';
-          
-          if (vizMode === 'visual' && audioContextInitialized) {
-            startVisualization();
-          }
+          if (vizMode === 'visual' && audioContextInitialized) startVisualization();
         } catch (err) {
           console.error('Play error:', err);
           status.textContent = '❌ Нажмите ещё раз';
@@ -1086,25 +1036,17 @@
       try {
         const res = await fetch('https://radiogram.su/api/nowplaying/radio_gram');
         const data = await res.json();
-        
         let trackName = 'Deep House Mix';
-        
         if (data.now_playing && data.now_playing.song) {
           const song = data.now_playing.song;
           const title = song.title || 'Неизвестный трек';
           const artist = song.artist || '';
           trackName = artist ? `${artist} — ${title}` : title;
         }
-        
         if (trackName !== currentTrack && trackName !== 'Deep House Mix') {
           previousTrack = currentTrack;
           currentTrack = trackName;
-          
-          if (previousTrack) {
-            previousTrackEl.textContent = previousTrack;
-          } else {
-            previousTrackEl.textContent = '—';
-          }
+          previousTrackEl.textContent = previousTrack || '—';
           currentTrackEl.textContent = currentTrack;
         } else if (!currentTrack || currentTrack === 'Загрузка...') {
           currentTrack = trackName;
@@ -1131,27 +1073,16 @@
     setInterval(updateStats, 30000);
     updateStats();
 
-    function toggleChannels() {
-      document.getElementById('channels-popup').classList.toggle('show');
-    }
-
-    function togglePartners() {
-      document.getElementById('partners-popup').classList.toggle('show');
-    }
+    function toggleChannels() { document.getElementById('channels-popup').classList.toggle('show'); }
+    function togglePartners() { document.getElementById('partners-popup').classList.toggle('show'); }
 
     document.addEventListener('click', (e) => {
-      if (!e.target.closest('.btn-channels')) {
-        document.getElementById('channels-popup').classList.remove('show');
-      }
-      if (!e.target.closest('.btn-partners')) {
-        document.getElementById('partners-popup').classList.remove('show');
-      }
+      if (!e.target.closest('.btn-channels')) document.getElementById('channels-popup').classList.remove('show');
+      if (!e.target.closest('.btn-partners')) document.getElementById('partners-popup').classList.remove('show');
     });
 
     let timerInterval;
-    function toggleSleepMenu() {
-      document.getElementById('sleep-menu').classList.toggle('show');
-    }
+    function toggleSleepMenu() { document.getElementById('sleep-menu').classList.toggle('show'); }
     function setTimer(min) {
       clearInterval(timerInterval);
       let sec = min * 60;
@@ -1173,19 +1104,13 @@
       document.getElementById('donateModal').classList.add('show');
       document.getElementById('tonWallet').style.display = 'none';
     }
-    function closeDonateModal() {
-      document.getElementById('donateModal').classList.remove('show');
-    }
-    function closeDonateModalOutside(e) {
-      if (e.target.id === 'donateModal') closeDonateModal();
-    }
+    function closeDonateModal() { document.getElementById('donateModal').classList.remove('show'); }
+    function closeDonateModalOutside(e) { if (e.target.id === 'donateModal') closeDonateModal(); }
     function copyTonWallet() {
       const wallet = 'UQDNJZb6MPyqP1P1JONmZ5Que0_UMA1n4k3ugAYcVEv7XH3Q';
       navigator.clipboard.writeText(wallet).then(() => {
         document.getElementById('tonWallet').style.display = 'block';
-        setTimeout(() => {
-          document.getElementById('tonWallet').style.display = 'none';
-        }, 3000);
+        setTimeout(() => { document.getElementById('tonWallet').style.display = 'none'; }, 3000);
       });
     }
 
@@ -1206,25 +1131,16 @@
 
     const fish1 = document.getElementById('fish1');
     const fishDialog = document.getElementById('fishDialog');
-    
     function animateFish(fish, startX, startY) {
-      let x = startX;
-      let y = startY;
-      let speedX = 0.5;
-      let speedY = 0.2;
-      let lastDialogTime = Date.now();
-      
+      let x = startX, y = startY, speedX = 0.5, speedY = 0.2, lastDialogTime = Date.now();
       function swim() {
         x += speedX;
         y += speedY + Math.sin(Date.now() / 1000) * 0.3;
-        
         if (x <= -60 || x >= window.innerWidth - 20) speedX *= -1;
         if (y <= 40 || y >= window.innerHeight - 150) speedY *= -1;
-        
         fish.style.left = x + 'px';
         fish.style.top = y + 'px';
         fish.style.transform = `scaleX(${speedX > 0 ? 1 : -1})`;
-        
         const now = Date.now();
         if (now - lastDialogTime > 15000 && Math.random() < 0.001) {
           fishDialog.style.left = Math.min(x + 25, window.innerWidth - 160) + 'px';
@@ -1237,7 +1153,6 @@
           fishDialog.style.left = Math.min(x + 25, window.innerWidth - 160) + 'px';
           fishDialog.style.top = Math.max(y - 50, 10) + 'px';
         }
-        
         requestAnimationFrame(swim);
       }
       swim();
@@ -1248,12 +1163,8 @@
     const snailDialog = document.getElementById('snailDialog');
     const snailPhrases = ['не трогай меня! Я просто ползу 🐌', 'я устала, я ухожу! 😴', 'на что я трачу свою жизнь ((( 💭'];
     let snailX = 20, snailY = window.innerHeight - 60, snailDirection = 0, lastTrailTime = Date.now();
-    
     function moveSnail() {
-      const speed = 0.3;
-      const margin = 20;
-      const maxX = window.innerWidth - 60;
-      const maxY = window.innerHeight - 60;
+      const speed = 0.3, margin = 20, maxX = window.innerWidth - 60, maxY = window.innerHeight - 60;
       switch(snailDirection) {
         case 0: snailX += speed; if (snailX >= maxX) snailDirection = 1; break;
         case 1: snailY -= speed; if (snailY <= margin) snailDirection = 2; break;
@@ -1263,10 +1174,7 @@
       snail.style.left = snailX + 'px';
       snail.style.bottom = (window.innerHeight - snailY - 40) + 'px';
       const now = Date.now();
-      if (now - lastTrailTime > 5000) {
-        createSnailTrail(snailX + 20, snailY + 20);
-        lastTrailTime = now;
-      }
+      if (now - lastTrailTime > 5000) { createSnailTrail(snailX + 20, snailY + 20); lastTrailTime = now; }
       requestAnimationFrame(moveSnail);
     }
     function createSnailTrail(x, y) {
@@ -1317,25 +1225,17 @@
 
     async function setupAudioVisualization() {
       if (audioContextInitialized) return;
-      
       try {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        
-        if (audioContext.state === 'suspended') {
-          await audioContext.resume();
-        }
-        
+        if (audioContext.state === 'suspended') await audioContext.resume();
         analyser = audioContext.createAnalyser();
         analyser.fftSize = 256;
         analyser.smoothingTimeConstant = 0.8;
-        
         source = audioContext.createMediaElementSource(audio);
         source.connect(analyser);
         analyser.connect(audioContext.destination);
-        
         dataArray = new Uint8Array(analyser.frequencyBinCount);
         audioContextInitialized = true;
-        
         console.log('✅ Audio visualization ready');
       } catch (e) {
         console.error('❌ Audio context setup failed:', e);
@@ -1344,22 +1244,33 @@
 
     function setMode(mode) {
       vizMode = mode;
-      
       document.getElementById('mode-normal').classList.toggle('active', mode === 'normal');
       document.getElementById('mode-visual').classList.toggle('active', mode === 'visual');
-      
       canvas.classList.toggle('active', mode === 'visual');
       bg.classList.toggle('visualizer-active', mode === 'visual');
-      
       document.getElementById('settings-toggle').classList.toggle('show', mode === 'visual');
       
+      // Выход из погружения при переключении в обычный режим
+      if (mode === 'normal' && isImmersive) {
+        toggleImmersive();
+      }
+
       if (mode === 'visual') {
         resizeCanvas();
-        if (isPlaying && audioContextInitialized) {
-          startVisualization();
-        }
+        if (isPlaying && audioContextInitialized) startVisualization();
       } else {
         stopVisualization();
+      }
+    }
+
+    function toggleImmersive() {
+      isImmersive = !isImmersive;
+      document.body.classList.toggle('immersive-mode', isImmersive);
+      
+      if (isImmersive) {
+        if (isPlaying && audioContextInitialized) startVisualization();
+      } else {
+        if (vizMode === 'visual') startVisualization();
       }
     }
 
@@ -1372,37 +1283,24 @@
 
     function startVisualization() {
       if (animationId || !audioContextInitialized) return;
-      
-      if (vizType === 'particles') {
-        initParticles();
-      }
-      
+      if (vizType === 'particles') initParticles();
       function animate() {
-        if (!analyser || vizMode !== 'visual') {
-          animationId = null;
-          return;
-        }
-        
+        if (!analyser || (vizMode !== 'visual' && !isImmersive)) { animationId = null; return; }
         analyser.getByteFrequencyData(dataArray);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
         switch(vizType) {
           case 'bars': drawBars(); break;
           case 'waves': drawWaves(); break;
           case 'circular': drawCircular(); break;
           case 'particles': drawParticles(); break;
         }
-        
         animationId = requestAnimationFrame(animate);
       }
       animate();
     }
 
     function stopVisualization() {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-      }
+      if (animationId) { cancelAnimationFrame(animationId); animationId = null; }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
@@ -1410,31 +1308,25 @@
       const barCount = 64;
       const barWidth = canvas.width / barCount;
       const gap = 2;
-      
       for (let i = 0; i < barCount; i++) {
         const dataIndex = Math.floor(i * (dataArray.length / barCount));
         const value = dataArray[dataIndex] * sensitivity;
         const barHeight = (value / 255) * canvas.height * 0.8;
-        
         const x = i * barWidth;
         const y = canvas.height - barHeight;
-        
         const gradient = ctx.createLinearGradient(x, y, x, canvas.height);
         gradient.addColorStop(0, vizColor);
         gradient.addColorStop(0.5, vizColor + '80');
         gradient.addColorStop(1, vizColor + '20');
-        
         ctx.fillStyle = gradient;
         const radius = Math.min(barWidth / 2 - gap / 2, 5);
         ctx.beginPath();
         ctx.roundRect(x + gap / 2, y, barWidth - gap, barHeight, [radius, radius, 0, 0]);
         ctx.fill();
-        
         ctx.shadowColor = vizColor;
         ctx.shadowBlur = 10;
         ctx.fill();
         ctx.shadowBlur = 0;
-        
         const reflGradient = ctx.createLinearGradient(x, canvas.height, x, canvas.height + barHeight * 0.3);
         reflGradient.addColorStop(0, vizColor + '40');
         reflGradient.addColorStop(1, 'transparent');
@@ -1446,34 +1338,27 @@
     function drawWaves() {
       const waveCount = 3;
       const centerY = canvas.height / 2;
-      
       for (let w = 0; w < waveCount; w++) {
         const offset = w * 20;
         const amplitude = (dataArray.reduce((a, b) => a + b, 0) / dataArray.length) * sensitivity * 0.5;
-        
         ctx.beginPath();
         ctx.strokeStyle = vizColor;
         ctx.lineWidth = 3 - w * 0.5;
         ctx.globalAlpha = 1 - w * 0.25;
-        
         for (let x = 0; x < canvas.width; x++) {
           const dataIndex = Math.floor((x / canvas.width) * dataArray.length);
           const value = dataArray[dataIndex] || 0;
           const y = centerY + Math.sin((x + offset + Date.now() * speed * 0.002) * 0.02) * amplitude * (1 + value / 255);
-          
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
         ctx.stroke();
         ctx.globalAlpha = 1;
       }
-      
       for (let i = 0; i < 50; i++) {
         const dataIndex = Math.floor(i * (dataArray.length / 50));
         const value = dataArray[dataIndex] * sensitivity;
         const x = (i / 50) * canvas.width;
         const y = centerY + Math.sin((x + Date.now() * speed * 0.002) * 0.02) * (value / 255) * 100;
-        
         ctx.beginPath();
         ctx.arc(x, y, 2 + (value / 255) * 3, 0, Math.PI * 2);
         ctx.fillStyle = vizColor;
@@ -1486,18 +1371,15 @@
       const centerY = canvas.height / 2;
       const baseRadius = Math.min(canvas.width, canvas.height) * 0.2;
       const barCount = 128;
-      
       for (let i = 0; i < barCount; i++) {
         const angle = (i / barCount) * Math.PI * 2;
         const dataIndex = Math.floor(i * (dataArray.length / barCount));
         const value = dataArray[dataIndex] * sensitivity;
         const barLength = (value / 255) * 150;
-        
         const x1 = centerX + Math.cos(angle) * baseRadius;
         const y1 = centerY + Math.sin(angle) * baseRadius;
         const x2 = centerX + Math.cos(angle) * (baseRadius + barLength);
         const y2 = centerY + Math.sin(angle) * (baseRadius + barLength);
-        
         ctx.beginPath();
         ctx.strokeStyle = vizColor;
         ctx.lineWidth = 2;
@@ -1507,16 +1389,13 @@
         ctx.stroke();
         ctx.globalAlpha = 1;
       }
-      
       const avgValue = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
       const pulseRadius = baseRadius * 0.8 + (avgValue / 255) * 20 * sensitivity;
-      
       ctx.beginPath();
       ctx.arc(centerX, centerY, pulseRadius, 0, Math.PI * 2);
       ctx.strokeStyle = vizColor;
       ctx.lineWidth = 2;
       ctx.stroke();
-      
       ctx.beginPath();
       ctx.arc(centerX, centerY, pulseRadius * 0.5, 0, Math.PI * 2);
       ctx.fillStyle = vizColor + '30';
@@ -1540,54 +1419,39 @@
       }
     }
 
-    // Рисуем перевёрнутый треугольник (остриём ВНИЗ) как на скриншоте
     function drawGramLogo(cx, cy, size, color, alpha) {
       ctx.save();
       ctx.translate(cx, cy);
       ctx.globalAlpha = alpha;
-      
-      // Настройки для контура (рамки) как на скриншоте
       ctx.strokeStyle = color;
       ctx.lineWidth = Math.max(size * 0.18, 1.2);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      
-      // Перевёрнутый треугольник — широкая сторона СВЕРХУ, остриё ВНИЗУ
       ctx.beginPath();
-      ctx.moveTo(-size * 0.86, -size * 0.5);   // левый верхний угол
-      ctx.lineTo(size * 0.86, -size * 0.5);     // правый верхний угол
-      ctx.lineTo(0, size);                        // остриё вниз
+      ctx.moveTo(-size * 0.86, -size * 0.5);
+      ctx.lineTo(size * 0.86, -size * 0.5);
+      ctx.lineTo(0, size);
       ctx.closePath();
       ctx.stroke();
-      
-      // Вертикальная линия посередине (от основания до острия)
       ctx.beginPath();
       ctx.moveTo(0, -size * 0.5);
       ctx.lineTo(0, size * 0.85);
       ctx.stroke();
-      
       ctx.restore();
     }
 
     function drawParticles() {
       const avgValue = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
       const energy = (avgValue / 255) * sensitivity;
-      
       particles.forEach((p, i) => {
         p.x += p.vx * speed * (1 + energy * 3);
         p.y += p.vy * speed * (1 + energy * 3);
-        
         if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-        
         const dataIndex = Math.floor((i / particles.length) * dataArray.length);
         const value = dataArray[dataIndex] || 0;
         const size = Math.max(p.size + (value / 255) * 6 * sensitivity, 6);
-        
-        // Рисуем перевёрнутый логотип GRAM
         drawGramLogo(p.x, p.y, size, vizColor, p.alpha * (0.4 + energy * 0.6));
-        
-        // Свечение для высоких значений
         if (value > 128) {
           ctx.save();
           ctx.translate(p.x, p.y);
@@ -1598,8 +1462,6 @@
           ctx.fill();
           ctx.restore();
         }
-        
-        // Соединительные линии
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dx = p.x - p2.x;
@@ -1619,9 +1481,7 @@
       });
     }
 
-    function toggleVizSettings() {
-      document.getElementById('viz-settings').classList.toggle('show');
-    }
+    function toggleVizSettings() { document.getElementById('viz-settings').classList.toggle('show'); }
     function updateSensitivity(val) { sensitivity = parseFloat(val); }
     function updateSpeed(val) { speed = parseFloat(val); }
     function setColor(color, btn) {
