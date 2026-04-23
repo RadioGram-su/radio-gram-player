@@ -1523,47 +1523,47 @@
       ctx.fill();
     }
 
-    // === ЧАСТИЦЫ С ЛОГОТИПОМ GRAM ===
+    // === ЧАСТИЦЫ С ПЕРЕВЁРНУТЫМ ЛОГОТИПОМ GRAM ===
     function initParticles() {
       particles = [];
-      const count = 80; // чуть меньше для лучшей производительности
+      const count = 80;
       for (let i = 0; i < count; i++) {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
           vx: (Math.random() - 0.5) * 2,
           vy: (Math.random() - 0.5) * 2,
-          size: Math.random() * 3 + 2,
+          size: Math.random() * 3 + 3,
           alpha: Math.random() * 0.5 + 0.5,
-          rotation: Math.random() * Math.PI * 2 // случайный поворот для разнообразия
+          rotation: Math.random() * Math.PI * 2
         });
       }
     }
 
+    // Рисуем перевёрнутый треугольник (остриём ВНИЗ) как на скриншоте
     function drawGramLogo(cx, cy, size, color, alpha) {
       ctx.save();
       ctx.translate(cx, cy);
       ctx.globalAlpha = alpha;
       
-      // Рисуем перевёрнутый треугольник с вертикальной чертой (логотип GRAM)
-      ctx.fillStyle = color;
+      // Настройки для контура (рамки) как на скриншоте
       ctx.strokeStyle = color;
-      ctx.lineWidth = Math.max(size * 0.12, 0.8);
+      ctx.lineWidth = Math.max(size * 0.18, 1.2);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       
-      // Перевёрнутый треугольник
+      // Перевёрнутый треугольник — широкая сторона СВЕРХУ, остриё ВНИЗУ
       ctx.beginPath();
-      ctx.moveTo(0, -size);           // верхняя точка (центр внизу)
-      ctx.lineTo(-size * 0.86, size * 0.5);  // левый нижний угол
-      ctx.lineTo(size * 0.86, size * 0.5);   // правый нижний угол
+      ctx.moveTo(-size * 0.86, -size * 0.5);   // левый верхний угол
+      ctx.lineTo(size * 0.86, -size * 0.5);     // правый верхний угол
+      ctx.lineTo(0, size);                        // остриё вниз
       ctx.closePath();
-      ctx.fill();
+      ctx.stroke();
       
-      // Вертикальная линия посередине
+      // Вертикальная линия посередине (от основания до острия)
       ctx.beginPath();
-      ctx.moveTo(0, -size * 0.85);
-      ctx.lineTo(0, size * 0.45);
+      ctx.moveTo(0, -size * 0.5);
+      ctx.lineTo(0, size * 0.85);
       ctx.stroke();
       
       ctx.restore();
@@ -1574,27 +1574,24 @@
       const energy = (avgValue / 255) * sensitivity;
       
       particles.forEach((p, i) => {
-        // Движение зависит от энергии музыки
         p.x += p.vx * speed * (1 + energy * 3);
         p.y += p.vy * speed * (1 + energy * 3);
         
-        // Отскок от краёв
         if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
         
-        // Размер зависит от частоты (минимум 5px для читаемости логотипа)
         const dataIndex = Math.floor((i / particles.length) * dataArray.length);
         const value = dataArray[dataIndex] || 0;
-        const size = Math.max(p.size + (value / 255) * 6 * sensitivity, 5);
+        const size = Math.max(p.size + (value / 255) * 6 * sensitivity, 6);
         
-        // Рисуем логотип GRAM вместо кружка
+        // Рисуем перевёрнутый логотип GRAM
         drawGramLogo(p.x, p.y, size, vizColor, p.alpha * (0.4 + energy * 0.6));
         
         // Свечение для высоких значений
         if (value > 128) {
           ctx.save();
           ctx.translate(p.x, p.y);
-          ctx.globalAlpha = (0.4 + energy * 0.6) * 0.25;
+          ctx.globalAlpha = (0.4 + energy * 0.6) * 0.2;
           ctx.fillStyle = vizColor;
           ctx.beginPath();
           ctx.arc(0, 0, size * 2.5, 0, Math.PI * 2);
@@ -1602,13 +1599,12 @@
           ctx.restore();
         }
         
-        // Соединительные линии между близкими частицами
+        // Соединительные линии
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dx = p.x - p2.x;
           const dy = p.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          
           if (dist < 100) {
             ctx.beginPath();
             ctx.strokeStyle = vizColor;
