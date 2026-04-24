@@ -1063,15 +1063,38 @@
     setInterval(updateTrackInfo, 10000);
     updateTrackInfo();
 
+    // === ФУНКЦИЯ ДЛЯ ГЕНЕРАЦИИ КОНСИСТЕНТНОГО "ФЕЙКОВОГО" ЧИСЛА ===
+    function getConsistentFakeListeners() {
+      // Берем текущий час (меняется каждые 2 часа для естественности)
+      const currentHour = new Date().getHours();
+      const twoHourBlock = Math.floor(currentHour / 2);
+      
+      // Генерируем число от 6 до 9 на основе временного блока
+      // Это гарантирует, что все пользователи увидят одно и то же число в течение 2 часов
+      const fakeAddition = (twoHourBlock % 4) + 6; // 6, 7, 8, или 9
+      
+      return fakeAddition;
+    }
+
     async function updateStats() {
       try {
         const res = await fetch('https://radiogram.su/api/nowplaying/radio_gram');
         const data = await res.json();
-        document.getElementById('listener-count').textContent = data.listeners?.unique || 0;
-      } catch(e) {}
+        const realListeners = data.listeners?.unique || 0;
+        
+        // Добавляем "фейковых" слушателей (6-9)
+        const fakeListeners = getConsistentFakeListeners();
+        const totalListeners = realListeners + fakeListeners;
+        
+        document.getElementById('listener-count').textContent = totalListeners;
+      } catch(e) {
+        console.error('Stats error:', e);
+      }
     }
-    setInterval(updateStats, 30000);
+    
+    // Обновляем счетчик сразу и затем каждые 30 секунд
     updateStats();
+    setInterval(updateStats, 30000);
 
     function toggleChannels() { document.getElementById('channels-popup').classList.toggle('show'); }
     function togglePartners() { document.getElementById('partners-popup').classList.toggle('show'); }
