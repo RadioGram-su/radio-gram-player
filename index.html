@@ -160,6 +160,114 @@
       opacity: 1;
       pointer-events: auto;
     }
+    #aquarium-stage {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      background: radial-gradient(circle at 50% 20%, rgba(80, 180, 255, 0.1), rgba(2, 20, 36, 0.75));
+    }
+    #aquarium-stage.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #aquarium-ui {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 130;
+      width: min(360px, calc(100vw - 32px));
+      background: rgba(8, 18, 30, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 10px;
+      backdrop-filter: blur(12px);
+      opacity: 0;
+      transform: translateY(-8px);
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    #aquarium-ui.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .aquarium-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .aquarium-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+    .aquarium-points {
+      font-size: 12px;
+      font-weight: 700;
+      color: #7cd2ff;
+    }
+    .aquarium-sync {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.72);
+    }
+    .aquarium-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .aquarium-item {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 10px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .aquarium-item-name {
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .aquarium-item-meta {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.72);
+    }
+    .aquarium-buy-btn {
+      border: 1px solid rgba(122, 212, 255, 0.5);
+      background: rgba(12, 87, 122, 0.5);
+      color: #d8f3ff;
+      border-radius: 8px;
+      padding: 5px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .aquarium-buy-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .aquarium-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .aquarium-action-btn {
+      flex: 1;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border-radius: 8px;
+      padding: 7px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
 
     #visual-exit-btn {
       position: fixed;
@@ -604,6 +712,10 @@
       opacity: 1;
       pointer-events: auto;
     }
+    body.visual-only #aquarium-ui.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
     body.night-mode {
       --glass-bg: rgba(255, 255, 255, 0.05);
       --glass-border: rgba(255, 255, 255, 0.08);
@@ -684,6 +796,12 @@
       .buttons-grid { gap: 10px; }
       .bottom-controls { bottom: 15px; right: 15px; }
       .viz-mode-selector { display: none; }
+      #aquarium-ui {
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        width: auto;
+      }
     }
 
     @media (max-width: 360px) {
@@ -712,6 +830,21 @@
   <!-- CANVAS ДЛЯ ВИЗУАЛИЗАТОРА -->
   <div id="reactive-bg"></div>
   <canvas id="visualizer-canvas"></canvas>
+  <div id="aquarium-stage"></div>
+  <div id="aquarium-ui" aria-live="polite">
+    <div class="aquarium-top">
+      <div>
+        <div class="aquarium-title">AQUARIUM</div>
+        <div class="aquarium-sync" id="aquarium-sync-text">Saved locally</div>
+      </div>
+      <div class="aquarium-points" id="aquarium-points">0 pts</div>
+    </div>
+    <div class="aquarium-grid" id="aquarium-shop"></div>
+    <div class="aquarium-actions">
+      <button class="aquarium-action-btn" id="aquarium-theme-btn" onclick="cycleAquariumTheme()">Theme</button>
+      <button class="aquarium-action-btn" onclick="clearAquariumCreatures()">Clear tank</button>
+    </div>
+  </div>
   <button id="visual-exit-btn" onclick="toggleImmersive()" aria-label="Exit visual mode">Выйти</button>
 
   <!-- ОСНОВНОЙ КОНТЕНТ -->
@@ -855,6 +988,7 @@
       <button class="viz-mode-btn active" onclick="setVizMode('bars', this)">Bars</button>
       <button class="viz-mode-btn" onclick="setVizMode('particles', this)">Particles</button>
       <button class="viz-mode-btn" onclick="setVizMode('nebula', this)">Nebula</button>
+      <button class="viz-mode-btn" onclick="setVizMode('aquarium', this)">Aquarium</button>
     </div>
 
     <!-- Переключатель режима погружения -->
@@ -882,11 +1016,14 @@
     Stream is unavailable. Please try again.
   </div>
 
+  <script src="https://unpkg.com/three@0.164.1/build/three.min.js"></script>
   <script>
     // === ПЕРЕМЕННЫЕ ===
     const audio = document.getElementById('audio-player');
     const canvas = document.getElementById('visualizer-canvas');
     const reactiveBg = document.getElementById('reactive-bg');
+    const aquariumStage = document.getElementById('aquarium-stage');
+    const aquariumUi = document.getElementById('aquarium-ui');
     const ctx = canvas.getContext('2d');
     const playBtn = document.getElementById('play-btn');
     
@@ -904,12 +1041,46 @@
     let reactiveBgAnimationId = null;
     let audioContextInitialized = false;
     let particles = [];
+    let aquariumReady = false;
+    let aquariumRunning = false;
+    let aquariumScene = null;
+    let aquariumCamera = null;
+    let aquariumRenderer = null;
+    let aquariumAnimationId = null;
+    let aquariumClock = null;
+    let aquariumFish = [];
+    let aquariumSnail = null;
+    let aquariumThemeIndex = 0;
+    let listeningPointsTimer = null;
+    let cloudSaveDebounce = null;
+    let lastSyncState = 'Saved locally';
     let toastTimeout = null;
     let activeModalId = null;
     let isFading = false;
     const FADE_IN_MS = 500;
     const FADE_OUT_MS = 350;
     const bgState = { bass: 0.12, mid: 0.12, treble: 0.12 };
+    const POINTS_PER_MINUTE = 12;
+    const LOCAL_PROFILE_KEY = 'radiogram_aquarium_profile_v1';
+    const aquariumThemes = [
+      { id: 'deepBlue', name: 'Deep Blue', bg: 0x07172a, fog: 0x082b40, light: 0x83d0ff },
+      { id: 'sunsetReef', name: 'Sunset Reef', bg: 0x27161a, fog: 0x4d2e3a, light: 0xffb273 },
+      { id: 'emeraldLagoon', name: 'Emerald', bg: 0x04261c, fog: 0x0a3f33, light: 0x8fffd2 }
+    ];
+    const aquariumShopItems = [
+      { id: 'fish-clown', name: 'Clownfish', cost: 40, type: 'fish', color: 0xff8b3d, speed: 0.55, size: 0.22 },
+      { id: 'fish-tang', name: 'Blue Tang', cost: 70, type: 'fish', color: 0x3f8dff, speed: 0.65, size: 0.24 },
+      { id: 'fish-koi', name: 'Koi', cost: 95, type: 'fish', color: 0xf5d38a, speed: 0.45, size: 0.3 },
+      { id: 'snail-gold', name: 'Golden Snail', cost: 120, type: 'snail', color: 0xd0a15a, speed: 0.12, size: 0.22 }
+    ];
+    const aquariumProfileDefault = () => ({
+      points: 0,
+      theme: aquariumThemes[0].id,
+      fishPlaced: [],
+      snailPlaced: false,
+      updatedAt: Date.now()
+    });
+    let aquariumProfile = aquariumProfileDefault();
 
     // === СЛОВАРЬ ===
     const translations = {
@@ -979,6 +1150,11 @@
         nightBtn.title = currentLang === 'ru' ? 'Ночной режим' : 'Night Mode';
         nightBtn.setAttribute('aria-label', currentLang === 'ru' ? 'Переключить ночной режим' : 'Toggle night mode');
       }
+      const aquariumTitle = document.querySelector('.aquarium-title');
+      if (aquariumTitle) aquariumTitle.textContent = currentLang === 'ru' ? 'АКВАРИУМ' : 'AQUARIUM';
+      const themeBtn = document.getElementById('aquarium-theme-btn');
+      if (themeBtn) themeBtn.textContent = currentLang === 'ru' ? 'Тема' : 'Theme';
+      updateAquariumHud();
     }
 
     function toggleLang() {
@@ -990,13 +1166,20 @@
       isImmersive = !isImmersive;
       document.getElementById('immersive-toggle').classList.toggle('active', isImmersive);
       document.body.classList.toggle('visual-only', isImmersive);
-      
-      if (isImmersive && isPlaying && audioContextInitialized) {
-        canvas.classList.add('active');
-        startVisualization();
-      } else if (!isImmersive) {
+
+      if (isImmersive) {
+        if (vizMode === 'aquarium') {
+          activateAquariumMode();
+          return;
+        }
+        if (isPlaying && audioContextInitialized) {
+          canvas.classList.add('active');
+          startVisualization();
+        }
+      } else {
         canvas.classList.remove('active');
         stopVisualization();
+        deactivateAquariumMode();
       }
     }
 
@@ -1018,11 +1201,108 @@
       }, 2600);
     }
 
+    function updateAquariumHud() {
+      const pointsEl = document.getElementById('aquarium-points');
+      if (pointsEl) {
+        const suffix = currentLang === 'ru' ? 'очк' : 'pts';
+        pointsEl.textContent = `${aquariumProfile.points} ${suffix}`;
+      }
+      const syncEl = document.getElementById('aquarium-sync-text');
+      if (syncEl) syncEl.textContent = lastSyncState;
+      const themeBtn = document.getElementById('aquarium-theme-btn');
+      if (themeBtn) {
+        const prefix = currentLang === 'ru' ? 'Тема' : 'Theme';
+        const themeName = aquariumThemes[aquariumThemeIndex]?.name || aquariumThemes[0].name;
+        themeBtn.textContent = `${prefix}: ${themeName}`;
+      }
+      renderAquariumShop();
+    }
+
+    function renderAquariumShop() {
+      const container = document.getElementById('aquarium-shop');
+      if (!container) return;
+      container.innerHTML = aquariumShopItems.map((item) => {
+        const canBuy = aquariumProfile.points >= item.cost;
+        const isSnailPlaced = item.type === 'snail' && aquariumProfile.snailPlaced;
+        const disabled = !canBuy || isSnailPlaced;
+        const buyText = currentLang === 'ru' ? 'Добавить' : 'Add';
+        const placedText = currentLang === 'ru' ? 'Уже в аквариуме' : 'Already placed';
+        return `
+          <div class="aquarium-item">
+            <div class="aquarium-item-name">${item.name}</div>
+            <div class="aquarium-item-meta">${item.cost} ${currentLang === 'ru' ? 'очк' : 'pts'}</div>
+            <button class="aquarium-buy-btn" data-item-id="${item.id}" ${disabled ? 'disabled' : ''}>
+              ${isSnailPlaced ? placedText : buyText}
+            </button>
+          </div>
+        `;
+      }).join('');
+      container.querySelectorAll('.aquarium-buy-btn').forEach((btn) => {
+        btn.addEventListener('click', () => buyAquariumItem(btn.getAttribute('data-item-id')));
+      });
+    }
+
     function setVizMode(mode, btn) {
       vizMode = mode;
       document.querySelectorAll('.viz-mode-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       if (mode === 'particles') initParticles();
+      if (mode === 'aquarium') {
+        if (isImmersive) {
+          activateAquariumMode();
+        }
+      } else {
+        deactivateAquariumMode();
+      }
+    }
+
+    function activateAquariumMode() {
+      aquariumStage.classList.add('active');
+      aquariumUi.classList.add('active');
+      if (!aquariumReady) initAquarium();
+      applyAquariumTheme();
+      startAquarium();
+    }
+
+    function deactivateAquariumMode() {
+      aquariumStage.classList.remove('active');
+      aquariumUi.classList.remove('active');
+      stopAquarium();
+    }
+
+    function clearAquariumCreatures() {
+      aquariumProfile.fishPlaced = [];
+      aquariumProfile.snailPlaced = false;
+      rebuildAquariumCreatures();
+      queueAquariumSave();
+      updateAquariumHud();
+    }
+
+    function cycleAquariumTheme() {
+      aquariumThemeIndex = (aquariumThemeIndex + 1) % aquariumThemes.length;
+      aquariumProfile.theme = aquariumThemes[aquariumThemeIndex].id;
+      applyAquariumTheme();
+      queueAquariumSave();
+      updateAquariumHud();
+    }
+
+    function buyAquariumItem(itemId) {
+      const item = aquariumShopItems.find((it) => it.id === itemId);
+      if (!item) return;
+      if (aquariumProfile.points < item.cost) return;
+      if (item.type === 'snail' && aquariumProfile.snailPlaced) return;
+      aquariumProfile.points -= item.cost;
+      if (item.type === 'fish') {
+        aquariumProfile.fishPlaced.push({
+          id: `${item.id}-${Date.now()}-${Math.floor(Math.random() * 9999)}`,
+          type: item.id
+        });
+      } else if (item.type === 'snail') {
+        aquariumProfile.snailPlaced = true;
+      }
+      rebuildAquariumCreatures();
+      queueAquariumSave();
+      updateAquariumHud();
     }
 
     // === АУДИО И ВИЗУАЛИЗАТОР ===
@@ -1051,6 +1331,233 @@
       } catch (e) {
         console.error('Audio context error:', e);
       }
+    }
+
+    function initAquarium() {
+      if (aquariumReady || typeof THREE === 'undefined') return;
+      aquariumScene = new THREE.Scene();
+      aquariumCamera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
+      aquariumCamera.position.set(0, 1.7, 6.4);
+
+      aquariumRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      aquariumRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      aquariumRenderer.setSize(window.innerWidth, window.innerHeight);
+      aquariumStage.appendChild(aquariumRenderer.domElement);
+
+      const ambient = new THREE.AmbientLight(0x7ec9ff, 0.7);
+      const key = new THREE.DirectionalLight(0xaadfff, 1.1);
+      key.position.set(3, 4, 2);
+      aquariumScene.add(ambient, key);
+
+      const glass = new THREE.Mesh(
+        new THREE.BoxGeometry(8, 4.8, 3),
+        new THREE.MeshPhysicalMaterial({
+          color: 0x9ad8ff,
+          transparent: true,
+          opacity: 0.12,
+          roughness: 0.03,
+          metalness: 0,
+          transmission: 0.95
+        })
+      );
+      glass.position.y = 1;
+      aquariumScene.add(glass);
+
+      const floor = new THREE.Mesh(
+        new THREE.CylinderGeometry(3.8, 3.6, 0.25, 32),
+        new THREE.MeshStandardMaterial({ color: 0x253a4a, roughness: 0.95, metalness: 0.05 })
+      );
+      floor.position.y = -1.25;
+      aquariumScene.add(floor);
+
+      const plantMat = new THREE.MeshStandardMaterial({ color: 0x2fa26f, roughness: 0.7 });
+      for (let i = 0; i < 8; i++) {
+        const plant = new THREE.Mesh(new THREE.ConeGeometry(0.08 + Math.random() * 0.1, 0.6 + Math.random() * 0.5, 8), plantMat);
+        plant.position.set((Math.random() - 0.5) * 6.8, -1.02, (Math.random() - 0.5) * 2.1);
+        aquariumScene.add(plant);
+      }
+
+      aquariumClock = new THREE.Clock();
+      aquariumReady = true;
+      rebuildAquariumCreatures();
+      applyAquariumTheme();
+    }
+
+    function createFishMesh(itemDef) {
+      const group = new THREE.Group();
+      const body = new THREE.Mesh(
+        new THREE.SphereGeometry(itemDef.size, 16, 12),
+        new THREE.MeshStandardMaterial({ color: itemDef.color, roughness: 0.4, metalness: 0.05 })
+      );
+      body.scale.set(1.5, 0.9, 0.7);
+      const tail = new THREE.Mesh(
+        new THREE.ConeGeometry(itemDef.size * 0.55, itemDef.size * 0.95, 10),
+        new THREE.MeshStandardMaterial({ color: itemDef.color, roughness: 0.5 })
+      );
+      tail.rotation.z = Math.PI / 2;
+      tail.position.x = -itemDef.size * 1.5;
+      const fin = new THREE.Mesh(
+        new THREE.ConeGeometry(itemDef.size * 0.22, itemDef.size * 0.42, 8),
+        new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.68 })
+      );
+      fin.position.set(itemDef.size * 0.1, itemDef.size * 0.75, 0);
+      fin.rotation.x = Math.PI;
+      group.add(body, tail, fin);
+      return { group, tail };
+    }
+
+    function createSnailMesh() {
+      const group = new THREE.Group();
+      const shell = new THREE.Mesh(
+        new THREE.TorusGeometry(0.18, 0.08, 10, 24),
+        new THREE.MeshStandardMaterial({ color: 0xc49756, roughness: 0.85 })
+      );
+      shell.rotation.x = Math.PI / 2;
+      const body = new THREE.Mesh(
+        new THREE.CapsuleGeometry(0.1, 0.24, 5, 8),
+        new THREE.MeshStandardMaterial({ color: 0x7b6f61, roughness: 0.9 })
+      );
+      body.rotation.z = Math.PI / 2;
+      body.position.set(-0.08, -0.07, 0);
+      group.add(shell, body);
+      return group;
+    }
+
+    function rebuildAquariumCreatures() {
+      if (!aquariumReady || !aquariumScene) return;
+      aquariumFish.forEach((fish) => aquariumScene.remove(fish.group));
+      aquariumFish = [];
+      if (aquariumSnail) {
+        aquariumScene.remove(aquariumSnail.group);
+        aquariumSnail = null;
+      }
+
+      aquariumProfile.fishPlaced.forEach((entry, idx) => {
+        const def = aquariumShopItems.find((it) => it.id === entry.type);
+        if (!def) return;
+        const mesh = createFishMesh(def);
+        const group = mesh.group;
+        group.position.set((Math.random() - 0.5) * 6, -0.4 + Math.random() * 2.6, (Math.random() - 0.5) * 2);
+        aquariumScene.add(group);
+        aquariumFish.push({
+          id: entry.id,
+          group,
+          tail: mesh.tail,
+          speed: def.speed,
+          target: new THREE.Vector3((Math.random() - 0.5) * 6, -0.5 + Math.random() * 2.6, (Math.random() - 0.5) * 2),
+          tailPhase: Math.random() * Math.PI * 2 + idx
+        });
+      });
+
+      if (aquariumProfile.snailPlaced) {
+        const snailGroup = createSnailMesh();
+        snailGroup.position.set(-2.8, -1.12, 0);
+        aquariumScene.add(snailGroup);
+        aquariumSnail = {
+          group: snailGroup,
+          direction: 1
+        };
+      }
+    }
+
+    function updateFishAI(delta) {
+      aquariumFish.forEach((fish) => {
+        const toTarget = fish.target.clone().sub(fish.group.position);
+        if (toTarget.length() < 0.2) {
+          fish.target.set((Math.random() - 0.5) * 6.4, -0.6 + Math.random() * 2.8, (Math.random() - 0.5) * 2.2);
+        }
+        toTarget.normalize();
+        fish.group.position.addScaledVector(toTarget, fish.speed * delta);
+        fish.group.rotation.y = Math.atan2(toTarget.x, toTarget.z);
+        fish.tailPhase += delta * 11;
+        fish.tail.rotation.y = Math.sin(fish.tailPhase) * 0.55;
+      });
+    }
+
+    function updateSnailAI(delta) {
+      if (!aquariumSnail) return;
+      aquariumSnail.group.position.x += aquariumSnail.direction * delta * 0.18;
+      if (aquariumSnail.group.position.x > 3.1) aquariumSnail.direction = -1;
+      if (aquariumSnail.group.position.x < -3.1) aquariumSnail.direction = 1;
+      aquariumSnail.group.rotation.y = aquariumSnail.direction > 0 ? Math.PI / 2 : -Math.PI / 2;
+    }
+
+    function startAquarium() {
+      if (!aquariumReady || aquariumRunning) return;
+      aquariumRunning = true;
+      const tick = () => {
+        if (!aquariumRunning) return;
+        const delta = Math.min(aquariumClock.getDelta(), 0.05);
+        updateFishAI(delta);
+        updateSnailAI(delta);
+        aquariumRenderer.render(aquariumScene, aquariumCamera);
+        aquariumAnimationId = requestAnimationFrame(tick);
+      };
+      tick();
+    }
+
+    function stopAquarium() {
+      aquariumRunning = false;
+      if (aquariumAnimationId) {
+        cancelAnimationFrame(aquariumAnimationId);
+        aquariumAnimationId = null;
+      }
+    }
+
+    function applyAquariumTheme() {
+      const theme = aquariumThemes[aquariumThemeIndex] || aquariumThemes[0];
+      if (aquariumScene) {
+        aquariumScene.fog = new THREE.Fog(theme.fog, 6, 14);
+        aquariumScene.background = new THREE.Color(theme.bg);
+        const light = aquariumScene.children.find((obj) => obj.isDirectionalLight);
+        if (light) light.color = new THREE.Color(theme.light);
+      }
+    }
+
+    function loadLocalAquariumProfile() {
+      try {
+        const raw = localStorage.getItem(LOCAL_PROFILE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        aquariumProfile = { ...aquariumProfileDefault(), ...parsed };
+      } catch (e) {
+        console.warn('Failed to load local aquarium profile', e);
+      }
+      aquariumThemeIndex = Math.max(0, aquariumThemes.findIndex((t) => t.id === aquariumProfile.theme));
+      if (aquariumThemeIndex === -1) aquariumThemeIndex = 0;
+    }
+
+    function saveLocalAquariumProfile() {
+      try {
+        aquariumProfile.updatedAt = Date.now();
+        localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(aquariumProfile));
+      } catch (e) {
+        console.warn('Failed to save local aquarium profile', e);
+      }
+    }
+
+    function updateSyncStatus(text) {
+      lastSyncState = text;
+      const el = document.getElementById('aquarium-sync-text');
+      if (el) el.textContent = text;
+    }
+
+    function queueAquariumSave() {
+      saveLocalAquariumProfile();
+      if (cloudSaveDebounce) clearTimeout(cloudSaveDebounce);
+      cloudSaveDebounce = setTimeout(() => {
+        updateSyncStatus('Saved locally');
+        updateAquariumHud();
+      }, 80);
+    }
+
+    function startListeningPointsTicker() {
+      if (listeningPointsTimer) return;
+      listeningPointsTimer = setInterval(() => {
+        if (!isPlaying) return;
+        aquariumProfile.points += POINTS_PER_MINUTE;
+        queueAquariumSave();
+      }, 60000);
     }
 
     function getFrequencyEnergy() {
@@ -1129,6 +1636,11 @@
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      if (aquariumRenderer && aquariumCamera) {
+        aquariumRenderer.setSize(window.innerWidth, window.innerHeight);
+        aquariumCamera.aspect = window.innerWidth / window.innerHeight;
+        aquariumCamera.updateProjectionMatrix();
+      }
     }
     window.addEventListener('resize', resizeCanvas);
 
@@ -1144,6 +1656,7 @@
           case 'bars': drawBars(); break;
           case 'particles': drawParticles(); break;
           case 'nebula': drawNebula(); break;
+          case 'aquarium': break;
         }
         
         animationId = requestAnimationFrame(animate);
@@ -1490,6 +2003,12 @@
       }
     });
 
+    loadLocalAquariumProfile();
+    updateSyncStatus('Saved locally');
+    rebuildAquariumCreatures();
+    applyAquariumTheme();
+    updateAquariumHud();
+    startListeningPointsTicker();
     updateTexts();
   </script>
 </body>
