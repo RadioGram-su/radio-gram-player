@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
   <!-- === SEO META TAGS === -->
-  <title>Radio Gram — Deep House, Techno, Lo-Fi 24/7</title>
+  <title>Radio Gram — Deep House, Techno, Lo-Fi, Reggae & Chill Music 24/7</title>
   <meta name="description" content="🎧 Radio Gram (Грам) — атмосферное радио Deep House, Techno, Lo-Fi, Reggae и Lounge. Музыка для работы, кодинга, учёбы и отдыха 24/7. GramCoin сообщество.">
   <meta name="keywords" content="Radio Gram, Грам, gram radio, deep house, techno, lo-fi hip hop, reggae, lounge, chillout, coding music, music for work, music for programming, study music, relax radio, gramcoin, грамкоин, радио онлайн, музыка для медитации">
   <meta name="author" content="Radio Gram">
@@ -113,9 +113,9 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: linear-gradient(-45deg, #0f172a, #1e1b4b, #312e81, #042f2e, #0f172a);
-      background-size: 400% 400%;
-      animation: appleGradient 15s ease infinite;
+      background: linear-gradient(-45deg, #1a0033, #330066, #003366, #006666, #003366, #330066, #1a0033);
+      background-size: 600% 600%;
+      animation: vibrantGradient 20s ease infinite;
       color: var(--text-primary);
       min-height: 100vh;
       display: flex;
@@ -127,9 +127,11 @@
       position: relative;
     }
 
-    @keyframes appleGradient {
+    @keyframes vibrantGradient {
       0% { background-position: 0% 50%; }
+      25% { background-position: 50% 100%; }
       50% { background-position: 100% 50%; }
+      75% { background-position: 50% 0%; }
       100% { background-position: 0% 50%; }
     }
 
@@ -158,7 +160,6 @@
       align-items: center;
       z-index: 10;
       transition: opacity 0.5s ease;
-      /* Для мобильных */
       margin-top: auto;
       margin-bottom: auto;
     }
@@ -167,15 +168,9 @@
     .top-bar {
       width: 100%;
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
-      margin-bottom: 40px;
-    }
-
-    .logo {
-      font-weight: 700;
-      font-size: 18px;
-      opacity: 0.9;
+      margin-bottom: 30px;
     }
 
     .top-widgets {
@@ -208,7 +203,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       color: #5AC8FA;
       animation: fadeIn 0.5s ease;
     }
@@ -222,7 +217,7 @@
       animation: pulseLive 2s infinite;
     }
 
-    /* === КНОПКА PLAY === */
+    /* === КНОПКА PLAY С ЛОГОТИПОМ === */
     .play-wrapper {
       position: relative;
       margin-bottom: 30px;
@@ -233,40 +228,96 @@
 
     .play-ring {
       position: absolute;
-      width: 140px;
-      height: 140px;
+      width: 160px;
+      height: 160px;
       border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.1);
-      border-top: 2px solid var(--accent-play);
-      animation: spin 3s linear infinite;
+      border: 3px solid rgba(255,255,255,0.1);
       opacity: 0;
       transition: opacity 0.5s;
+      animation: rgbPulse 3s ease-in-out infinite;
     }
     .play-ring.active { opacity: 1; }
 
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes rgbPulse {
+      0%, 100% { 
+        border-color: rgba(255, 0, 100, 0.6);
+        box-shadow: 0 0 30px rgba(255, 0, 100, 0.4), inset 0 0 20px rgba(255, 0, 100, 0.2);
+      }
+      33% { 
+        border-color: rgba(0, 255, 150, 0.6);
+        box-shadow: 0 0 30px rgba(0, 255, 150, 0.4), inset 0 0 20px rgba(0, 255, 150, 0.2);
+      }
+      66% { 
+        border-color: rgba(0, 150, 255, 0.6);
+        box-shadow: 0 0 30px rgba(0, 150, 255, 0.4), inset 0 0 20px rgba(0, 150, 255, 0.2);
+      }
+    }
 
     .play-btn-main {
-      width: 120px;
-      height: 120px;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
-      background: rgba(20, 20, 30, 0.8);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: linear-gradient(145deg, #1a1a2e, #0f0f1e);
+      border: 3px solid rgba(255,255,255,0.15);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 2px 10px rgba(255,255,255,0.1);
       position: relative;
       z-index: 2;
+      overflow: hidden;
     }
 
-    .play-btn-main:hover { transform: scale(1.05); background: rgba(30, 30, 40, 0.9); }
+    .play-btn-main::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .play-btn-main:hover::before {
+      opacity: 1;
+    }
+
+    .play-btn-main:hover { 
+      transform: scale(1.05); 
+      box-shadow: 0 25px 70px rgba(0,0,0,0.6), inset 0 2px 15px rgba(255,255,255,0.15);
+    }
     .play-btn-main:active { transform: scale(0.95); }
 
-    .play-icon { width: 40px; height: 40px; fill: white; margin-left: 4px; }
-    .pause-icon { width: 36px; height: 36px; fill: white; }
+    /* Логотип Radio Gram (треугольник V) */
+    .gram-logo {
+      width: 70px;
+      height: 70px;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .play-btn-main.playing .gram-logo {
+      animation: logoRGB 4s ease-in-out infinite;
+    }
+
+    @keyframes logoRGB {
+      0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 0, 100, 0.8)); }
+      33% { filter: drop-shadow(0 0 10px rgba(0, 255, 150, 0.8)); }
+      66% { filter: drop-shadow(0 0 10px rgba(0, 150, 255, 0.8)); }
+    }
+
+    .gram-logo svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .play-icon, .pause-icon {
+      display: none;
+    }
 
     /* === ЗАГОЛОВОК И LIVE === */
     .title-section {
@@ -557,26 +608,27 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* === АДАПТИВНОСТЬ (МОБИЛЬНЫЕ) === */
+    /* === АДАПТИВНОСТЬ === */
     @media (max-width: 480px) {
       .app-container { padding: 15px; }
       .track-grid { grid-template-columns: 1fr; gap: 10px; }
       .main-title { font-size: 36px; }
       .sub-title { font-size: 12px; }
-      .play-btn-main { width: 100px; height: 100px; }
-      .play-ring { width: 120px; height: 120px; }
+      .play-btn-main { width: 120px; height: 120px; }
+      .gram-logo { width: 60px; height: 60px; }
+      .play-ring { width: 140px; height: 140px; }
       .listeners-badge { font-size: 12px; padding: 6px 12px; }
       .action-btn { padding: 12px; font-size: 13px; }
       .buttons-grid { gap: 10px; }
       .bottom-controls { bottom: 15px; right: 15px; }
-      .viz-mode-selector { display: none; } /* Скрываем переключатель визуализатора на мобильных для чистоты */
+      .viz-mode-selector { display: none; }
     }
 
-    /* === АДАПТИВНОСТЬ (МАЛЕНЬКИЕ ТЕЛЕФОНЫ) === */
     @media (max-width: 360px) {
       .main-title { font-size: 32px; }
-      .play-btn-main { width: 90px; height: 90px; }
-      .play-ring { width: 110px; height: 110px; }
+      .play-btn-main { width: 110px; height: 110px; }
+      .gram-logo { width: 55px; height: 55px; }
+      .play-ring { width: 130px; height: 130px; }
       .listeners-badge { font-size: 11px; }
       .track-text { font-size: 12px; }
     }
@@ -590,9 +642,8 @@
   <!-- ОСНОВНОЙ КОНТЕНТ -->
   <div class="app-container" id="main-ui">
     
-    <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+    <!-- ВЕРХНЯЯ ПАНЕЛЬ (без логотипа) -->
     <div class="top-bar">
-      <div class="logo">Radio Gram</div>
       <div class="top-widgets">
         <div class="widget-pill">
           👁️ <span id="site-visitors">--</span>
@@ -609,11 +660,39 @@
       <span data-i18n="listeners" style="opacity: 0.7; font-weight: 400;">слушают</span>
     </div>
 
-    <!-- КНОПКА PLAY -->
+    <!-- КНОПКА PLAY С ЛОГОТИПОМ -->
     <div class="play-wrapper">
       <div class="play-ring" id="play-ring"></div>
       <div class="play-btn-main" id="play-btn" onclick="togglePlay()">
+        <div class="gram-logo">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <!-- Белый круг -->
+            <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+            
+            <!-- Треугольник V -->
+            <path d="M 30 35 L 70 35 L 50 70 Z" 
+                  fill="none" 
+                  stroke="white" 
+                  stroke-width="6" 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round"/>
+            
+            <!-- Вертикальная линия с красной точкой -->
+            <line x1="50" y1="35" x2="50" y2="68" 
+                  stroke="white" 
+                  stroke-width="5" 
+                  stroke-linecap="round"/>
+            
+            <!-- Красная точка/линия -->
+            <line x1="52" y1="40" x2="56" y2="50" 
+                  stroke="#FF3B30" 
+                  stroke-width="3" 
+                  stroke-linecap="round"/>
+            <circle cx="57" cy="38" r="3" fill="#FF3B30"/>
+          </svg>
+        </div>
         <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
       </div>
     </div>
 
@@ -669,6 +748,7 @@
         <button class="close-modal" onclick="document.getElementById('channels-popup').classList.remove('show')">✕</button>
         <div class="modal-title" data-i18n="channels_title">Our Channels</div>
         <a href="https://t.me/gramradiochill" target="_blank" class="modal-btn">📢 Telegram</a>
+        <a href="https://vk.com/radiogramchill" target="_blank" class="modal-btn">💙 VKontakte</a>
         <a href="https://www.youtube.com/@blogcheloveka" target="_blank" class="modal-btn">📺 YouTube</a>
       </div>
     </div>
@@ -698,7 +778,7 @@
 
   <!-- НИЖНИЕ КОНТРОЛЫ -->
   <div class="bottom-controls">
-    <!-- Переключатель режима визуализатора (скрывается на мобильных) -->
+    <!-- Переключатель режима визуализатора -->
     <div class="viz-mode-selector" id="viz-selector" style="display: none;">
       <button class="viz-mode-btn active" onclick="setVizMode('bars', this)">Bars</button>
       <button class="viz-mode-btn" onclick="setVizMode('particles', this)">Particles</button>
@@ -731,6 +811,7 @@
     const audio = document.getElementById('audio-player');
     const canvas = document.getElementById('visualizer-canvas');
     const ctx = canvas.getContext('2d');
+    const playBtn = document.getElementById('play-btn');
     
     let isPlaying = false;
     let isImmersive = false;
@@ -789,13 +870,26 @@
     function updateTexts() {
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if(translations[currentLang][key]) el.textContent = translations[currentLang][key];
+        if (translations[currentLang] && translations[currentLang][key]) {
+          el.textContent = translations[currentLang][key];
+        }
       });
+      
+      // Обновляем текст кнопки языка
+      const langBtn = document.querySelector('.lang-toggle');
+      if (langBtn) {
+        langBtn.textContent = currentLang === 'ru' ? 'EN' : 'RU';
+      }
+      
+      // Обновляем текст в бейдже слушателей
+      const listenersBadge = document.querySelector('.listeners-badge span[data-i18n="listeners"]');
+      if (listenersBadge) {
+        listenersBadge.textContent = translations[currentLang].listeners;
+      }
     }
 
     function toggleLang() {
       currentLang = currentLang === 'ru' ? 'en' : 'ru';
-      document.querySelector('.lang-toggle').textContent = currentLang === 'ru' ? 'EN' : 'RU';
       updateTexts();
     }
 
@@ -1019,21 +1113,19 @@
 
     // === ПЛЕЕР ===
     async function togglePlay() {
-      const btn = document.getElementById('play-btn');
       const ring = document.getElementById('play-ring');
-      const liveBadge = document.getElementById('live-badge');
 
       if (isPlaying) {
         audio.pause();
-        btn.innerHTML = '<svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+        playBtn.classList.remove('playing');
         ring.classList.remove('active');
-        liveBadge.style.display = 'none';
+        document.getElementById('live-badge').style.display = 'none';
         if (isImmersive) stopVisualization();
       } else {
         await audio.play();
-        btn.innerHTML = '<svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+        playBtn.classList.add('playing');
         ring.classList.add('active');
-        liveBadge.style.display = 'inline-flex';
+        document.getElementById('live-badge').style.display = 'inline-flex';
         
         if (!audioContextInitialized) await setupAudioVisualization();
         if (isImmersive) startVisualization();
@@ -1041,7 +1133,7 @@
       isPlaying = !isPlaying;
     }
 
-    // === СЧЁТЧИК СЛУШАТЕЛЕЙ РАДИО (реальные + 6-9 фейковых) ===
+    // === СЧЁТЧИК СЛУШАТЕЛЕЙ РАДИО ===
     function getConsistentFakeListeners() {
       const currentHour = new Date().getHours();
       const twoHourBlock = Math.floor(currentHour / 2);
@@ -1064,7 +1156,7 @@
     setInterval(updateRadioListeners, 30000);
     updateRadioListeners();
 
-    // === СЧЁТЧИК ПОСЕТИТЕЛЕЙ САЙТА (уникальные по localStorage) ===
+    // === СЧЁТЧИК ПОСЕТИТЕЛЕЙ САЙТА ===
     function updateSiteVisitors() {
       const visitorsEl = document.getElementById('site-visitors');
       const stored = localStorage.getItem('siteVisitors');
