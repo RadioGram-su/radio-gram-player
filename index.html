@@ -126,6 +126,17 @@
       overflow-y: auto;
       position: relative;
     }
+    #reactive-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 25% 30%, rgba(0, 122, 255, 0.24), transparent 50%),
+                  radial-gradient(circle at 75% 70%, rgba(140, 90, 255, 0.22), transparent 56%),
+                  linear-gradient(120deg, #080d2c, #041b39, #05374a);
+      transition: opacity 0.25s ease;
+      opacity: 1;
+    }
 
     @keyframes vibrantGradient {
       0% { background-position: 0% 50%; }
@@ -593,6 +604,14 @@
       opacity: 1;
       pointer-events: auto;
     }
+    body.night-mode {
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --text-secondary: rgba(255, 255, 255, 0.72);
+    }
+    body.night-mode #reactive-bg {
+      filter: brightness(0.55) saturate(0.82);
+    }
 
     /* === МОДАЛКИ === */
     .modal-overlay {
@@ -691,6 +710,7 @@
 <body>
 
   <!-- CANVAS ДЛЯ ВИЗУАЛИЗАТОРА -->
+  <div id="reactive-bg"></div>
   <canvas id="visualizer-canvas"></canvas>
   <button id="visual-exit-btn" onclick="toggleImmersive()" aria-label="Exit visual mode">Выйти</button>
 
@@ -846,6 +866,7 @@
     </div>
     
     <div class="settings-row">
+      <button class="icon-btn" id="night-mode-btn" onclick="toggleNightMode()" title="Night Mode" aria-label="Toggle night mode">🌙</button>
       <button class="icon-btn lang-toggle" onclick="toggleLang()" aria-label="Switch language">EN</button>
       <button class="icon-btn" onclick="toggleSleepMenu()" title="Sleep Timer" aria-label="Sleep timer">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
@@ -865,22 +886,30 @@
     // === ПЕРЕМЕННЫЕ ===
     const audio = document.getElementById('audio-player');
     const canvas = document.getElementById('visualizer-canvas');
+    const reactiveBg = document.getElementById('reactive-bg');
     const ctx = canvas.getContext('2d');
     const playBtn = document.getElementById('play-btn');
     
     let isPlaying = false;
     let isImmersive = false;
+    let isNightMode = false;
     let currentLang = 'ru';
     let vizMode = 'bars';
     let audioContext = null;
     let analyser = null;
     let dataArray = null;
     let source = null;
+    let masterGain = null;
     let animationId = null;
+    let reactiveBgAnimationId = null;
     let audioContextInitialized = false;
     let particles = [];
     let toastTimeout = null;
     let activeModalId = null;
+    let isFading = false;
+    const FADE_IN_MS = 500;
+    const FADE_OUT_MS = 350;
+    const bgState = { bass: 0.12, mid: 0.12, treble: 0.12 };
 
     // === СЛОВАРЬ ===
     const translations = {
@@ -899,7 +928,8 @@
         donate_title: "Поддержать проект",
         close: "Закрыть",
         immersive: "Визуал",
-        listeners: "слушают"
+        listeners: "слушают",
+        night_mode: "Ночь"
       },
       en: {
         live: "LIVE",
@@ -916,7 +946,8 @@
         donate_title: "Support Developer",
         close: "Close",
         immersive: "Visual",
-        listeners: "listening"
+        listeners: "listening",
+        night_mode: "Night"
       }
     };
 
@@ -943,6 +974,11 @@
       if (listenersBadge) {
         listenersBadge.textContent = translations[currentLang].listeners;
       }
+      const nightBtn = document.getElementById('night-mode-btn');
+      if (nightBtn) {
+        nightBtn.title = currentLang === 'ru' ? 'Ночной режим' : 'Night Mode';
+        nightBtn.setAttribute('aria-label', currentLang === 'ru' ? 'Переключить ночной режим' : 'Toggle night mode');
+      }
     }
 
     function toggleLang() {
@@ -962,6 +998,13 @@
         canvas.classList.remove('active');
         stopVisualization();
       }
+    }
+
+    function toggleNightMode() {
+      isNightMode = !isNightMode;
+      document.body.classList.toggle('night-mode', isNightMode);
+      const nightBtn = document.getElementById('night-mode-btn');
+      if (nightBtn) nightBtn.textContent = isNightMode ? '☀️' : '🌙';
     }
 
     function showStatusMessage(message) {
@@ -994,8 +1037,11 @@
         analyser.smoothingTimeConstant = 0.8;
         
         source = audioContext.createMediaElementSource(audio);
+        masterGain = audioContext.createGain();
+        masterGain.gain.value = 1;
         source.connect(analyser);
-        analyser.connect(audioContext.destination);
+        analyser.connect(masterGain);
+        masterGain.connect(audioContext.destination);
         
         dataArray = new Uint8Array(analyser.frequencyBinCount);
         audioContextInitialized = true;
@@ -1005,6 +1051,79 @@
       } catch (e) {
         console.error('Audio context error:', e);
       }
+    }
+
+    function getFrequencyEnergy() {
+      if (!dataArray || !dataArray.length) {
+        return { bass: 0, mid: 0, treble: 0 };
+      }
+      const len = dataArray.length;
+      const bassEnd = Math.max(1, Math.floor(len * 0.18));
+      const midEnd = Math.max(bassEnd + 1, Math.floor(len * 0.55));
+      let bass = 0;
+      let mid = 0;
+      let treble = 0;
+
+      for (let i = 0; i < bassEnd; i++) bass += dataArray[i];
+      for (let i = bassEnd; i < midEnd; i++) mid += dataArray[i];
+      for (let i = midEnd; i < len; i++) treble += dataArray[i];
+
+      bass = (bass / bassEnd) / 255;
+      mid = (mid / (midEnd - bassEnd)) / 255;
+      treble = (treble / (len - midEnd)) / 255;
+      return { bass, mid, treble };
+    }
+
+    function renderReactiveBackground() {
+      if (!reactiveBg) return;
+      const coreOpacity = 0.12 + bgState.bass * 0.45;
+      const sideOpacity = 0.1 + bgState.mid * 0.35;
+      const lowOpacity = 0.08 + bgState.treble * 0.32;
+      const y1 = Math.round(28 + bgState.treble * 14);
+      const y2 = Math.round(72 - bgState.bass * 16);
+      const h = Math.round(205 + bgState.mid * 120 + bgState.treble * 80);
+
+      reactiveBg.style.background = `
+        radial-gradient(circle at 22% ${y1}%, rgba(26, 123, 255, ${coreOpacity.toFixed(3)}), transparent 52%),
+        radial-gradient(circle at 78% ${y2}%, rgba(139, 83, 255, ${sideOpacity.toFixed(3)}), transparent 58%),
+        radial-gradient(circle at 50% 100%, rgba(0, 210, 255, ${lowOpacity.toFixed(3)}), transparent 48%),
+        linear-gradient(120deg, #050914, #031325, hsl(${h}, 80%, 20%))
+      `;
+      reactiveBg.style.boxShadow = `inset 0 0 160px rgba(0, 0, 0, ${0.15 + bgState.bass * 0.2})`;
+      reactiveBg.style.filter = isNightMode
+        ? `brightness(${0.52 + bgState.mid * 0.2}) saturate(0.8)`
+        : `brightness(${0.9 + bgState.mid * 0.25}) saturate(${1.0 + bgState.treble * 0.25})`;
+    }
+
+    function startReactiveBackground() {
+      if (reactiveBgAnimationId) return;
+      const animateBg = () => {
+        if (audioContextInitialized && analyser && isPlaying) {
+          analyser.getByteFrequencyData(dataArray);
+          const energy = getFrequencyEnergy();
+          bgState.bass += (energy.bass - bgState.bass) * 0.12;
+          bgState.mid += (energy.mid - bgState.mid) * 0.12;
+          bgState.treble += (energy.treble - bgState.treble) * 0.12;
+        } else {
+          bgState.bass += (0.08 - bgState.bass) * 0.04;
+          bgState.mid += (0.08 - bgState.mid) * 0.04;
+          bgState.treble += (0.08 - bgState.treble) * 0.04;
+        }
+        renderReactiveBackground();
+        reactiveBgAnimationId = requestAnimationFrame(animateBg);
+      };
+      animateBg();
+    }
+
+    function stopReactiveBackground() {
+      if (reactiveBgAnimationId) {
+        cancelAnimationFrame(reactiveBgAnimationId);
+        reactiveBgAnimationId = null;
+      }
+      bgState.bass = 0.08;
+      bgState.mid = 0.08;
+      bgState.treble = 0.08;
+      renderReactiveBackground();
     }
 
     function resizeCanvas() {
@@ -1170,20 +1289,53 @@
     // === ПЛЕЕР ===
     async function togglePlay() {
       const ring = document.getElementById('play-ring');
+      if (isFading) return;
 
       if (isPlaying) {
-        audio.pause();
-        playBtn.classList.remove('playing');
-        ring.classList.remove('active');
-        document.getElementById('live-badge').style.display = 'none';
-        if (isImmersive) stopVisualization();
+        if (audioContextInitialized && masterGain) {
+          isFading = true;
+          const now = audioContext.currentTime;
+          masterGain.gain.cancelScheduledValues(now);
+          masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+          masterGain.gain.linearRampToValueAtTime(0.001, now + FADE_OUT_MS / 1000);
+          setTimeout(() => {
+            audio.pause();
+            playBtn.classList.remove('playing');
+            ring.classList.remove('active');
+            document.getElementById('live-badge').style.display = 'none';
+            if (isImmersive) stopVisualization();
+            stopReactiveBackground();
+            if (masterGain && audioContext) {
+              masterGain.gain.setValueAtTime(1, audioContext.currentTime);
+            }
+            isFading = false;
+          }, FADE_OUT_MS + 40);
+        } else {
+          audio.pause();
+          playBtn.classList.remove('playing');
+          ring.classList.remove('active');
+          document.getElementById('live-badge').style.display = 'none';
+          if (isImmersive) stopVisualization();
+          stopReactiveBackground();
+        }
       } else {
         try {
+          if (!audioContextInitialized) await setupAudioVisualization();
+          if (audioContext && audioContext.state === 'suspended') await audioContext.resume();
+          if (masterGain && audioContext) {
+            const now = audioContext.currentTime;
+            masterGain.gain.cancelScheduledValues(now);
+            masterGain.gain.setValueAtTime(0.001, now);
+          }
           await audio.play();
           playBtn.classList.add('playing');
           ring.classList.add('active');
           document.getElementById('live-badge').style.display = 'inline-flex';
-          if (!audioContextInitialized) await setupAudioVisualization();
+          startReactiveBackground();
+          if (masterGain && audioContext) {
+            const now = audioContext.currentTime;
+            masterGain.gain.linearRampToValueAtTime(1, now + FADE_IN_MS / 1000);
+          }
           if (isImmersive) startVisualization();
         } catch (e) {
           showStatusMessage(currentLang === 'ru' ? 'Не удалось запустить поток. Повторите попытку.' : 'Unable to start stream. Please try again.');
