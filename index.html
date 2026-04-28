@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <!-- === SEO META TAGS === -->
   <title>Radio Gram — Deep House, Techno, Lo-Fi, Reggae & Chill Music 24/7</title>
@@ -632,6 +632,17 @@
       .listeners-badge { font-size: 11px; }
       .track-text { font-size: 12px; }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -663,7 +674,7 @@
     <!-- КНОПКА PLAY С ЛОГОТИПОМ -->
     <div class="play-wrapper">
       <div class="play-ring" id="play-ring"></div>
-      <div class="play-btn-main" id="play-btn" onclick="togglePlay()">
+      <div class="play-btn-main" id="play-btn" onclick="togglePlay()" role="button" tabindex="0" aria-label="Play or pause radio stream">
         <div class="gram-logo">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <!-- Белый круг -->
@@ -737,40 +748,40 @@
       <button class="action-btn btn-partners" onclick="togglePopup('partners-popup')">
         <span data-i18n="partners">Partners</span> 🤝
       </button>
-      <button class="action-btn btn-chat" onclick="window.open('https://t.me/chatradiogram', '_blank')">
+      <button class="action-btn btn-chat" onclick="window.open('https://t.me/chatradiogram', '_blank', 'noopener,noreferrer')">
         <span data-i18n="chat">Join Chat</span> 💬
       </button>
     </div>
 
     <!-- ПОПАПЫ -->
-    <div id="channels-popup" class="modal-overlay" onclick="closePopups(event)">
-      <div class="modal-content" style="position: relative;">
-        <button class="close-modal" onclick="document.getElementById('channels-popup').classList.remove('show')">✕</button>
-        <div class="modal-title" data-i18n="channels_title">Our Channels</div>
-        <a href="https://t.me/gramradiochill" target="_blank" class="modal-btn">📢 Telegram</a>
-        <a href="https://vk.com/radiogramchill" target="_blank" class="modal-btn">💙 VKontakte</a>
-        <a href="https://www.youtube.com/@blogcheloveka" target="_blank" class="modal-btn">📺 YouTube</a>
+    <div id="channels-popup" class="modal-overlay" onclick="closePopups(event)" role="dialog" aria-modal="true" aria-labelledby="channels-title">
+      <div class="modal-content" style="position: relative;" tabindex="-1">
+        <button class="close-modal" onclick="closeModal('channels-popup')">✕</button>
+        <div class="modal-title" id="channels-title" data-i18n="channels_title">Our Channels</div>
+        <a href="https://t.me/gramradiochill" target="_blank" rel="noopener noreferrer" class="modal-btn">📢 Telegram</a>
+        <a href="https://vk.com/radiogramchill" target="_blank" rel="noopener noreferrer" class="modal-btn">💙 VKontakte</a>
+        <a href="https://www.youtube.com/@blogcheloveka" target="_blank" rel="noopener noreferrer" class="modal-btn">📺 YouTube</a>
       </div>
     </div>
 
-    <div id="partners-popup" class="modal-overlay" onclick="closePopups(event)">
-      <div class="modal-content" style="position: relative;">
-        <button class="close-modal" onclick="document.getElementById('partners-popup').classList.remove('show')">✕</button>
-        <div class="modal-title" data-i18n="partners_title">Partners</div>
-        <a href="https://onlineradiohub.ru/" target="_blank" class="modal-btn">🌐 OnlineRadioHub</a>
-        <a href="http://www.internet-radio.com" target="_blank" class="modal-btn">📻 Internet-Radio.com</a>
-        <a href="https://t.me/Gram_zonebot?start=679bcd47c630af4776e08ffb" target="_blank" class="modal-btn">🎮 Gram Zone</a>
+    <div id="partners-popup" class="modal-overlay" onclick="closePopups(event)" role="dialog" aria-modal="true" aria-labelledby="partners-title">
+      <div class="modal-content" style="position: relative;" tabindex="-1">
+        <button class="close-modal" onclick="closeModal('partners-popup')">✕</button>
+        <div class="modal-title" id="partners-title" data-i18n="partners_title">Partners</div>
+        <a href="https://onlineradiohub.ru/" target="_blank" rel="noopener noreferrer" class="modal-btn">🌐 OnlineRadioHub</a>
+        <a href="http://www.internet-radio.com" target="_blank" rel="noopener noreferrer" class="modal-btn">📻 Internet-Radio.com</a>
+        <a href="https://t.me/Gram_zonebot?start=679bcd47c630af4776e08ffb" target="_blank" rel="noopener noreferrer" class="modal-btn">🎮 Gram Zone</a>
       </div>
     </div>
 
     <!-- МОДАЛКА ДОНАТА -->
-    <div id="donate-modal" class="modal-overlay" onclick="closePopups(event)">
-      <div class="modal-content">
-        <div class="modal-title" data-i18n="donate_title">Support Developer</div>
-        <a href="https://pay.cloudtips.ru/p/b5dba7c2" target="_blank" class="modal-btn">💳 CloudTips (SBP)</a>
+    <div id="donate-modal" class="modal-overlay" onclick="closePopups(event)" role="dialog" aria-modal="true" aria-labelledby="donate-title">
+      <div class="modal-content" tabindex="-1">
+        <div class="modal-title" id="donate-title" data-i18n="donate_title">Support Developer</div>
+        <a href="https://pay.cloudtips.ru/p/b5dba7c2" target="_blank" rel="noopener noreferrer" class="modal-btn">💳 CloudTips (SBP)</a>
         <div class="modal-btn" onclick="copyWallet()">💎 Copy TON Wallet</div>
         <div id="wallet-text" style="display:none; font-size:11px; margin:5px 0; color:#aaa; word-break:break-all;">UQDNJZb6MPyqP1P1JONmZ5Que0_UMA1n4k3ugAYcVEv7XH3Q</div>
-        <button class="close-modal" onclick="document.getElementById('donate-modal').classList.remove('show')" data-i18n="close">Close</button>
+        <button class="close-modal" onclick="closeModal('donate-modal')" data-i18n="close">Close</button>
       </div>
     </div>
 
@@ -794,8 +805,8 @@
     </div>
     
     <div class="settings-row">
-      <button class="icon-btn lang-toggle" onclick="toggleLang()">EN</button>
-      <button class="icon-btn" onclick="toggleSleepMenu()" title="Sleep Timer">
+      <button class="icon-btn lang-toggle" onclick="toggleLang()" aria-label="Switch language">EN</button>
+      <button class="icon-btn" onclick="toggleSleepMenu()" title="Sleep Timer" aria-label="Sleep timer">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
       </button>
     </div>
@@ -805,6 +816,9 @@
   <audio id="audio-player" crossorigin="anonymous">
     <source src="https://radiogram.su/listen/radio_gram/radio.mp3" type="audio/mpeg">
   </audio>
+  <div id="player-status" aria-live="polite" style="position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); background: rgba(20,20,20,0.85); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 10px; padding: 10px 14px; font-size: 13px; z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;">
+    Stream is unavailable. Please try again.
+  </div>
 
   <script>
     // === ПЕРЕМЕННЫЕ ===
@@ -825,6 +839,9 @@
     let audioContextInitialized = false;
     let particles = [];
     let rings = [];
+    let toastTimeout = null;
+    let activeModalId = null;
+    const METRICS_API_URL = 'https://player.radiogram.su/api/metrics/visitors-total';
 
     // === СЛОВАРЬ ===
     const translations = {
@@ -891,6 +908,7 @@
     function toggleLang() {
       currentLang = currentLang === 'ru' ? 'en' : 'ru';
       updateTexts();
+      updateSiteVisitors();
     }
 
     function toggleImmersive() {
@@ -907,6 +925,17 @@
         canvas.classList.remove('active');
         stopVisualization();
       }
+    }
+
+    function showStatusMessage(message) {
+      const status = document.getElementById('player-status');
+      if (!status) return;
+      status.textContent = message;
+      status.style.opacity = '1';
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        status.style.opacity = '0';
+      }, 2600);
     }
 
     function setVizMode(mode, btn) {
@@ -1122,13 +1151,18 @@
         document.getElementById('live-badge').style.display = 'none';
         if (isImmersive) stopVisualization();
       } else {
-        await audio.play();
-        playBtn.classList.add('playing');
-        ring.classList.add('active');
-        document.getElementById('live-badge').style.display = 'inline-flex';
-        
-        if (!audioContextInitialized) await setupAudioVisualization();
-        if (isImmersive) startVisualization();
+        try {
+          await audio.play();
+          playBtn.classList.add('playing');
+          ring.classList.add('active');
+          document.getElementById('live-badge').style.display = 'inline-flex';
+          if (!audioContextInitialized) await setupAudioVisualization();
+          if (isImmersive) startVisualization();
+        } catch (e) {
+          showStatusMessage(currentLang === 'ru' ? 'Не удалось запустить поток. Повторите попытку.' : 'Unable to start stream. Please try again.');
+          console.error('Playback error:', e);
+          return;
+        }
       }
       isPlaying = !isPlaying;
     }
@@ -1156,23 +1190,37 @@
     setInterval(updateRadioListeners, 30000);
     updateRadioListeners();
 
-    // === СЧЁТЧИК ПОСЕТИТЕЛЕЙ САЙТА ===
-    function updateSiteVisitors() {
+    // === СЧЁТЧИК ПОСЕТИТЕЛЕЙ САЙТА (УНИКАЛЬНЫЕ ЗА ВСЁ ВРЕМЯ) ===
+    async function updateSiteVisitors() {
       const visitorsEl = document.getElementById('site-visitors');
-      const stored = localStorage.getItem('siteVisitors');
-      const today = new Date().toDateString();
-      
-      let count = stored ? JSON.parse(stored) : {date: today, count: Math.floor(Math.random() * 50) + 100};
-      
-      if (count.date !== today) {
-        count = {date: today, count: Math.floor(Math.random() * 50) + 100};
+      if (!visitorsEl) return;
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 7000);
+        const res = await fetch(METRICS_API_URL, {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (!res.ok) throw new Error(`Metrics API error: ${res.status}`);
+
+        const data = await res.json();
+        const totalUnique = Number(data.totalUniqueVisitors);
+        if (!Number.isFinite(totalUnique) || totalUnique < 0) {
+          throw new Error('Invalid totalUniqueVisitors value');
+        }
+
+        visitorsEl.textContent = totalUnique.toLocaleString(currentLang === 'ru' ? 'ru-RU' : 'en-US');
+      } catch (e) {
+        visitorsEl.textContent = '--';
+        console.error('Failed to load metrics visitors count:', e);
       }
-      
-      count.count++;
-      localStorage.setItem('siteVisitors', JSON.stringify(count));
-      visitorsEl.textContent = count.count;
     }
     updateSiteVisitors();
+    setInterval(updateSiteVisitors, 120000);
 
     // === ТРЕКИ ===
     async function updateTrackInfo() {
@@ -1199,10 +1247,38 @@
     updateTrackInfo();
 
     // === МОДАЛКИ ===
-    function togglePopup(id) { document.getElementById(id).classList.toggle('show'); }
-    function openModal(id) { document.getElementById(id).classList.add('show'); }
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.remove('show');
+      if (activeModalId === id) activeModalId = null;
+    }
+
+    function togglePopup(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      const willShow = !modal.classList.contains('show');
+      modal.classList.toggle('show');
+      activeModalId = willShow ? id : null;
+      if (willShow) {
+        const modalContent = modal.querySelector('.modal-content');
+        if (modalContent) modalContent.focus();
+      }
+    }
+
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.add('show');
+      activeModalId = id;
+      const modalContent = modal.querySelector('.modal-content');
+      if (modalContent) modalContent.focus();
+    }
     function closePopups(e) {
-      if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('show');
+      if (e.target.classList.contains('modal-overlay')) {
+        e.target.classList.remove('show');
+        if (activeModalId === e.target.id) activeModalId = null;
+      }
     }
     function copyWallet() {
       navigator.clipboard.writeText('UQDNJZb6MPyqP1P1JONmZ5Que0_UMA1n4k3ugAYcVEv7XH3Q');
@@ -1251,6 +1327,19 @@
         }
       }, 1000);
     }
+
+    playBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        togglePlay();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && activeModalId) {
+        closeModal(activeModalId);
+      }
+    });
   </script>
 </body>
 </html>
