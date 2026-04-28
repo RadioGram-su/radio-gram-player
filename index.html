@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
   <!-- === SEO META TAGS === -->
   <title>Radio Gram — Deep House, Techno, Lo-Fi, Reggae & Chill Music 24/7</title>
@@ -653,12 +653,9 @@
   <!-- ОСНОВНОЙ КОНТЕНТ -->
   <div class="app-container" id="main-ui">
     
-    <!-- ВЕРХНЯЯ ПАНЕЛЬ (без логотипа) -->
+    <!-- ВЕРХНЯЯ ПАНЕЛЬ (только таймер сна) -->
     <div class="top-bar">
       <div class="top-widgets">
-        <div class="widget-pill">
-          👁️ <span id="site-visitors">--</span>
-        </div>
         <div class="widget-pill" id="sleep-timer-widget" style="display: none; cursor: pointer;" onclick="toggleSleepMenu()">
           💤 <span id="timer-text">30m</span>
         </div>
@@ -841,7 +838,6 @@
     let rings = [];
     let toastTimeout = null;
     let activeModalId = null;
-    const METRICS_API_URL = 'https://player.radiogram.su/api/metrics/visitors-total';
 
     // === СЛОВАРЬ ===
     const translations = {
@@ -908,7 +904,6 @@
     function toggleLang() {
       currentLang = currentLang === 'ru' ? 'en' : 'ru';
       updateTexts();
-      updateSiteVisitors();
     }
 
     function toggleImmersive() {
@@ -1167,7 +1162,7 @@
       isPlaying = !isPlaying;
     }
 
-    // === СЧЁТЧИК СЛУШАТЕЛЕЙ РАДИО ===
+    // === СЧЁТЧИК СЛУШАТЕЛЕЙ РАДИО (реальные + 6-9 фейковых) ===
     function getConsistentFakeListeners() {
       const currentHour = new Date().getHours();
       const twoHourBlock = Math.floor(currentHour / 2);
@@ -1189,38 +1184,6 @@
     }
     setInterval(updateRadioListeners, 30000);
     updateRadioListeners();
-
-    // === СЧЁТЧИК ПОСЕТИТЕЛЕЙ САЙТА (УНИКАЛЬНЫЕ ЗА ВСЁ ВРЕМЯ) ===
-    async function updateSiteVisitors() {
-      const visitorsEl = document.getElementById('site-visitors');
-      if (!visitorsEl) return;
-
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 7000);
-        const res = await fetch(METRICS_API_URL, {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' },
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-
-        if (!res.ok) throw new Error(`Metrics API error: ${res.status}`);
-
-        const data = await res.json();
-        const totalUnique = Number(data.totalUniqueVisitors);
-        if (!Number.isFinite(totalUnique) || totalUnique < 0) {
-          throw new Error('Invalid totalUniqueVisitors value');
-        }
-
-        visitorsEl.textContent = totalUnique.toLocaleString(currentLang === 'ru' ? 'ru-RU' : 'en-US');
-      } catch (e) {
-        visitorsEl.textContent = '--';
-        console.error('Failed to load metrics visitors count:', e);
-      }
-    }
-    updateSiteVisitors();
-    setInterval(updateSiteVisitors, 120000);
 
     // === ТРЕКИ ===
     async function updateTrackInfo() {
