@@ -150,6 +150,31 @@
       pointer-events: auto;
     }
 
+    #visual-exit-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 120;
+      background: rgba(12, 12, 20, 0.35);
+      color: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease;
+      transform: translateY(-4px);
+    }
+    #visual-exit-btn:hover {
+      background: rgba(20, 20, 34, 0.55);
+      transform: translateY(0);
+    }
+
     /* === ГЛАВНЫЙ КОНТЕЙНЕР === */
     .app-container {
       width: 100%;
@@ -178,19 +203,6 @@
       gap: 10px;
     }
 
-    .widget-pill {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(10px);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
     /* === СЧЁТЧИК СЛУШАТЕЛЕЙ (рядом с Play) === */
     .listeners-badge {
       background: rgba(0, 122, 255, 0.15);
@@ -215,6 +227,19 @@
       background: #5AC8FA;
       border-radius: 50%;
       animation: pulseLive 2s infinite;
+    }
+
+    .widget-pill {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     /* === КНОПКА PLAY С ЛОГОТИПОМ === */
@@ -551,6 +576,24 @@
     .immersive-switch.active .switch-track { background: #34C759; }
     .immersive-switch.active .switch-thumb { left: 16px; }
 
+    body.visual-only {
+      overflow: hidden;
+      animation-play-state: paused;
+    }
+    body.visual-only .app-container,
+    body.visual-only .bottom-controls {
+      opacity: 0;
+      pointer-events: none;
+    }
+    body.visual-only #visualizer-canvas {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    body.visual-only #visual-exit-btn {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     /* === МОДАЛКИ === */
     .modal-overlay {
       display: none;
@@ -649,6 +692,7 @@
 
   <!-- CANVAS ДЛЯ ВИЗУАЛИЗАТОРА -->
   <canvas id="visualizer-canvas"></canvas>
+  <button id="visual-exit-btn" onclick="toggleImmersive()" aria-label="Exit visual mode">Выйти</button>
 
   <!-- ОСНОВНОЙ КОНТЕНТ -->
   <div class="app-container" id="main-ui">
@@ -790,7 +834,7 @@
     <div class="viz-mode-selector" id="viz-selector" style="display: none;">
       <button class="viz-mode-btn active" onclick="setVizMode('bars', this)">Bars</button>
       <button class="viz-mode-btn" onclick="setVizMode('particles', this)">Particles</button>
-      <button class="viz-mode-btn" onclick="setVizMode('rings', this)">Rings</button>
+      <button class="viz-mode-btn" onclick="setVizMode('nebula', this)">Nebula</button>
     </div>
 
     <!-- Переключатель режима погружения -->
@@ -835,7 +879,6 @@
     let animationId = null;
     let audioContextInitialized = false;
     let particles = [];
-    let rings = [];
     let toastTimeout = null;
     let activeModalId = null;
 
@@ -855,9 +898,8 @@
         partners_title: "Партнёры",
         donate_title: "Поддержать проект",
         close: "Закрыть",
-        immersive: "Погружение",
-        listeners: "слушают",
-        visitors: "посет."
+        immersive: "Визуал",
+        listeners: "слушают"
       },
       en: {
         live: "LIVE",
@@ -873,9 +915,8 @@
         partners_title: "Partners",
         donate_title: "Support Developer",
         close: "Close",
-        immersive: "Immersive",
-        listeners: "listening",
-        visitors: "visitors"
+        immersive: "Visual",
+        listeners: "listening"
       }
     };
 
@@ -894,7 +935,10 @@
         langBtn.textContent = currentLang === 'ru' ? 'EN' : 'RU';
       }
       
-      // Обновляем текст в бейдже слушателей
+      const exitBtn = document.getElementById('visual-exit-btn');
+      if (exitBtn) {
+        exitBtn.textContent = currentLang === 'ru' ? 'Выйти' : 'Exit';
+      }
       const listenersBadge = document.querySelector('.listeners-badge span[data-i18n="listeners"]');
       if (listenersBadge) {
         listenersBadge.textContent = translations[currentLang].listeners;
@@ -909,9 +953,7 @@
     function toggleImmersive() {
       isImmersive = !isImmersive;
       document.getElementById('immersive-toggle').classList.toggle('active', isImmersive);
-      document.getElementById('main-ui').style.opacity = isImmersive ? '0' : '1';
-      document.getElementById('main-ui').style.pointerEvents = isImmersive ? 'none' : 'auto';
-      document.getElementById('viz-selector').style.display = isImmersive ? 'flex' : 'none';
+      document.body.classList.toggle('visual-only', isImmersive);
       
       if (isImmersive && isPlaying && audioContextInitialized) {
         canvas.classList.add('active');
@@ -982,7 +1024,7 @@
         switch(vizMode) {
           case 'bars': drawBars(); break;
           case 'particles': drawParticles(); break;
-          case 'rings': drawRings(); break;
+          case 'nebula': drawNebula(); break;
         }
         
         animationId = requestAnimationFrame(animate);
@@ -1092,47 +1134,37 @@
       });
     }
 
-    // 3. ЭНЕРГЕТИЧЕСКИЕ КОЛЬЦА
-    function drawRings() {
+    // 3. NEBULA FLOW (иммерсивный режим)
+    function drawNebula() {
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
       const avgValue = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
       const energy = avgValue / 255;
-      
-      if (energy > 0.6 && Math.random() > 0.9) {
-        rings.push({
-          radius: 50,
-          maxRadius: Math.min(canvas.width, canvas.height) * 0.8,
-          alpha: 1,
-          speed: 2 + energy * 3
-        });
+      const baseRadius = Math.min(canvas.width, canvas.height) * (0.1 + energy * 0.12);
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+
+      for (let i = 0; i < dataArray.length; i += 6) {
+        const value = dataArray[i] / 255;
+        const angle = (i / dataArray.length) * Math.PI * 2 + performance.now() * 0.0002;
+        const radius = baseRadius + value * Math.min(canvas.width, canvas.height) * 0.35;
+        const x = centerX + Math.cos(angle) * radius;
+        const y = centerY + Math.sin(angle) * radius;
+        const hue = 180 + i * 1.6 + energy * 120;
+        const glow = 14 + value * 28;
+
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, glow);
+        gradient.addColorStop(0, `hsla(${hue}, 95%, 70%, ${0.45 + value * 0.5})`);
+        gradient.addColorStop(1, `hsla(${hue}, 95%, 55%, 0)`);
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(x, y, glow, 0, Math.PI * 2);
+        ctx.fill();
       }
-      
-      rings = rings.filter(ring => {
-        ring.radius += ring.speed;
-        ring.alpha = 1 - (ring.radius / ring.maxRadius);
-        
-        if (ring.alpha <= 0) return false;
-        
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, ring.radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(0, 122, 255, ${ring.alpha * 0.6})`;
-        ctx.lineWidth = 3 + energy * 5;
-        ctx.stroke();
-        
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, ring.radius * 0.95, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(100, 150, 255, ${ring.alpha * 0.3})`;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        
-        return true;
-      });
-      
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 5 + energy * 10, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0, 122, 255, ${0.5 + energy * 0.5})`;
-      ctx.fill();
+
+      ctx.restore();
     }
 
     // === ПЛЕЕР ===
@@ -1176,7 +1208,6 @@
         const realListeners = data.listeners?.unique || 0;
         const fakeListeners = getConsistentFakeListeners();
         const totalListeners = realListeners + fakeListeners;
-        
         document.getElementById('radio-listeners').textContent = totalListeners;
       } catch (e) {
         document.getElementById('radio-listeners').textContent = '0';
@@ -1302,7 +1333,12 @@
       if (e.key === 'Escape' && activeModalId) {
         closeModal(activeModalId);
       }
+      if (e.key === 'Escape' && isImmersive && !activeModalId) {
+        toggleImmersive();
+      }
     });
+
+    updateTexts();
   </script>
 </body>
 </html>
