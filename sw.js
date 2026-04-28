@@ -1,4 +1,4 @@
-const CACHE_NAME = 'radio-gram-v2';
+const CACHE_NAME = 'radio-gram-v3';
 const urlsToCache = [
   '/',
   '/index.html',
