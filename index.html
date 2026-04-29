@@ -1077,9 +1077,9 @@
         max-height: 24vh;
         overflow-y: auto;
         padding-right: 2px;
-        background: rgba(7, 14, 24, 0.42);
-        border: 1px solid rgba(255,255,255,0.16);
-        border-radius: 12px;
+        background: transparent;
+        border: none;
+        border-radius: 0;
         padding: 6px;
       }
       #aquarium-ui {
@@ -1431,6 +1431,7 @@
     let aquariumShopHidden = false;
     let aquariumShopCategory = 'all';
     const aquariumThemeImageCache = {};
+    const aquariumThemeTransition = { fromId: '', toId: '', startedAt: 0, durationMs: 1200 };
     let aquariumThemeIndex = 0;
     let listeningPointsTimer = null;
     let cloudSaveDebounce = null;
@@ -1472,11 +1473,34 @@
     let chatViolationStrikes = 0;
     let chatMutedUntil = 0;
     let listeningMinutes = 0;
+    const aquariumSpriteSources = {
+      fish: 'images/sprites/fish-sheet.png',
+      diver: 'images/sprites/diver.png',
+      snail: 'images/sprites/snail.png',
+      crab: 'images/sprites/crab.png'
+    };
+    const aquariumSprites = { fish: null, diver: null, snail: null, crab: null };
+    const aquariumDecorSources = {
+      ship: 'images/decor/shipwreck.png',
+      ruins: 'images/decor/ruins.png',
+      rocks: 'images/decor/rocks.png',
+      plants: 'images/decor/plants-sheet.png'
+    };
+    const aquariumDecorImages = { ship: null, ruins: null, rocks: null, plants: null };
     const aquariumThemes = [
       { id: 'deepBlue', name: 'Лазурная бездна', bg: 0x07172a, fog: 0x082b40, light: 0x83d0ff, image: 'https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&w=1600&q=80' },
       { id: 'sunsetReef', name: 'Закатный риф', bg: 0x27161a, fog: 0x4d2e3a, light: 0xffb273, image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1600&q=80' },
       { id: 'emeraldLagoon', name: 'Изумрудная лагуна', bg: 0x04261c, fog: 0x0a3f33, light: 0x8fffd2, image: 'https://images.unsplash.com/photo-1439405326854-014607f694d7?auto=format&fit=crop&w=1600&q=80' },
-      { id: 'oceanPhoto', name: 'Глубины океана', bg: 0x051629, fog: 0x08243d, light: 0x95d9ff, image: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1600&q=80' }
+      { id: 'oceanPhoto', name: 'Глубины океана', bg: 0x051629, fog: 0x08243d, light: 0x95d9ff, image: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1600&q=80' },
+      { id: 'oceanCalm', name: 'Тихий океан', bg: 0x061a31, fog: 0x10304e, light: 0x7fd1ff, image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1600&q=80' },
+      { id: 'coralBlue', name: 'Коралловая синь', bg: 0x09223a, fog: 0x0f3e60, light: 0x86e0ff, image: 'https://images.unsplash.com/photo-1546026423-cc4642628d2b?auto=format&fit=crop&w=1600&q=80' },
+      { id: 'reefLight', name: 'Свет рифа', bg: 0x0b2a45, fog: 0x1c486f, light: 0xb2ecff, image: 'https://images.unsplash.com/photo-1520302630591-fd1c66ed37a8?auto=format&fit=crop&w=1600&q=80' },
+      { id: 'openSea', name: 'Открытое море', bg: 0x071f34, fog: 0x1a3957, light: 0x88ccff, image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80' },
+      { id: 'blueCave', name: 'Синяя пещера', bg: 0x051a2f, fog: 0x17324c, light: 0x6cb8ff, image: 'https://images.unsplash.com/photo-1530053969600-caed2596d242?auto=format&fit=crop&w=1600&q=80' },
+      { id: 'reefSun', name: 'Солнечный риф', bg: 0x14253a, fog: 0x345b7d, light: 0xffd69d, image: 'https://images.unsplash.com/photo-1682686581220-689c34afb6ef?auto=format&fit=crop&w=1600&q=80' },
+      { id: 'deepCurrent', name: 'Глубокое течение', bg: 0x031120, fog: 0x0d2742, light: 0x78bbff, image: 'https://images.unsplash.com/photo-1498623116890-37e912163d5d?auto=format&fit=crop&w=1600&q=80' },
+      { id: 'atoll', name: 'Лагуна атолла', bg: 0x0a2c35, fog: 0x18505f, light: 0x91f3e7, image: 'https://images.unsplash.com/photo-1473116763249-2faaef81ccda?auto=format&fit=crop&w=1600&q=80' },
+      { id: 'abyss', name: 'Бездна', bg: 0x020b16, fog: 0x11253c, light: 0x6fa3e6, image: 'https://images.unsplash.com/photo-1572715376701-98568319fd0b?auto=format&fit=crop&w=1600&q=80' }
     ];
     const aquariumShopItems = [
       { id: 'fish-clown', name: 'Clownfish', cost: 40, type: 'fish', color: 0xff8b3d, speed: 0.55, size: 0.22 },
@@ -1490,6 +1514,7 @@
       { id: 'aerator', name: 'Aerator', cost: 180, type: 'aerator' },
       { id: 'decor-ship', name: 'Shipwreck', cost: 220, type: 'decor', decorType: 'ship' },
       { id: 'decor-ruins', name: 'Ancient Ruins', cost: 240, type: 'decor', decorType: 'ruins' },
+      { id: 'decor-rocks', name: 'Mossy Rocks', cost: 160, type: 'decor', decorType: 'rocks' },
       { id: 'theme-oceanic', name: 'Тема: Глубины океана', cost: 210, type: 'theme', themeId: 'oceanPhoto' },
       { id: 'diver-hunter', name: 'Diver Hunter', cost: 460, type: 'diver' }
     ];
@@ -1515,6 +1540,7 @@
       diverPlaced: false,
       diverActive: true,
       inactiveEntityIds: [],
+      nextFishBirthAt: Date.now() + (24 + Math.random() * 24) * 60 * 60 * 1000,
       updatedAt: Date.now()
     });
     let aquariumProfile = aquariumProfileDefault();
@@ -1912,7 +1938,10 @@
     }
 
     function cycleAquariumTheme() {
+      aquariumThemeTransition.fromId = aquariumThemes[aquariumThemeIndex]?.id || aquariumThemes[0].id;
       aquariumThemeIndex = (aquariumThemeIndex + 1) % aquariumThemes.length;
+      aquariumThemeTransition.toId = aquariumThemes[aquariumThemeIndex]?.id || aquariumThemes[0].id;
+      aquariumThemeTransition.startedAt = Date.now();
       aquariumProfile.theme = aquariumThemes[aquariumThemeIndex].id;
       applyAquariumTheme();
       queueAquariumSave();
@@ -1953,8 +1982,11 @@
         aquariumProfile.decorPlaced.push(item.decorType);
         aquariumProfile.decorActive = Array.from(new Set([...(aquariumProfile.decorActive || []), item.decorType]));
       } else if (item.type === 'theme') {
+        aquariumThemeTransition.fromId = aquariumProfile.theme || aquariumThemes[0].id;
         aquariumProfile.theme = item.themeId;
         aquariumThemeIndex = Math.max(0, aquariumThemes.findIndex((t) => t.id === item.themeId));
+        aquariumThemeTransition.toId = aquariumThemes[aquariumThemeIndex]?.id || aquariumThemes[0].id;
+        aquariumThemeTransition.startedAt = Date.now();
       } else if (item.type === 'diver') {
         aquariumProfile.diverPlaced = true;
         aquariumProfile.diverActive = true;
@@ -2008,9 +2040,37 @@
         sway: Math.random() * Math.PI * 2
       }));
       aquariumReady = true;
+      loadAquariumSprites();
       resizeCanvas();
       rebuildAquariumCreatures();
       applyAquariumTheme();
+    }
+
+    function loadAquariumSprites() {
+      Object.entries(aquariumSpriteSources).forEach(([key, src]) => {
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = src;
+        aquariumSprites[key] = img;
+      });
+      Object.entries(aquariumDecorSources).forEach(([key, src]) => {
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = src;
+        aquariumDecorImages[key] = img;
+      });
+    }
+
+    function getOrLoadThemeImage(themeId) {
+      const themeObj = aquariumThemes.find((t) => t.id === themeId);
+      if (!themeObj || !themeObj.image) return null;
+      if (!aquariumThemeImageCache[themeId]) {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = themeObj.image;
+        aquariumThemeImageCache[themeId] = img;
+      }
+      return aquariumThemeImageCache[themeId];
     }
 
     function rebuildAquariumCreatures() {
@@ -2025,6 +2085,7 @@
         const mobileScale = window.innerWidth <= 768 ? 0.52 : 0.72;
         const angle = Math.random() * Math.PI * 2;
         const speed = def.speed * 56 + 14 + Math.random() * 14;
+        const spriteFrame = def.id === 'fish-clown' ? 5 : def.id === 'fish-tang' ? 1 : 4;
         return {
           id: entry.id,
           def,
@@ -2036,7 +2097,8 @@
           targetX: Math.random() * w,
           targetY: h * (0.16 + Math.random() * 0.62),
           moveTimer: 0.8 + Math.random() * 2.4,
-          size: (18 + def.size * 52 + idx * 0.9) * mobileScale
+          size: (18 + def.size * 52 + idx * 0.9) * mobileScale,
+          spriteFrame
         };
       }).filter(Boolean);
       aquariumSnails = (aquariumProfile.snailsPlaced || []).filter((entry) => !hidden.has(entry.id)).map((entry, idx) => {
@@ -2067,6 +2129,7 @@
       aquariumHideSpots = [];
       if (aquariumDecor.includes('ship')) aquariumHideSpots.push({ x: w * 0.72, y: h * 0.74 });
       if (aquariumDecor.includes('ruins')) aquariumHideSpots.push({ x: w * 0.24, y: h * 0.74 });
+      if (aquariumDecor.includes('rocks')) aquariumHideSpots.push({ x: w * 0.5, y: h * 0.78 });
       aquariumHideSpots.push({ x: w * 0.1, y: h * 0.72 });
       aquariumDiver = aquariumProfile.diverPlaced && aquariumProfile.diverActive !== false ? {
         x: w * 0.78,
@@ -2090,6 +2153,23 @@
       c.translate(fish.x, fish.y);
       c.scale(fish.vx >= 0 ? 1 : -1, 1);
       c.rotate(wobble * 0.06);
+      const fishSprite = aquariumSprites.fish;
+      if (fishSprite && fishSprite.complete && fishSprite.naturalWidth > 0) {
+        const cols = 3;
+        const rows = 2;
+        const frameW = fishSprite.naturalWidth / cols;
+        const frameH = fishSprite.naturalHeight / rows;
+        const frame = Math.max(0, Math.min(cols * rows - 1, fish.spriteFrame || 0));
+        const sx = (frame % cols) * frameW;
+        const sy = Math.floor(frame / cols) * frameH;
+        const screenScale = Math.max(0.75, Math.min(1.18, (aquariumCanvas.clientWidth || window.innerWidth) / 1280));
+        const w = fish.size * 2.1 * screenScale;
+        const h = fish.size * 1.45 * screenScale;
+        c.imageSmoothingEnabled = false;
+        c.drawImage(fishSprite, sx, sy, frameW, frameH, -w * 0.55, -h * 0.5, w, h);
+        c.restore();
+        return;
+      }
 
       const bodyLen = fish.size * 1.35;
       const bodyH = fish.size * 0.55;
@@ -2288,20 +2368,45 @@
       water.addColorStop(1, fogHex);
       c.fillStyle = water;
       c.fillRect(0, 0, w, h);
-      if (theme.image) {
-        if (!aquariumThemeImageCache[theme.id]) {
-          const img = new Image();
-          img.crossOrigin = 'anonymous';
-          img.src = theme.image;
-          aquariumThemeImageCache[theme.id] = img;
-        }
-        const img = aquariumThemeImageCache[theme.id];
-        if (img && img.complete) {
-          c.globalAlpha = 0.24;
-          c.drawImage(img, 0, 0, w, h);
-          c.globalAlpha = 1;
-        }
+      const currentImg = getOrLoadThemeImage(theme.id);
+      if (currentImg && currentImg.complete) {
+        const driftX = Math.sin(aquariumLightPhase * 0.45) * (w * 0.018);
+        const driftY = Math.cos(aquariumLightPhase * 0.33) * (h * 0.012);
+        c.globalAlpha = 0.34;
+        c.drawImage(currentImg, driftX - w * 0.02, driftY - h * 0.02, w * 1.04, h * 1.04);
+        c.globalAlpha = 1;
       }
+      // smooth theme photo crossfade
+      if (aquariumThemeTransition.startedAt > 0 && aquariumThemeTransition.fromId && aquariumThemeTransition.toId) {
+        const elapsed = Date.now() - aquariumThemeTransition.startedAt;
+        const t = Math.max(0, Math.min(1, elapsed / aquariumThemeTransition.durationMs));
+        const eased = t * t * (3 - 2 * t);
+        const fromImg = getOrLoadThemeImage(aquariumThemeTransition.fromId);
+        const toImg = getOrLoadThemeImage(aquariumThemeTransition.toId);
+        const driftX = Math.sin(aquariumLightPhase * 0.45) * (w * 0.018);
+        const driftY = Math.cos(aquariumLightPhase * 0.33) * (h * 0.012);
+        if (fromImg && fromImg.complete) {
+          c.globalAlpha = (1 - eased) * 0.32;
+          c.drawImage(fromImg, driftX - w * 0.02, driftY - h * 0.02, w * 1.04, h * 1.04);
+        }
+        if (toImg && toImg.complete) {
+          c.globalAlpha = eased * 0.36;
+          c.drawImage(toImg, driftX - w * 0.02, driftY - h * 0.02, w * 1.04, h * 1.04);
+        }
+        c.globalAlpha = 1;
+        if (t >= 1) aquariumThemeTransition.startedAt = 0;
+      }
+      // subtle cinematic color grade for a richer, premium look
+      c.globalCompositeOperation = 'soft-light';
+      c.globalAlpha = 0.22;
+      const grade = c.createLinearGradient(0, 0, 0, h);
+      grade.addColorStop(0, 'rgba(120, 210, 255, 0.52)');
+      grade.addColorStop(0.55, 'rgba(18, 70, 115, 0.36)');
+      grade.addColorStop(1, 'rgba(6, 20, 36, 0.75)');
+      c.fillStyle = grade;
+      c.fillRect(0, 0, w, h);
+      c.globalCompositeOperation = 'source-over';
+      c.globalAlpha = 1;
 
       c.globalAlpha = 0.16;
       for (let i = 0; i < 6; i++) {
@@ -2339,52 +2444,86 @@
       if (aquariumProfile.plantsActive !== false) {
         const plantBoost = Math.max(1, aquariumProfile.plantsLevel || 1);
         const plantsToDraw = aquariumPlants.slice(0, Math.min(aquariumPlants.length, 10 + plantBoost * 3));
-        plantsToDraw.forEach((p, idx) => {
-          const px = p.x * w;
-          const ph = p.h * h * (1 + plantBoost * 0.14);
-          const pw = p.w * w;
-          const sway = Math.sin(aquariumLightPhase * 1.7 + p.sway + idx * 0.4) * 12;
-          c.fillStyle = `rgba(${40 + idx * 5}, ${120 + idx * 4}, ${80 + idx * 3}, 0.75)`;
-          c.beginPath();
-          c.moveTo(px, h * 0.86);
-          c.quadraticCurveTo(px + sway * 0.3, h * 0.86 - ph * 0.5, px + sway, h * 0.86 - ph);
-          c.quadraticCurveTo(px + sway * 0.2 + pw, h * 0.86 - ph * 0.56, px + pw, h * 0.86);
-          c.closePath();
-          c.fill();
-        });
+        const plantsSprite = aquariumDecorImages.plants;
+        if (plantsSprite && plantsSprite.complete && plantsSprite.naturalWidth > 0) {
+          const spriteW = plantsSprite.naturalWidth;
+          const spriteH = plantsSprite.naturalHeight * 0.68; // skip watermark area
+          const variants = 8;
+          const segW = spriteW / variants;
+          c.imageSmoothingEnabled = false;
+          plantsToDraw.forEach((p, idx) => {
+            const px = p.x * w;
+            const ph = (30 + p.h * h * 0.62) * (1 + plantBoost * 0.09);
+            const pw = ph * 0.55;
+            const sway = Math.sin(aquariumLightPhase * 1.7 + p.sway + idx * 0.4) * 5;
+            const variant = idx % variants;
+            c.drawImage(plantsSprite, variant * segW, 0, segW, spriteH, px - pw * 0.5 + sway, h * 0.86 - ph, pw, ph);
+          });
+        } else {
+          plantsToDraw.forEach((p, idx) => {
+            const px = p.x * w;
+            const ph = p.h * h * (1 + plantBoost * 0.14);
+            const pw = p.w * w;
+            const sway = Math.sin(aquariumLightPhase * 1.7 + p.sway + idx * 0.4) * 12;
+            c.fillStyle = `rgba(${40 + idx * 5}, ${120 + idx * 4}, ${80 + idx * 3}, 0.75)`;
+            c.beginPath();
+            c.moveTo(px, h * 0.86);
+            c.quadraticCurveTo(px + sway * 0.3, h * 0.86 - ph * 0.5, px + sway, h * 0.86 - ph);
+            c.quadraticCurveTo(px + sway * 0.2 + pw, h * 0.86 - ph * 0.56, px + pw, h * 0.86);
+            c.closePath();
+            c.fill();
+          });
+        }
       }
       if (aquariumDecor.includes('ship')) {
-        c.fillStyle = '#70543f';
-        c.beginPath();
-        c.moveTo(w * 0.62, h * 0.82);
-        c.lineTo(w * 0.84, h * 0.82);
-        c.lineTo(w * 0.8, h * 0.72);
-        c.lineTo(w * 0.65, h * 0.72);
-        c.closePath();
-        c.fill();
-        c.strokeStyle = 'rgba(20, 12, 8, 0.65)';
-        c.lineWidth = 2;
-        c.stroke();
-        c.fillStyle = '#b28761';
-        c.fillRect(w * 0.7, h * 0.66, w * 0.04, h * 0.06);
-        c.fillStyle = '#1a222d';
-        c.fillRect(w * 0.69, h * 0.75, w * 0.06, h * 0.04); // shelter opening
+        const shipImg = aquariumDecorImages.ship;
+        if (shipImg && shipImg.complete && shipImg.naturalWidth > 0) {
+          const dw = w * 0.32;
+          const dh = h * 0.2;
+          c.fillStyle = 'rgba(0, 0, 0, 0.28)';
+          c.beginPath();
+          c.ellipse(w * 0.73, h * 0.84, dw * 0.34, dh * 0.12, 0, 0, Math.PI * 2);
+          c.fill();
+          c.drawImage(shipImg, w * 0.58, h * 0.65, dw, dh);
+        } else {
+          c.fillStyle = '#70543f';
+          c.beginPath();
+          c.moveTo(w * 0.62, h * 0.82);
+          c.lineTo(w * 0.84, h * 0.82);
+          c.lineTo(w * 0.8, h * 0.72);
+          c.lineTo(w * 0.65, h * 0.72);
+          c.closePath();
+          c.fill();
+        }
       }
       if (aquariumDecor.includes('ruins')) {
-        c.fillStyle = '#8e9eaa';
-        c.fillRect(w * 0.17, h * 0.74, w * 0.06, h * 0.12);
-        c.fillRect(w * 0.24, h * 0.71, w * 0.06, h * 0.15);
-        c.fillRect(w * 0.31, h * 0.75, w * 0.05, h * 0.11);
-        c.strokeStyle = 'rgba(31, 43, 56, 0.65)';
-        c.lineWidth = 2;
-        c.strokeRect(w * 0.17, h * 0.74, w * 0.06, h * 0.12);
-        c.strokeRect(w * 0.24, h * 0.71, w * 0.06, h * 0.15);
-        c.strokeRect(w * 0.31, h * 0.75, w * 0.05, h * 0.11);
-        c.fillStyle = '#202b39';
-        c.beginPath();
-        c.arc(w * 0.245, h * 0.81, w * 0.03, Math.PI, 0);
-        c.closePath();
-        c.fill();
+        const ruinsImg = aquariumDecorImages.ruins;
+        if (ruinsImg && ruinsImg.complete && ruinsImg.naturalWidth > 0) {
+          const dw = w * 0.24;
+          const dh = h * 0.22;
+          c.fillStyle = 'rgba(0, 0, 0, 0.24)';
+          c.beginPath();
+          c.ellipse(w * 0.26, h * 0.84, dw * 0.35, dh * 0.12, 0, 0, Math.PI * 2);
+          c.fill();
+          c.drawImage(ruinsImg, w * 0.14, h * 0.64, dw, dh);
+        } else {
+          c.fillStyle = '#8e9eaa';
+          c.fillRect(w * 0.17, h * 0.74, w * 0.06, h * 0.12);
+          c.fillRect(w * 0.24, h * 0.71, w * 0.06, h * 0.15);
+          c.fillRect(w * 0.31, h * 0.75, w * 0.05, h * 0.11);
+        }
+      }
+      if (aquariumDecor.includes('rocks')) {
+        const rocksImg = aquariumDecorImages.rocks;
+        if (rocksImg && rocksImg.complete && rocksImg.naturalWidth > 0) {
+          const dw = w * 0.24;
+          const dh = h * 0.18;
+          c.fillStyle = 'rgba(0, 0, 0, 0.22)';
+          c.beginPath();
+          c.ellipse(w * 0.53, h * 0.84, dw * 0.38, dh * 0.1, 0, 0, Math.PI * 2);
+          c.fill();
+          c.drawImage(rocksImg, w * 0.42, h * 0.67, dw, dh);
+        }
       }
       if (aquariumProfile.hasAerator && aquariumProfile.aeratorActive !== false) {
         c.fillStyle = 'rgba(148, 163, 177, 0.9)';
@@ -2410,6 +2549,16 @@
         c.save();
         c.translate(snail.x, y);
         c.scale(snail.dir > 0 ? 1 : -1, 1);
+        const snailSprite = aquariumSprites.snail;
+        if (snailSprite && snailSprite.complete && snailSprite.naturalWidth > 0) {
+          const unit = Math.max(0.78, Math.min(1.25, (aquariumCanvas.clientWidth || window.innerWidth) / 1100));
+          const sw = 28 * unit;
+          const sh = 22 * unit;
+          c.imageSmoothingEnabled = false;
+          c.drawImage(snailSprite, -sw * 0.5, -sh * 0.65, sw, sh);
+          c.restore();
+          return;
+        }
         c.fillStyle = 'rgba(115, 102, 88, 0.9)';
         c.beginPath();
         c.ellipse(-8, 0, 14, 8, 0, 0, Math.PI * 2);
@@ -2437,6 +2586,16 @@
         c.save();
         c.translate(crab.x, y);
         c.scale(crab.dir > 0 ? 1 : -1, 1);
+        const crabSprite = aquariumSprites.crab;
+        if (crabSprite && crabSprite.complete && crabSprite.naturalWidth > 0) {
+          const unit = Math.max(0.8, Math.min(1.26, (aquariumCanvas.clientWidth || window.innerWidth) / 1100));
+          const cw = 34 * unit;
+          const ch = 24 * unit;
+          c.imageSmoothingEnabled = false;
+          c.drawImage(crabSprite, -cw * 0.5, -ch * 0.6, cw, ch);
+          c.restore();
+          return;
+        }
         c.fillStyle = crab.color;
         c.beginPath();
         c.ellipse(0, 0, 12, 8, 0, 0, Math.PI * 2);
@@ -2478,6 +2637,17 @@
         c.translate(aquariumDiver.x, aquariumDiver.y);
         c.scale(aquariumDiver.vx > 0 ? 1 : -1, 1);
         c.globalAlpha = aquariumDiver.hideTimer > 0 ? 0.7 : 1;
+        const diverSprite = aquariumSprites.diver;
+        if (diverSprite && diverSprite.complete && diverSprite.naturalWidth > 0) {
+          const unit = Math.max(0.84, Math.min(1.16, (aquariumCanvas.clientWidth || window.innerWidth) / 1200));
+          const dw = 48 * unit;
+          const dh = 34 * unit;
+          c.imageSmoothingEnabled = false;
+          c.drawImage(diverSprite, -dw * 0.58, -dh * 0.62, dw, dh);
+          c.globalAlpha = 1;
+          c.restore();
+          return;
+        }
         const limbPhase = Math.sin(aquariumLightPhase * 4);
         const armSwing = limbPhase * 4.5;
         const legSwing = Math.cos(aquariumLightPhase * 4) * 4.5;
@@ -2621,6 +2791,9 @@
         const parsed = JSON.parse(raw);
         aquariumProfile = { ...aquariumProfileDefault(), ...parsed };
         if (typeof aquariumProfile.points !== 'number' || Number.isNaN(aquariumProfile.points)) aquariumProfile.points = 0;
+        if (!aquariumProfile.nextFishBirthAt || Number.isNaN(aquariumProfile.nextFishBirthAt)) {
+          aquariumProfile.nextFishBirthAt = Date.now() + (24 + Math.random() * 24) * 60 * 60 * 1000;
+        }
         aquariumProfile.decorActive = Array.isArray(aquariumProfile.decorActive) && aquariumProfile.decorActive.length
           ? aquariumProfile.decorActive.filter((d) => (aquariumProfile.decorPlaced || []).includes(d))
           : [...(aquariumProfile.decorPlaced || [])];
@@ -2641,6 +2814,28 @@
       if (minute <= 30) return 2;
       if (minute <= 120) return minute % 2 === 0 ? 1 : 0;
       return minute % 3 === 0 ? 1 : 0;
+    }
+
+    function maybeSpawnBabyFish() {
+      const fishList = aquariumProfile.fishPlaced || [];
+      if (!fishList.length) return;
+      if (!aquariumProfile.nextFishBirthAt) {
+        aquariumProfile.nextFishBirthAt = Date.now() + (24 + Math.random() * 24) * 60 * 60 * 1000;
+        return;
+      }
+      const now = Date.now();
+      if (now < aquariumProfile.nextFishBirthAt) return;
+      const successChance = 0.09; // minimal chance
+      if (Math.random() < successChance) {
+        const parent = fishList[Math.floor(Math.random() * fishList.length)];
+        aquariumProfile.fishPlaced.push({
+          id: `${parent.type}-baby-${now}-${Math.floor(Math.random() * 9999)}`,
+          type: parent.type
+        });
+        rebuildAquariumCreatures();
+        showStatusMessage(currentLang === 'ru' ? 'В аквариуме появился малыш рыбки! 🐟' : 'A baby fish appeared in the aquarium! 🐟');
+      }
+      aquariumProfile.nextFishBirthAt = now + (24 + Math.random() * 24) * 60 * 60 * 1000;
     }
 
     function saveLocalAquariumProfile() {
@@ -2672,6 +2867,7 @@
       listeningPointsTimer = setInterval(() => {
         if (!isPlaying) return;
         listeningMinutes += 1;
+        maybeSpawnBabyFish();
         const reward = getListeningRewardForMinute(listeningMinutes);
         if (reward <= 0) return;
         aquariumProfile.points += reward;
