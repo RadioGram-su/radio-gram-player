@@ -1448,6 +1448,9 @@
     let trackToastTimeout = null;
     let activeModalId = null;
     let isFading = false;
+    let hourlyVoiceTimer = null;
+    let lastHourlyAnnounceKey = '';
+    let hourlyAnnouncementRunning = false;
     let deferredInstallPrompt = null;
     let installPromptTimer = null;
     let autoplayAttempted = false;
@@ -3499,6 +3502,82 @@
       }, 60000);
     }
 
+    function getPreferredFemaleVoice(langPrefix) {
+      if (!('speechSynthesis' in window)) return null;
+      const voices = window.speechSynthesis.getVoices() || [];
+      if (!voices.length) return null;
+      const preferred = voices.find((v) =>
+        v.lang && v.lang.toLowerCase().startsWith(langPrefix)
+        && /(female|woman|zira|katya|alena|milena|olga|irina|anna)/i.test(v.name)
+      );
+      return preferred || voices.find((v) => v.lang && v.lang.toLowerCase().startsWith(langPrefix)) || voices[0];
+    }
+
+    function duckRadioVolume(target = 0.26) {
+      if (audioContextInitialized && masterGain && audioContext) {
+        const now = audioContext.currentTime;
+        masterGain.gain.cancelScheduledValues(now);
+        masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+        masterGain.gain.linearRampToValueAtTime(target, now + 0.45);
+        return;
+      }
+      audio.volume = Math.max(0.05, Math.min(1, target));
+    }
+
+    function restoreRadioVolume() {
+      if (audioContextInitialized && masterGain && audioContext) {
+        const now = audioContext.currentTime;
+        masterGain.gain.cancelScheduledValues(now);
+        masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+        masterGain.gain.linearRampToValueAtTime(1, now + 0.65);
+        return;
+      }
+      audio.volume = 1;
+    }
+
+    function speakHourlyTimeAnnouncement() {
+      if (hourlyAnnouncementRunning || !isPlaying || !('speechSynthesis' in window)) return;
+      const now = new Date();
+      const hh = `${now.getHours()}`.padStart(2, '0');
+      const mm = `${now.getMinutes()}`.padStart(2, '0');
+      const isRu = currentLang === 'ru';
+      const text = isRu ? `Сейчас ${hh}:${mm}` : `The time is ${hh}:${mm}`;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = isRu ? 'ru-RU' : 'en-US';
+      utter.rate = 0.95;
+      utter.pitch = 1.05;
+      utter.volume = 1;
+      const voice = getPreferredFemaleVoice(isRu ? 'ru' : 'en');
+      if (voice) utter.voice = voice;
+      hourlyAnnouncementRunning = true;
+      duckRadioVolume(0.28);
+      utter.onend = () => {
+        restoreRadioVolume();
+        hourlyAnnouncementRunning = false;
+      };
+      utter.onerror = () => {
+        restoreRadioVolume();
+        hourlyAnnouncementRunning = false;
+      };
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
+    }
+
+    function startHourlyTimeAnnouncements() {
+      if (hourlyVoiceTimer) return;
+      const tick = () => {
+        if (!isPlaying) return;
+        const now = new Date();
+        const key = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${now.getHours()}`;
+        if (now.getMinutes() === 0 && key !== lastHourlyAnnounceKey) {
+          lastHourlyAnnounceKey = key;
+          speakHourlyTimeAnnouncement();
+        }
+      };
+      tick();
+      hourlyVoiceTimer = setInterval(tick, 15000);
+    }
+
     function getFrequencyEnergy() {
       if (!dataArray || !dataArray.length) {
         return { bass: 0, mid: 0, treble: 0 };
@@ -4309,6 +4388,7 @@
     updateAtmosphereByTimeWeather();
     setInterval(updateAtmosphereByTimeWeather, 20 * 60 * 1000);
     startListeningPointsTicker();
+    startHourlyTimeAnnouncements();
     updateTexts();
     syncVisualModeState();
     attemptAutoplayOnLoad();
