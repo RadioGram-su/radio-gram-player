@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://player.radiogram.su/sitemap.xml
+
+# Host
+Host: https://player.radiogram.su
+
+# Crawl-delay
+Crawl-delay: 1

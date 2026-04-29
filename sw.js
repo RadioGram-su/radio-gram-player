@@ -1,4 +1,4 @@
-const CACHE_NAME = 'radio-gram-v1';
+const CACHE_NAME = 'radio-gram-v3';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -44,6 +44,29 @@ self.addEventListener('fetch', event => {
       event.request.url.includes('zeno.fm') ||
       event.request.url.includes('radiogram')) {
     event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // Для index.html всегда используем сеть сначала, затем кэш
+  if (event.request.url === self.location.origin + '/' || 
+      event.request.url === self.location.origin + '/index.html' ||
+      event.request.destination === 'document') {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          // Клонируем ответ для кэширования
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME)
+            .then(cache => {
+              cache.put(event.request, responseToCache);
+            });
+          return response;
+        })
+        .catch(() => {
+          // Если офлайн - возвращаем из кэша
+          return caches.match(event.request);
+        })
+    );
     return;
   }
 

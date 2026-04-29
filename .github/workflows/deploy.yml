@@ -1,0 +1,27 @@
+name: Deploy to Yandex Cloud Storage
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Configure AWS CLI for Yandex
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.YC_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.YC_SECRET_ACCESS_KEY }}
+        aws configure set default.region ru-central1
+
+    - name: Upload to Yandex Object Storage
+      run: |
+        aws s3 sync . s3://${{ secrets.YC_BUCKET_NAME }}/ \
+          --endpoint-url=https://storage.yandexcloud.net \
+          --delete \
+          --exclude ".git/*" \
+          --exclude ".github/*"
