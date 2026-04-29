@@ -677,10 +677,26 @@
       padding-right: 4px;
     }
     .track-history-item {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      line-height: 1.35;
+      word-break: break-word;
       opacity: 0.85;
+    }
+    .track-history-more-btn {
+      margin-top: 6px;
+      align-self: flex-start;
+      border: 1px solid rgba(125, 214, 255, 0.35);
+      background: rgba(125, 214, 255, 0.12);
+      color: #cfeaff;
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .track-history-more-btn:active {
+      transform: scale(0.98);
     }
 
     /* === СЕТКА КНОПОК === */
@@ -1011,6 +1027,7 @@
     /* === АДАПТИВНОСТЬ === */
     @media (max-width: 480px) {
       .app-container { padding: 15px; }
+      .app-container { padding-bottom: 250px; }
       .track-grid { grid-template-columns: 1fr; gap: 10px; }
       .main-title { font-size: 36px; }
       .sub-title { font-size: 12px; }
@@ -1020,16 +1037,21 @@
       .listeners-badge { font-size: 12px; padding: 6px 12px; }
       .action-btn { padding: 12px; font-size: 13px; }
       .buttons-grid { gap: 10px; }
+      .buttons-grid { grid-template-columns: 1fr; }
       .bottom-controls {
         bottom: 10px;
         left: 10px;
         right: 10px;
         width: auto;
         align-items: stretch;
-        gap: 10px;
-        max-height: 38vh;
+        gap: 8px;
+        max-height: 24vh;
         overflow-y: auto;
         padding-right: 2px;
+        background: rgba(7, 14, 24, 0.42);
+        border: 1px solid rgba(255,255,255,0.16);
+        border-radius: 12px;
+        padding: 6px;
       }
       .viz-mode-selector {
         display: flex;
@@ -1045,6 +1067,7 @@
       }
       .settings-row { justify-content: flex-end; }
       .immersive-switch { width: fit-content; margin-left: auto; }
+      .viz-mode-btn { font-size: 10px; padding: 5px 8px; }
       .chat-modal-content { width: 96vw; padding: 12px; }
       .chat-name-row { flex-direction: column; align-items: stretch; }
       .chat-name-input { width: 100%; }
@@ -1382,7 +1405,8 @@
     const FADE_IN_MS = 500;
     const FADE_OUT_MS = 350;
     const bgState = { bass: 0.12, mid: 0.12, treble: 0.12 };
-    const START_POINTS = 1000;
+    const START_POINTS = 300;
+    const START_POINTS_GRANTED_KEY = 'radiogram_start_points_granted_v1';
     const LOCAL_PROFILE_KEY = 'radiogram_aquarium_profile_v1';
     const INSTALL_PROMPT_SEEN_KEY = 'radiogram_install_prompt_seen_v1';
     const CHAT_NAME_KEY = 'radiogram_chat_name_v1';
@@ -1399,6 +1423,7 @@
     const CHAT_MAX_IMAGES_PER_MIN = 3;
     const CHAT_MUTE_BASE_MS = 60 * 1000;
     const trackHistory = [];
+    let trackHistoryExpanded = false;
     const seenSharedChatIds = new Set();
     let sharedChatPollTimer = null;
     let lastChatSentAt = 0;
@@ -1436,7 +1461,7 @@
       themes: (item) => item.type === 'theme'
     };
     const aquariumProfileDefault = () => ({
-      points: START_POINTS,
+      points: 0,
       theme: aquariumThemes[0].id,
       fishPlaced: [],
       snailsPlaced: [],
@@ -1573,16 +1598,29 @@
     function renderTrackHistory() {
       const container = document.getElementById('track-history-list');
       if (!container) return;
-      container.innerHTML = trackHistory.slice(0, 10)
-        .map((name, idx) => `<div class="track-history-item">${idx + 1}. ${name}</div>`)
-        .join('');
+      const isMobile = window.innerWidth <= 480;
+      const maxItems = isMobile ? (trackHistoryExpanded ? 5 : 3) : 5;
+      const visible = trackHistory.slice(0, maxItems);
+      const moreNeeded = isMobile && !trackHistoryExpanded && trackHistory.length > maxItems;
+      const lessNeeded = isMobile && trackHistoryExpanded && trackHistory.length > maxItems;
+
+      container.innerHTML = [
+        visible.map((name, idx) => `<div class="track-history-item">${idx + 1}. ${name}</div>`).join(''),
+        moreNeeded ? `<button class="track-history-more-btn" onclick="toggleTrackHistoryExpanded()">Ещё</button>` : '',
+        lessNeeded ? `<button class="track-history-more-btn" onclick="toggleTrackHistoryExpanded()">Свернуть</button>` : ''
+      ].filter(Boolean).join('');
+    }
+
+    function toggleTrackHistoryExpanded() {
+      trackHistoryExpanded = !trackHistoryExpanded;
+      renderTrackHistory();
     }
 
     function pushTrackHistory(trackName) {
       if (!trackName) return;
       if (trackHistory[0] === trackName) return;
       trackHistory.unshift(trackName);
-      if (trackHistory.length > 10) trackHistory.length = 10;
+      if (trackHistory.length > 5) trackHistory.length = 5;
       localStorage.setItem(TRACK_HISTORY_KEY, JSON.stringify(trackHistory));
       renderTrackHistory();
     }
@@ -1944,18 +1982,21 @@
       aquariumFish = aquariumProfile.fishPlaced.filter((entry) => !hidden.has(entry.id)).map((entry, idx) => {
         const def = aquariumShopItems.find((it) => it.id === entry.type);
         if (!def) return null;
-        const dir = Math.random() > 0.5 ? 1 : -1;
-        const mobileScale = window.innerWidth <= 768 ? 0.78 : 1;
+        const mobileScale = window.innerWidth <= 768 ? 0.52 : 0.72;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = def.speed * 56 + 14 + Math.random() * 14;
         return {
           id: entry.id,
           def,
           x: Math.random() * w,
           y: h * (0.18 + Math.random() * 0.58),
-          vx: dir * (def.speed * 70 + Math.random() * 16),
-          vy: (Math.random() - 0.5) * 20,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
           phase: Math.random() * Math.PI * 2,
-          targetY: h * (0.2 + Math.random() * 0.5),
-          size: (24 + def.size * 85 + idx * 1.5) * mobileScale
+          targetX: Math.random() * w,
+          targetY: h * (0.16 + Math.random() * 0.62),
+          moveTimer: 0.8 + Math.random() * 2.4,
+          size: (18 + def.size * 52 + idx * 0.9) * mobileScale
         };
       }).filter(Boolean);
       aquariumSnails = (aquariumProfile.snailsPlaced || []).filter((entry) => !hidden.has(entry.id)).map((entry, idx) => {
@@ -1965,8 +2006,10 @@
           model: def?.model || 'round',
           color: def?.color || '#d0a15a',
           x: w * (0.1 + (idx % 5) * 0.16),
+          y: h * 0.84,
           dir: idx % 2 ? -1 : 1,
-          phase: Math.random() * Math.PI * 2
+          phase: Math.random() * Math.PI * 2,
+          climb: 0
         };
       });
       aquariumCrabs = (aquariumProfile.crabsPlaced || []).filter((entry) => !hidden.has(entry.id)).map((entry, idx) => {
@@ -1975,6 +2018,7 @@
           id: entry.id,
           color: def?.color || '#ff6464',
           x: w * (0.2 + (idx % 4) * 0.18),
+          y: h * 0.84,
           dir: idx % 2 ? -1 : 1,
           phase: Math.random() * Math.PI * 2
         };
@@ -1991,7 +2035,9 @@
         vy: 10,
         hideTimer: 0,
         chaseTimer: 0,
-        hideSpotIdx: 0
+        hideSpotIdx: 0,
+        targetId: '',
+        targetTimer: 0
       } : null;
       aquariumBubbles = [];
     }
@@ -2028,14 +2074,7 @@
       c.ellipse(-fish.size * 0.18, -fish.size * 0.18, fish.size * 0.34, fish.size * 0.15, -0.2, 0, Math.PI * 2);
       c.fill();
 
-      c.strokeStyle = 'rgba(255,255,255,0.36)';
-      c.lineWidth = 1.35;
-      for (let i = -2; i <= 2; i++) {
-        c.beginPath();
-        c.moveTo(-bodyLen * 0.22 + i * 4, -bodyH * 0.72);
-        c.quadraticCurveTo(-bodyLen * 0.16 + i * 4, 0, -bodyLen * 0.23 + i * 4, bodyH * 0.72);
-        c.stroke();
-      }
+      // keep fish body clean and bright on mobile (no "skeleton" ribs)
 
       c.fillStyle = `#${baseHex}`;
       c.beginPath();
@@ -2079,15 +2118,32 @@
       const w = aquariumCanvas.clientWidth || window.innerWidth;
       const h = aquariumCanvas.clientHeight || window.innerHeight;
       aquariumFish.forEach((fish) => {
-        fish.targetY += (Math.random() - 0.5) * 20 * delta;
-        fish.targetY = Math.max(h * 0.15, Math.min(h * 0.72, fish.targetY));
-        fish.vy += (fish.targetY - fish.y) * 0.06 * delta;
-        fish.vy *= 0.98;
+        const movementPreset = fish.def.id === 'fish-clown'
+          ? { speed: 0.82, turn: 2.4, zig: 22 }
+          : fish.def.id === 'fish-tang'
+            ? { speed: 1.08, turn: 1.7, zig: 12 }
+            : { speed: 0.72, turn: 1.35, zig: 7 }; // koi is calmer
+        fish.moveTimer -= delta;
+        if (fish.moveTimer <= 0) {
+          fish.moveTimer = 0.8 + Math.random() * (fish.def.id === 'fish-tang' ? 1.8 : 2.8);
+          fish.targetX = Math.random() * w;
+          fish.targetY = h * (0.15 + Math.random() * 0.63);
+        }
+        fish.targetY += Math.sin(fish.phase * 0.6) * movementPreset.zig * delta;
+        const dx = fish.targetX - fish.x;
+        const dy = fish.targetY - fish.y;
+        const len = Math.max(1, Math.hypot(dx, dy));
+        const baseSpeed = (fish.def.speed * 55 + 16) * movementPreset.speed;
+        const desiredVx = (dx / len) * baseSpeed;
+        const desiredVy = (dy / len) * baseSpeed;
+        fish.vx += (desiredVx - fish.vx) * Math.min(1, delta * movementPreset.turn);
+        fish.vy += (desiredVy - fish.vy) * Math.min(1, delta * movementPreset.turn);
         fish.x += fish.vx * delta;
         fish.y += fish.vy * delta;
-        if (fish.x > w + fish.size) fish.x = -fish.size;
-        if (fish.x < -fish.size) fish.x = w + fish.size;
-        if (fish.y < h * 0.12 || fish.y > h * 0.78) fish.vy *= -0.7;
+        if (fish.x < fish.size * 0.6) { fish.x = fish.size * 0.6; fish.targetX = w * 0.85; }
+        if (fish.x > w - fish.size * 0.6) { fish.x = w - fish.size * 0.6; fish.targetX = w * 0.15; }
+        if (fish.y < h * 0.12) { fish.y = h * 0.12; fish.targetY = h * 0.5; }
+        if (fish.y > h * 0.8) { fish.y = h * 0.8; fish.targetY = h * 0.4; }
         if (Math.random() < 0.03) {
           aquariumBubbles.push({
             x: fish.x + fish.size * 0.15,
@@ -2104,17 +2160,28 @@
       if (!aquariumReady) return;
       const w = aquariumCanvas.clientWidth || window.innerWidth;
       const h = aquariumCanvas.clientHeight || window.innerHeight;
+      const getBottomYAt = (x) => {
+        const nx = Math.max(0, Math.min(1, x / w));
+        let y = h * (0.82 + Math.sin(nx * 5.5) * 0.015);
+        if (aquariumDecor.includes('ship') && nx > 0.62 && nx < 0.84) y -= h * 0.08;
+        if (aquariumDecor.includes('ruins') && nx > 0.17 && nx < 0.36) y -= h * 0.06;
+        return y;
+      };
       aquariumSnails.forEach((snail) => {
         snail.phase += delta * 6;
-        snail.x += snail.dir * delta * 18;
+        snail.x += snail.dir * delta * 13;
         const min = w * 0.08;
         const max = w * 0.92;
         if (snail.x > max) snail.dir = -1;
         if (snail.x < min) snail.dir = 1;
+        const nearPlant = aquariumProfile.plantsActive !== false && Math.random() < 0.007;
+        if (nearPlant) snail.climb = 0.3 + Math.random() * 0.35;
+        snail.climb = Math.max(0, snail.climb - delta * 0.06);
+        snail.y = getBottomYAt(snail.x) - h * snail.climb;
         if (Math.random() < 0.02) {
           aquariumBubbles.push({
             x: snail.x,
-            y: h * 0.82,
+            y: snail.y,
             r: 2 + Math.random() * 3,
             vy: 14 + Math.random() * 16,
             drift: (Math.random() - 0.5) * 8
@@ -2123,23 +2190,33 @@
       });
       aquariumCrabs.forEach((crab) => {
         crab.phase += delta * 7;
-        crab.x += crab.dir * delta * 24;
+        crab.x += crab.dir * delta * 20;
         if (crab.x > w * 0.92 || crab.x < w * 0.08) crab.dir *= -1;
+        crab.y = getBottomYAt(crab.x);
       });
       if (aquariumDiver) {
         if (aquariumDiver.hideTimer > 0) {
           aquariumDiver.hideTimer -= delta;
           const hideSpot = aquariumHideSpots[aquariumDiver.hideSpotIdx] || { x: w * 0.08, y: h * 0.7 };
-          aquariumDiver.x += (hideSpot.x - aquariumDiver.x) * Math.min(1, delta * 3.4);
-          aquariumDiver.y += (hideSpot.y - aquariumDiver.y) * Math.min(1, delta * 3.4);
+          aquariumDiver.x += (hideSpot.x - aquariumDiver.x) * Math.min(1, delta * 2.2);
+          aquariumDiver.y += (hideSpot.y - aquariumDiver.y) * Math.min(1, delta * 2.2);
         } else {
-          const target = aquariumFish.length ? aquariumFish[Math.floor(Math.random() * aquariumFish.length)] : null;
+          aquariumDiver.targetTimer -= delta;
+          if (aquariumDiver.targetTimer <= 0) {
+            aquariumDiver.targetTimer = 1.6 + Math.random() * 1.8;
+            aquariumDiver.targetId = aquariumFish.length
+              ? aquariumFish[Math.floor(Math.random() * aquariumFish.length)].id
+              : '';
+          }
+          const target = aquariumFish.find((f) => f.id === aquariumDiver.targetId) || null;
           if (target) {
             const dx = target.x - aquariumDiver.x;
             const dy = target.y - aquariumDiver.y;
             const len = Math.max(1, Math.sqrt(dx * dx + dy * dy));
-            aquariumDiver.vx = (dx / len) * 35;
-            aquariumDiver.vy = (dy / len) * 30;
+            const desiredVx = (dx / len) * 33;
+            const desiredVy = (dy / len) * 25;
+            aquariumDiver.vx += (desiredVx - aquariumDiver.vx) * Math.min(1, delta * 3);
+            aquariumDiver.vy += (desiredVy - aquariumDiver.vy) * Math.min(1, delta * 3);
           }
           aquariumDiver.x += aquariumDiver.vx * delta;
           aquariumDiver.y += aquariumDiver.vy * delta;
@@ -2289,7 +2366,7 @@
       const c = aquariumCtx;
       const h = aquariumCanvas.clientHeight || window.innerHeight;
       aquariumSnails.forEach((snail) => {
-        const y = h * 0.84 + Math.sin(snail.phase) * 1.2;
+        const y = (snail.y || h * 0.84) + Math.sin(snail.phase) * 0.9;
         c.save();
         c.translate(snail.x, y);
         c.scale(snail.dir > 0 ? 1 : -1, 1);
@@ -2316,7 +2393,7 @@
         c.restore();
       });
       aquariumCrabs.forEach((crab) => {
-        const y = h * 0.82 + Math.sin(crab.phase) * 2;
+        const y = (crab.y || h * 0.82) + Math.sin(crab.phase) * 1.2;
         c.save();
         c.translate(crab.x, y);
         c.scale(crab.dir > 0 ? 1 : -1, 1);
@@ -2333,6 +2410,22 @@
         c.fillStyle = crab.color;
         c.fillRect(-16, -1, 8, 2);
         c.fillRect(8, -1, 8, 2);
+        c.strokeStyle = '#6d2f2f';
+        c.lineWidth = 1.8;
+        c.lineCap = 'round';
+        c.beginPath();
+        c.moveTo(-8, 2); c.lineTo(-12, 7);
+        c.moveTo(-4, 3); c.lineTo(-7, 8);
+        c.moveTo(4, 3); c.lineTo(7, 8);
+        c.moveTo(8, 2); c.lineTo(12, 7);
+        c.stroke();
+        c.fillStyle = crab.color;
+        c.beginPath();
+        c.moveTo(-12, -2); c.lineTo(-18, -8); c.lineTo(-10, -6); c.closePath();
+        c.fill();
+        c.beginPath();
+        c.moveTo(12, -2); c.lineTo(18, -8); c.lineTo(10, -6); c.closePath();
+        c.fill();
         c.fillStyle = 'rgba(255,255,255,0.75)';
         c.beginPath();
         c.arc(-3, -2, 1.1, 0, Math.PI * 2);
@@ -2476,12 +2569,18 @@
     function loadLocalAquariumProfile() {
       try {
         const raw = localStorage.getItem(LOCAL_PROFILE_KEY);
-        if (!raw) return;
+        if (!raw) {
+          const granted = localStorage.getItem(START_POINTS_GRANTED_KEY) === '1';
+          if (!granted) {
+            aquariumProfile.points = START_POINTS;
+            localStorage.setItem(START_POINTS_GRANTED_KEY, '1');
+            saveLocalAquariumProfile();
+          }
+          return;
+        }
         const parsed = JSON.parse(raw);
         aquariumProfile = { ...aquariumProfileDefault(), ...parsed };
-        if (typeof aquariumProfile.points !== 'number' || Number.isNaN(aquariumProfile.points) || aquariumProfile.points < START_POINTS) {
-          aquariumProfile.points = START_POINTS;
-        }
+        if (typeof aquariumProfile.points !== 'number' || Number.isNaN(aquariumProfile.points)) aquariumProfile.points = 0;
         aquariumProfile.decorActive = Array.isArray(aquariumProfile.decorActive) && aquariumProfile.decorActive.length
           ? aquariumProfile.decorActive.filter((d) => (aquariumProfile.decorPlaced || []).includes(d))
           : [...(aquariumProfile.decorPlaced || [])];
@@ -3333,7 +3432,7 @@
     loadLocalAquariumProfile();
     try {
       const persistedTracks = JSON.parse(localStorage.getItem(TRACK_HISTORY_KEY) || '[]');
-      if (Array.isArray(persistedTracks)) trackHistory.push(...persistedTracks.slice(0, 10));
+      if (Array.isArray(persistedTracks)) trackHistory.push(...persistedTracks.slice(0, 5));
     } catch (_) {}
     updateSyncStatus('Saved locally');
     rebuildAquariumCreatures();
