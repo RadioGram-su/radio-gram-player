@@ -1451,6 +1451,8 @@
     const bgState = { bass: 0.12, mid: 0.12, treble: 0.12 };
     const START_POINTS = 300;
     const START_POINTS_GRANTED_KEY = 'radiogram_start_points_granted_v1';
+    const POINTS_RESET_700_KEY = 'radiogram_points_reset_700_v1';
+    const ONE_TIME_RESET_POINTS = 700;
     const LOCAL_PROFILE_KEY = 'radiogram_aquarium_profile_v1';
     const INSTALL_PROMPT_SEEN_KEY = 'radiogram_install_prompt_seen_v1';
     const CHAT_NAME_KEY = 'radiogram_chat_name_v1';
@@ -2888,19 +2890,33 @@
 
     function loadLocalAquariumProfile() {
       try {
+        const resetDone = localStorage.getItem(POINTS_RESET_700_KEY) === '1';
         const raw = localStorage.getItem(LOCAL_PROFILE_KEY);
         if (!raw) {
-          const granted = localStorage.getItem(START_POINTS_GRANTED_KEY) === '1';
-          if (!granted) {
-            aquariumProfile.points = START_POINTS;
+          if (!resetDone) {
+            aquariumProfile.points = ONE_TIME_RESET_POINTS;
+            localStorage.setItem(POINTS_RESET_700_KEY, '1');
             localStorage.setItem(START_POINTS_GRANTED_KEY, '1');
             saveLocalAquariumProfile();
+          } else {
+            const granted = localStorage.getItem(START_POINTS_GRANTED_KEY) === '1';
+            if (!granted) {
+              aquariumProfile.points = START_POINTS;
+              localStorage.setItem(START_POINTS_GRANTED_KEY, '1');
+              saveLocalAquariumProfile();
+            }
           }
           return;
         }
         const parsed = JSON.parse(raw);
         aquariumProfile = { ...aquariumProfileDefault(), ...parsed };
         if (typeof aquariumProfile.points !== 'number' || Number.isNaN(aquariumProfile.points)) aquariumProfile.points = 0;
+        if (!resetDone) {
+          aquariumProfile.points = ONE_TIME_RESET_POINTS;
+          localStorage.setItem(POINTS_RESET_700_KEY, '1');
+          localStorage.setItem(START_POINTS_GRANTED_KEY, '1');
+          saveLocalAquariumProfile();
+        }
         if (!aquariumProfile.nextFishBirthAt || Number.isNaN(aquariumProfile.nextFishBirthAt)) {
           aquariumProfile.nextFishBirthAt = Date.now() + (24 + Math.random() * 24) * 60 * 60 * 1000;
         }
