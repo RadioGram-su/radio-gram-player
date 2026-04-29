@@ -725,6 +725,40 @@
     
     .btn-support { background: linear-gradient(135deg, #FF9966, #FF5E62); border: none; }
     .btn-support:hover { opacity: 0.9; }
+    .btn-support {
+      background-size: 240% 240%;
+      background-image: linear-gradient(135deg, #FF9966, #FF5E62, #7C5CFF, #27C7FF, #34C759, #FF9966);
+      animation: supportRainbow 3.2s linear infinite;
+      border: none;
+    }
+    @keyframes supportRainbow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .viz-mode-modal-btn {
+      display: none;
+      align-self: flex-end;
+      border: none;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #061018;
+      background-image: linear-gradient(135deg, #7C5CFF, #27C7FF, #34C759, #FF9966);
+      background-size: 240% 240%;
+      animation: vizRainbow 2.6s linear infinite;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.45);
+      backdrop-filter: blur(8px);
+      white-space: nowrap;
+    }
+    @keyframes vizRainbow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
     
     .btn-partners { background: linear-gradient(135deg, #8E2DE2, #4A00E0); border: none; }
     .btn-partners:hover { opacity: 0.9; }
@@ -1054,9 +1088,10 @@
         padding: 6px;
       }
       .viz-mode-selector {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
+        display: none;
+      }
+      .viz-mode-modal-btn {
+        display: inline-flex;
       }
       #aquarium-ui {
         top: 12px;
@@ -1080,6 +1115,12 @@
       }
       body.visual-only .bottom-controls {
         pointer-events: auto;
+      }
+      .viz-mode-selector {
+        display: none;
+      }
+      .viz-mode-modal-btn {
+        display: inline-flex;
       }
     }
 
@@ -1311,6 +1352,20 @@
       </div>
     </div>
 
+    <!-- МОДАЛКА ВИЗУАЛЬНЫХ РЕЖИМОВ (мобилка) -->
+    <div id="viz-modes-modal" class="modal-overlay" onclick="closePopups(event)" role="dialog" aria-modal="true" aria-labelledby="viz-modes-title">
+      <div class="modal-content" tabindex="-1">
+        <div class="modal-title" id="viz-modes-title">Режимы визуала</div>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:6px;">
+          <button class="viz-mode-btn active" onclick="setVizMode('bars', this); closeModal('viz-modes-modal')">Полосы</button>
+          <button class="viz-mode-btn" onclick="setVizMode('particles', this); closeModal('viz-modes-modal')">Частицы</button>
+          <button class="viz-mode-btn" onclick="setVizMode('nebula', this); closeModal('viz-modes-modal')">Небула</button>
+          <button class="viz-mode-btn" onclick="setVizMode('aquarium', this); closeModal('viz-modes-modal')">Аквариум</button>
+        </div>
+        <button class="close-modal" style="width:100%; margin-top:16px;" onclick="closeModal('viz-modes-modal')">Скрыть</button>
+      </div>
+    </div>
+
   </div>
 
   <!-- НИЖНИЕ КОНТРОЛЫ -->
@@ -1322,6 +1377,8 @@
       <button class="viz-mode-btn" onclick="setVizMode('nebula', this)">Nebula</button>
       <button class="viz-mode-btn" onclick="setVizMode('aquarium', this)">Aquarium</button>
     </div>
+
+      <button class="viz-mode-modal-btn" onclick="openModal('viz-modes-modal')">Визуал</button>
 
     <!-- Переключатель режима погружения -->
     <div class="immersive-switch" id="immersive-toggle" onclick="toggleImmersive()">
