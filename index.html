@@ -179,6 +179,8 @@
       left: 16px;
       z-index: 130;
       width: min(360px, calc(100vw - 32px));
+      max-height: calc(100vh - 110px);
+      overflow-y: auto;
       background: rgba(8, 18, 30, 0.6);
       border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 14px;
@@ -325,6 +327,29 @@
     #aquarium-ui.shop-hidden .aquarium-actions,
     #aquarium-ui.shop-hidden .aquarium-cats {
       display: none;
+    }
+    #aquarium-ui.shop-hidden {
+      width: auto;
+      min-width: 0;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(8, 18, 30, 0.42);
+    }
+    #aquarium-ui.shop-hidden .aquarium-top {
+      margin: 0;
+    }
+    #aquarium-ui.shop-hidden .aquarium-title,
+    #aquarium-ui.shop-hidden .aquarium-sync,
+    #aquarium-ui.shop-hidden #aquarium-points,
+    #aquarium-ui.shop-hidden .aquarium-inventory {
+      display: none;
+    }
+    #aquarium-ui.shop-hidden .aquarium-top > div:first-child {
+      display: none;
+    }
+    #aquarium-ui.shop-hidden .aquarium-top > div:last-child {
+      align-items: stretch !important;
+      gap: 0 !important;
     }
     .aquarium-action-btn {
       flex: 1;
@@ -995,23 +1020,44 @@
       .listeners-badge { font-size: 12px; padding: 6px 12px; }
       .action-btn { padding: 12px; font-size: 13px; }
       .buttons-grid { gap: 10px; }
-      .bottom-controls { bottom: 15px; right: 15px; }
+      .bottom-controls {
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        align-items: stretch;
+        gap: 10px;
+        max-height: 38vh;
+        overflow-y: auto;
+        padding-right: 2px;
+      }
       .viz-mode-selector {
         display: flex;
         flex-wrap: wrap;
-        justify-content: center;
+        justify-content: flex-start;
       }
       #aquarium-ui {
         top: 12px;
         left: 12px;
         right: 12px;
         width: auto;
+        max-height: 58vh;
       }
+      .settings-row { justify-content: flex-end; }
+      .immersive-switch { width: fit-content; margin-left: auto; }
       .chat-modal-content { width: 96vw; padding: 12px; }
       .chat-name-row { flex-direction: column; align-items: stretch; }
       .chat-name-input { width: 100%; }
       .chat-compose { flex-wrap: wrap; }
       #track-toast { bottom: 110px; font-size: 11px; }
+    }
+    @media (max-width: 768px) {
+      .bottom-controls {
+        max-width: min(96vw, 430px);
+      }
+      body.visual-only .bottom-controls {
+        pointer-events: auto;
+      }
     }
 
     @media (max-width: 360px) {
@@ -1336,7 +1382,7 @@
     const FADE_IN_MS = 500;
     const FADE_OUT_MS = 350;
     const bgState = { bass: 0.12, mid: 0.12, treble: 0.12 };
-    const POINTS_PER_MINUTE = 12;
+    const START_POINTS = 1000;
     const LOCAL_PROFILE_KEY = 'radiogram_aquarium_profile_v1';
     const INSTALL_PROMPT_SEEN_KEY = 'radiogram_install_prompt_seen_v1';
     const CHAT_NAME_KEY = 'radiogram_chat_name_v1';
@@ -1360,11 +1406,12 @@
     const recentImageSentAt = [];
     let chatViolationStrikes = 0;
     let chatMutedUntil = 0;
+    let listeningMinutes = 0;
     const aquariumThemes = [
-      { id: 'deepBlue', name: 'Deep Blue', bg: 0x07172a, fog: 0x082b40, light: 0x83d0ff },
-      { id: 'sunsetReef', name: 'Sunset Reef', bg: 0x27161a, fog: 0x4d2e3a, light: 0xffb273 },
-      { id: 'emeraldLagoon', name: 'Emerald', bg: 0x04261c, fog: 0x0a3f33, light: 0x8fffd2 },
-      { id: 'oceanPhoto', name: 'Oceanic', bg: 0x051629, fog: 0x08243d, light: 0x95d9ff, image: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1600&q=80' }
+      { id: 'deepBlue', name: 'Лазурная бездна', bg: 0x07172a, fog: 0x082b40, light: 0x83d0ff, image: 'https://images.unsplash.com/photo-1583212292454-1fe6229603b7?auto=format&fit=crop&w=1600&q=80' },
+      { id: 'sunsetReef', name: 'Закатный риф', bg: 0x27161a, fog: 0x4d2e3a, light: 0xffb273, image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1600&q=80' },
+      { id: 'emeraldLagoon', name: 'Изумрудная лагуна', bg: 0x04261c, fog: 0x0a3f33, light: 0x8fffd2, image: 'https://images.unsplash.com/photo-1439405326854-014607f694d7?auto=format&fit=crop&w=1600&q=80' },
+      { id: 'oceanPhoto', name: 'Глубины океана', bg: 0x051629, fog: 0x08243d, light: 0x95d9ff, image: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1600&q=80' }
     ];
     const aquariumShopItems = [
       { id: 'fish-clown', name: 'Clownfish', cost: 40, type: 'fish', color: 0xff8b3d, speed: 0.55, size: 0.22 },
@@ -1378,7 +1425,7 @@
       { id: 'aerator', name: 'Aerator', cost: 180, type: 'aerator' },
       { id: 'decor-ship', name: 'Shipwreck', cost: 220, type: 'decor', decorType: 'ship' },
       { id: 'decor-ruins', name: 'Ancient Ruins', cost: 240, type: 'decor', decorType: 'ruins' },
-      { id: 'theme-oceanic', name: 'Theme: Oceanic Photo', cost: 210, type: 'theme', themeId: 'oceanPhoto' },
+      { id: 'theme-oceanic', name: 'Тема: Глубины океана', cost: 210, type: 'theme', themeId: 'oceanPhoto' },
       { id: 'diver-hunter', name: 'Diver Hunter', cost: 460, type: 'diver' }
     ];
     const aquariumCategoryMap = {
@@ -1389,7 +1436,7 @@
       themes: (item) => item.type === 'theme'
     };
     const aquariumProfileDefault = () => ({
-      points: 0,
+      points: START_POINTS,
       theme: aquariumThemes[0].id,
       fishPlaced: [],
       snailsPlaced: [],
@@ -1751,6 +1798,9 @@
     }
 
     function activateAquariumMode() {
+      if (window.innerWidth <= 768) {
+        aquariumShopHidden = true;
+      }
       aquariumStage.classList.add('active');
       aquariumUi.classList.add('active');
       aquariumUi.classList.toggle('shop-hidden', aquariumShopHidden);
@@ -1895,6 +1945,7 @@
         const def = aquariumShopItems.find((it) => it.id === entry.type);
         if (!def) return null;
         const dir = Math.random() > 0.5 ? 1 : -1;
+        const mobileScale = window.innerWidth <= 768 ? 0.78 : 1;
         return {
           id: entry.id,
           def,
@@ -1904,7 +1955,7 @@
           vy: (Math.random() - 0.5) * 20,
           phase: Math.random() * Math.PI * 2,
           targetY: h * (0.2 + Math.random() * 0.5),
-          size: 24 + def.size * 85 + idx * 1.5
+          size: (24 + def.size * 85 + idx * 1.5) * mobileScale
         };
       }).filter(Boolean);
       aquariumSnails = (aquariumProfile.snailsPlaced || []).filter((entry) => !hidden.has(entry.id)).map((entry, idx) => {
@@ -1959,26 +2010,26 @@
       const g = c.createLinearGradient(-bodyLen * 0.8, -bodyH, bodyLen * 0.8, bodyH);
       const baseHex = fish.def.color.toString(16).padStart(6, '0');
       g.addColorStop(0, `#${baseHex}`);
-      g.addColorStop(0.56, 'rgba(255,255,255,0.24)');
-      g.addColorStop(1, 'rgba(255,255,255,0.9)');
+      g.addColorStop(0.5, 'rgba(255,255,255,0.2)');
+      g.addColorStop(1, 'rgba(255,255,255,1)');
       c.fillStyle = g;
       c.beginPath();
       c.ellipse(0, 0, bodyLen * 0.55, bodyH, 0, 0, Math.PI * 2);
       c.fill();
-      c.globalAlpha = 0.32;
+      c.globalAlpha = 0.2;
       c.fillStyle = '#09111a';
       c.beginPath();
       c.ellipse(-bodyLen * 0.04, bodyH * 0.64, bodyLen * 0.46, bodyH * 0.3, 0, 0, Math.PI * 2);
       c.fill();
       c.globalAlpha = 1;
 
-      c.fillStyle = 'rgba(255,255,255,0.35)';
+      c.fillStyle = 'rgba(255,255,255,0.52)';
       c.beginPath();
       c.ellipse(-fish.size * 0.18, -fish.size * 0.18, fish.size * 0.34, fish.size * 0.15, -0.2, 0, Math.PI * 2);
       c.fill();
 
-      c.strokeStyle = 'rgba(255,255,255,0.28)';
-      c.lineWidth = 1.2;
+      c.strokeStyle = 'rgba(255,255,255,0.36)';
+      c.lineWidth = 1.35;
       for (let i = -2; i <= 2; i++) {
         c.beginPath();
         c.moveTo(-bodyLen * 0.22 + i * 4, -bodyH * 0.72);
@@ -1993,18 +2044,18 @@
       c.lineTo(-bodyLen * 0.98, fish.size * 0.42 - Math.sin(fish.phase * 2.6) * 2);
       c.closePath();
       c.fill();
-      c.strokeStyle = 'rgba(0,0,0,0.22)';
-      c.lineWidth = 1;
+      c.strokeStyle = 'rgba(0,0,0,0.35)';
+      c.lineWidth = 1.2;
       c.stroke();
 
-      c.fillStyle = 'rgba(255,255,255,0.6)';
+      c.fillStyle = 'rgba(255,255,255,0.72)';
       c.beginPath();
       c.moveTo(-fish.size * 0.1, -fish.size * 0.1);
       c.lineTo(fish.size * 0.2, -fish.size * 0.48);
       c.lineTo(fish.size * 0.36, -fish.size * 0.1);
       c.closePath();
       c.fill();
-      c.fillStyle = 'rgba(255,255,255,0.42)';
+      c.fillStyle = 'rgba(255,255,255,0.55)';
       c.beginPath();
       c.moveTo(-fish.size * 0.02, fish.size * 0.1);
       c.lineTo(fish.size * 0.2, fish.size * 0.38);
@@ -2186,7 +2237,7 @@
         });
       }
       if (aquariumDecor.includes('ship')) {
-        c.fillStyle = 'rgba(92, 78, 64, 0.92)';
+        c.fillStyle = '#70543f';
         c.beginPath();
         c.moveTo(w * 0.62, h * 0.82);
         c.lineTo(w * 0.84, h * 0.82);
@@ -2194,17 +2245,25 @@
         c.lineTo(w * 0.65, h * 0.72);
         c.closePath();
         c.fill();
-        c.fillStyle = 'rgba(136, 112, 90, 0.85)';
+        c.strokeStyle = 'rgba(20, 12, 8, 0.65)';
+        c.lineWidth = 2;
+        c.stroke();
+        c.fillStyle = '#b28761';
         c.fillRect(w * 0.7, h * 0.66, w * 0.04, h * 0.06);
-        c.fillStyle = 'rgba(18, 24, 31, 0.6)';
+        c.fillStyle = '#1a222d';
         c.fillRect(w * 0.69, h * 0.75, w * 0.06, h * 0.04); // shelter opening
       }
       if (aquariumDecor.includes('ruins')) {
-        c.fillStyle = 'rgba(120, 133, 141, 0.86)';
+        c.fillStyle = '#8e9eaa';
         c.fillRect(w * 0.17, h * 0.74, w * 0.06, h * 0.12);
         c.fillRect(w * 0.24, h * 0.71, w * 0.06, h * 0.15);
         c.fillRect(w * 0.31, h * 0.75, w * 0.05, h * 0.11);
-        c.fillStyle = 'rgba(24, 33, 46, 0.52)';
+        c.strokeStyle = 'rgba(31, 43, 56, 0.65)';
+        c.lineWidth = 2;
+        c.strokeRect(w * 0.17, h * 0.74, w * 0.06, h * 0.12);
+        c.strokeRect(w * 0.24, h * 0.71, w * 0.06, h * 0.15);
+        c.strokeRect(w * 0.31, h * 0.75, w * 0.05, h * 0.11);
+        c.fillStyle = '#202b39';
         c.beginPath();
         c.arc(w * 0.245, h * 0.81, w * 0.03, Math.PI, 0);
         c.closePath();
@@ -2285,19 +2344,77 @@
         c.save();
         c.translate(aquariumDiver.x, aquariumDiver.y);
         c.scale(aquariumDiver.vx > 0 ? 1 : -1, 1);
-        c.globalAlpha = aquariumDiver.hideTimer > 0 ? 0.66 : 1;
-        c.fillStyle = 'rgba(33, 44, 58, 0.92)';
-        c.fillRect(-10, -14, 22, 20);
-        c.fillStyle = 'rgba(119, 203, 255, 0.8)';
+        c.globalAlpha = aquariumDiver.hideTimer > 0 ? 0.7 : 1;
+        const limbPhase = Math.sin(aquariumLightPhase * 4);
+        const armSwing = limbPhase * 4.5;
+        const legSwing = Math.cos(aquariumLightPhase * 4) * 4.5;
+
+        // tank
+        c.fillStyle = '#596a77';
+        c.fillRect(-18, -14, 10, 24);
+        c.fillStyle = '#32414c';
+        c.fillRect(-16, -11, 6, 18);
+
+        // torso suit
+        c.fillStyle = '#2f3f56';
+        c.fillRect(-8, -12, 16, 24);
+        c.fillStyle = '#4b5f7b';
+        c.fillRect(-2, -8, 4, 14);
+
+        // head and mask
+        c.fillStyle = '#f2c29a';
         c.beginPath();
-        c.arc(6, -10, 6, 0, Math.PI * 2);
+        c.arc(3, -16, 6.4, 0, Math.PI * 2);
         c.fill();
-        c.fillStyle = 'rgba(245, 183, 123, 0.9)';
+        c.fillStyle = '#8fd8ff';
         c.beginPath();
-        c.arc(-8, -10, 4, 0, Math.PI * 2);
+        c.arc(5.5, -16, 4.8, 0, Math.PI * 2);
         c.fill();
-        c.fillStyle = 'rgba(30, 38, 50, 0.92)';
-        c.fillRect(-14, -8, 4, 10);
+        c.strokeStyle = 'rgba(17, 34, 52, 0.85)';
+        c.lineWidth = 1.5;
+        c.stroke();
+
+        // arms
+        c.strokeStyle = '#f2c29a';
+        c.lineWidth = 3.2;
+        c.lineCap = 'round';
+        c.beginPath();
+        c.moveTo(0, -4);
+        c.quadraticCurveTo(8 + armSwing, -3, 11, 4 + armSwing * 0.35);
+        c.moveTo(-3, -3);
+        c.quadraticCurveTo(-9 - armSwing, -2, -12, 5 - armSwing * 0.35);
+        c.stroke();
+
+        // legs with fins
+        c.strokeStyle = '#1c2c3e';
+        c.lineWidth = 3.6;
+        c.beginPath();
+        c.moveTo(-2, 11);
+        c.lineTo(-3 + legSwing * 0.35, 21);
+        c.moveTo(4, 11);
+        c.lineTo(5 - legSwing * 0.35, 21);
+        c.stroke();
+        c.fillStyle = '#2f7fdc';
+        c.beginPath();
+        c.moveTo(-6 + legSwing * 0.35, 21);
+        c.lineTo(0 + legSwing * 0.35, 21);
+        c.lineTo(-2 + legSwing * 0.35, 25);
+        c.closePath();
+        c.fill();
+        c.beginPath();
+        c.moveTo(2 - legSwing * 0.35, 21);
+        c.lineTo(8 - legSwing * 0.35, 21);
+        c.lineTo(6 - legSwing * 0.35, 25);
+        c.closePath();
+        c.fill();
+
+        // breathing hose
+        c.strokeStyle = '#a8b8c5';
+        c.lineWidth = 1.8;
+        c.beginPath();
+        c.moveTo(-9, -7);
+        c.quadraticCurveTo(-2, -18, 2, -15);
+        c.stroke();
         c.globalAlpha = 1;
         c.restore();
       }
@@ -2362,6 +2479,9 @@
         if (!raw) return;
         const parsed = JSON.parse(raw);
         aquariumProfile = { ...aquariumProfileDefault(), ...parsed };
+        if (typeof aquariumProfile.points !== 'number' || Number.isNaN(aquariumProfile.points) || aquariumProfile.points < START_POINTS) {
+          aquariumProfile.points = START_POINTS;
+        }
         aquariumProfile.decorActive = Array.isArray(aquariumProfile.decorActive) && aquariumProfile.decorActive.length
           ? aquariumProfile.decorActive.filter((d) => (aquariumProfile.decorPlaced || []).includes(d))
           : [...(aquariumProfile.decorPlaced || [])];
@@ -2376,6 +2496,12 @@
       }
       aquariumThemeIndex = Math.max(0, aquariumThemes.findIndex((t) => t.id === aquariumProfile.theme));
       if (aquariumThemeIndex === -1) aquariumThemeIndex = 0;
+    }
+
+    function getListeningRewardForMinute(minute) {
+      if (minute <= 30) return 2;
+      if (minute <= 120) return minute % 2 === 0 ? 1 : 0;
+      return minute % 3 === 0 ? 1 : 0;
     }
 
     function saveLocalAquariumProfile() {
@@ -2406,7 +2532,10 @@
       if (listeningPointsTimer) return;
       listeningPointsTimer = setInterval(() => {
         if (!isPlaying) return;
-        aquariumProfile.points += POINTS_PER_MINUTE;
+        listeningMinutes += 1;
+        const reward = getListeningRewardForMinute(listeningMinutes);
+        if (reward <= 0) return;
+        aquariumProfile.points += reward;
         queueAquariumSave();
       }, 60000);
     }
