@@ -158,7 +158,7 @@
     }
     #visualizer-canvas.active {
       opacity: 1;
-      pointer-events: auto;
+      pointer-events: none;
     }
     #aquarium-stage {
       position: fixed;
@@ -215,10 +215,38 @@
       font-size: 10px;
       color: rgba(255, 255, 255, 0.72);
     }
+    .aquarium-mini-btn {
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 10px;
+      cursor: pointer;
+    }
     .aquarium-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
+    }
+    .aquarium-cats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .aquarium-cat-btn {
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.07);
+      color: #fff;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 10px;
+      cursor: pointer;
+    }
+    .aquarium-cat-btn.active {
+      background: rgba(91, 187, 255, 0.26);
+      border-color: rgba(123, 213, 255, 0.75);
     }
     .aquarium-item {
       background: rgba(255, 255, 255, 0.06);
@@ -257,6 +285,46 @@
       display: flex;
       gap: 8px;
       margin-top: 10px;
+    }
+    .aquarium-inventory {
+      margin-top: 8px;
+      font-size: 10px;
+      color: rgba(230, 246, 255, 0.85);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 9px;
+      padding: 6px 8px;
+      background: rgba(255,255,255,0.04);
+      line-height: 1.35;
+    }
+    .aquarium-inv-title {
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: rgba(238, 249, 255, 0.95);
+    }
+    .aquarium-inv-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .aquarium-inv-chip {
+      border: 1px solid rgba(157, 220, 255, 0.34);
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 10px;
+      background: rgba(20, 72, 96, 0.32);
+      color: #dff4ff;
+      cursor: pointer;
+    }
+    .aquarium-inv-chip.off {
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255,255,255,0.72);
+    }
+    #aquarium-ui.shop-hidden .aquarium-grid,
+    #aquarium-ui.shop-hidden .aquarium-actions,
+    #aquarium-ui.shop-hidden .aquarium-cats {
+      display: none;
     }
     .aquarium-action-btn {
       flex: 1;
@@ -517,7 +585,7 @@
     /* === КАРТОЧКИ ТРЕКОВ === */
     .track-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 15px;
       width: 100%;
       margin-bottom: 30px;
@@ -536,12 +604,18 @@
     }
 
     .track-card:hover { background: rgba(255, 255, 255, 0.12); }
+    .track-card.clickable { cursor: pointer; }
 
     .track-label {
       font-size: 11px;
       color: var(--text-secondary);
       margin-bottom: 6px;
       font-weight: 500;
+    }
+    .track-hint {
+      margin-left: 6px;
+      color: #7fd8ff;
+      font-weight: 600;
     }
 
     .track-info-row {
@@ -565,6 +639,23 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+    .track-history {
+      margin-top: 10px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.72);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 120px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+    .track-history-item {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      opacity: 0.85;
     }
 
     /* === СЕТКА КНОПОК === */
@@ -699,10 +790,13 @@
       overflow: hidden;
       animation-play-state: paused;
     }
-    body.visual-only .app-container,
-    body.visual-only .bottom-controls {
+    body.visual-only .app-container {
       opacity: 0;
       pointer-events: none;
+    }
+    body.visual-only .bottom-controls {
+      opacity: 1;
+      pointer-events: auto;
     }
     body.visual-only #visualizer-canvas {
       opacity: 1;
@@ -776,6 +870,113 @@
       cursor: pointer;
       padding: 10px;
     }
+    .chat-modal-content {
+      width: min(640px, 94vw);
+      max-width: 640px;
+      text-align: left;
+      padding: 16px;
+      max-height: min(82vh, 760px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chat-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #dff5ff;
+    }
+    .chat-name-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .chat-name-input, .chat-message-input {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 13px;
+      outline: none;
+    }
+    .chat-name-input { width: 220px; }
+    .chat-message-input { flex: 1; }
+    .chat-rows {
+      flex: 1;
+      overflow: auto;
+      background: rgba(6, 16, 24, 0.58);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 220px;
+    }
+    .chat-row {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 8px;
+    }
+    .chat-row-name {
+      font-size: 11px;
+      color: #85dcff;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .chat-row-text { font-size: 13px; line-height: 1.4; word-break: break-word; }
+    .chat-row-image {
+      max-width: min(320px, 100%);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.15);
+      margin-top: 6px;
+    }
+    .chat-compose {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .chat-pill-btn {
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    #track-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 138px;
+      transform: translateX(-50%) translateY(12px);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1000;
+      min-width: 220px;
+      max-width: min(92vw, 420px);
+      background: rgba(10, 18, 30, 0.88);
+      border: 1px solid rgba(125, 214, 255, 0.4);
+      border-radius: 12px;
+      padding: 10px 12px;
+      color: #e8f9ff;
+      font-size: 12px;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+    }
+    #track-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
@@ -795,13 +996,22 @@
       .action-btn { padding: 12px; font-size: 13px; }
       .buttons-grid { gap: 10px; }
       .bottom-controls { bottom: 15px; right: 15px; }
-      .viz-mode-selector { display: none; }
+      .viz-mode-selector {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
       #aquarium-ui {
         top: 12px;
         left: 12px;
         right: 12px;
         width: auto;
       }
+      .chat-modal-content { width: 96vw; padding: 12px; }
+      .chat-name-row { flex-direction: column; align-items: stretch; }
+      .chat-name-input { width: 100%; }
+      .chat-compose { flex-wrap: wrap; }
+      #track-toast { bottom: 110px; font-size: 11px; }
     }
 
     @media (max-width: 360px) {
@@ -823,6 +1033,19 @@
         scroll-behavior: auto !important;
       }
     }
+    @media (min-width: 1280px) {
+      .app-container { max-width: 560px; }
+      .main-title { font-size: 56px; }
+      .action-btn { font-size: 15px; padding: 16px; }
+    }
+    @media (min-width: 1700px) {
+      .app-container { max-width: 680px; }
+      .main-title { font-size: 66px; }
+      .sub-title { font-size: 18px; }
+      .listeners-badge { font-size: 16px; }
+      .action-btn { font-size: 18px; padding: 18px; }
+      .bottom-controls { transform: scale(1.15); transform-origin: bottom right; }
+    }
   </style>
 </head>
 <body>
@@ -837,13 +1060,24 @@
         <div class="aquarium-title">AQUARIUM</div>
         <div class="aquarium-sync" id="aquarium-sync-text">Saved locally</div>
       </div>
-      <div class="aquarium-points" id="aquarium-points">0 pts</div>
+      <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+        <div class="aquarium-points" id="aquarium-points">0 pts</div>
+        <button class="aquarium-mini-btn" id="aquarium-shop-toggle-btn" onclick="toggleAquariumShop()">Hide shop</button>
+      </div>
+    </div>
+    <div class="aquarium-cats" id="aquarium-cats">
+      <button class="aquarium-cat-btn active" onclick="setAquariumShopCategory('all', this)">All</button>
+      <button class="aquarium-cat-btn" onclick="setAquariumShopCategory('fish', this)">Fish</button>
+      <button class="aquarium-cat-btn" onclick="setAquariumShopCategory('creatures', this)">Life</button>
+      <button class="aquarium-cat-btn" onclick="setAquariumShopCategory('decor', this)">Decor</button>
+      <button class="aquarium-cat-btn" onclick="setAquariumShopCategory('themes', this)">Themes</button>
     </div>
     <div class="aquarium-grid" id="aquarium-shop"></div>
     <div class="aquarium-actions">
       <button class="aquarium-action-btn" id="aquarium-theme-btn" onclick="cycleAquariumTheme()">Theme</button>
       <button class="aquarium-action-btn" onclick="clearAquariumCreatures()">Clear tank</button>
     </div>
+    <div class="aquarium-inventory" id="aquarium-inventory"></div>
   </div>
   <button id="visual-exit-btn" onclick="toggleImmersive()" aria-label="Exit visual mode">Выйти</button>
 
@@ -915,19 +1149,16 @@
 
     <!-- ТРЕКИ -->
     <div class="track-grid">
-      <div class="track-card">
-        <div class="track-label" data-i18n="prev_track">Previous Track</div>
-        <div class="track-info-row">
-          <div class="track-art" style="background: rgba(255,255,255,0.05);"></div>
-          <div class="track-text" id="prev-track-text">—</div>
+      <div class="track-card clickable" role="button" tabindex="0" aria-label="Open Telegram channel" onclick="window.open('https://t.me/gramradiochill', '_blank', 'noopener,noreferrer')">
+        <div class="track-label">
+          <span data-i18n="now_playing">Now Playing</span>
+          <span class="track-hint" data-i18n="open_channel">↗ Telegram</span>
         </div>
-      </div>
-      <div class="track-card">
-        <div class="track-label" data-i18n="now_playing">Now Playing</div>
         <div class="track-info-row">
           <img class="track-art" id="current-art" src="images/i.jpg" onerror="this.src='https://player.radiogram.su/apple-touch-icon.png'" alt="Art">
           <div class="track-text" id="current-track-text" data-i18n="loading">Loading...</div>
         </div>
+        <div class="track-history" id="track-history-list"></div>
       </div>
     </div>
 
@@ -942,7 +1173,7 @@
       <button class="action-btn btn-partners" onclick="togglePopup('partners-popup')">
         <span data-i18n="partners">Partners</span> 🤝
       </button>
-      <button class="action-btn btn-chat" onclick="window.open('https://t.me/chatradiogram', '_blank', 'noopener,noreferrer')">
+      <button class="action-btn btn-chat" onclick="openModal('chat-modal')">
         <span data-i18n="chat">Join Chat</span> 💬
       </button>
     </div>
@@ -979,12 +1210,44 @@
       </div>
     </div>
 
+    <div id="install-modal" class="modal-overlay" onclick="closePopups(event)" role="dialog" aria-modal="true" aria-labelledby="install-title">
+      <div class="modal-content" tabindex="-1">
+        <div class="modal-title" id="install-title">Установить приложение</div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.75); margin-bottom:14px; line-height:1.45;">
+          Добавьте Radio Gram на главный экран телефона, чтобы запускать радио в один тап.
+        </div>
+        <button class="modal-btn" style="width:100%;" onclick="triggerInstallPrompt()">📲 Установить</button>
+        <button class="close-modal" onclick="closeModal('install-modal')">Позже</button>
+      </div>
+    </div>
+
+    <div id="chat-modal" class="modal-overlay" onclick="closePopups(event)" role="dialog" aria-modal="true" aria-labelledby="chat-title">
+      <div class="modal-content chat-modal-content" tabindex="-1">
+        <div class="chat-head">
+          <div class="chat-title" id="chat-title">💬 Чат Radio Gram</div>
+          <button class="chat-pill-btn" onclick="closeModal('chat-modal')">Закрыть</button>
+        </div>
+        <div class="chat-name-row">
+          <input id="chat-name-input" class="chat-name-input" type="text" maxlength="24" placeholder="Ваше имя">
+          <button class="chat-pill-btn" onclick="saveChatName()">Сохранить имя</button>
+        </div>
+        <div class="chat-rows" id="chat-rows"></div>
+        <div class="chat-compose">
+          <input id="chat-message-input" class="chat-message-input" type="text" maxlength="240" placeholder="Сообщение или эмодзи 😊">
+          <button class="chat-pill-btn" onclick="openEmojiPicker()">😀 Эмодзи</button>
+          <label class="chat-pill-btn" for="chat-image-input">🖼 Картинка</label>
+          <input id="chat-image-input" type="file" accept="image/*" style="display:none;">
+          <button class="chat-pill-btn" onclick="sendChatMessage()">Отправить</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- НИЖНИЕ КОНТРОЛЫ -->
   <div class="bottom-controls">
     <!-- Переключатель режима визуализатора -->
-    <div class="viz-mode-selector" id="viz-selector" style="display: none;">
+    <div class="viz-mode-selector" id="viz-selector">
       <button class="viz-mode-btn active" onclick="setVizMode('bars', this)">Bars</button>
       <button class="viz-mode-btn" onclick="setVizMode('particles', this)">Particles</button>
       <button class="viz-mode-btn" onclick="setVizMode('nebula', this)">Nebula</button>
@@ -1015,8 +1278,8 @@
   <div id="player-status" aria-live="polite" style="position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%); background: rgba(20,20,20,0.85); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 10px; padding: 10px 14px; font-size: 13px; z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;">
     Stream is unavailable. Please try again.
   </div>
+  <div id="track-toast" aria-live="polite"></div>
 
-  <script src="https://unpkg.com/three@0.164.1/build/three.min.js"></script>
   <script>
     // === ПЕРЕМЕННЫЕ ===
     const audio = document.getElementById('audio-player');
@@ -1043,41 +1306,103 @@
     let particles = [];
     let aquariumReady = false;
     let aquariumRunning = false;
-    let aquariumScene = null;
-    let aquariumCamera = null;
-    let aquariumRenderer = null;
+    let aquariumCanvas = null;
+    let aquariumCtx = null;
     let aquariumAnimationId = null;
-    let aquariumClock = null;
+    let aquariumLastTs = 0;
     let aquariumFish = [];
-    let aquariumSnail = null;
+    let aquariumSnails = [];
+    let aquariumCrabs = [];
+    let aquariumDecor = [];
+    let aquariumDiver = null;
+    let aquariumHideSpots = [];
+    let aquariumBubbles = [];
+    let aquariumPlants = [];
+    let aquariumLightPhase = 0;
+    let aquariumShopHidden = false;
+    let aquariumShopCategory = 'all';
+    const aquariumThemeImageCache = {};
     let aquariumThemeIndex = 0;
     let listeningPointsTimer = null;
     let cloudSaveDebounce = null;
     let lastSyncState = 'Saved locally';
     let toastTimeout = null;
+    let trackToastTimeout = null;
     let activeModalId = null;
     let isFading = false;
+    let deferredInstallPrompt = null;
+    let installPromptTimer = null;
+    let autoplayAttempted = false;
     const FADE_IN_MS = 500;
     const FADE_OUT_MS = 350;
     const bgState = { bass: 0.12, mid: 0.12, treble: 0.12 };
     const POINTS_PER_MINUTE = 12;
     const LOCAL_PROFILE_KEY = 'radiogram_aquarium_profile_v1';
+    const INSTALL_PROMPT_SEEN_KEY = 'radiogram_install_prompt_seen_v1';
+    const CHAT_NAME_KEY = 'radiogram_chat_name_v1';
+    const CHAT_MESSAGES_KEY = 'radiogram_chat_messages_v1';
+    const TRACK_HISTORY_KEY = 'radiogram_track_history_v1';
+    const WEATHER_CACHE_KEY = 'radiogram_weather_cache_v1';
+    const CHAT_SEND_API = 'https://radiogram-backend-production.up.railway.app/api/send-to-telegram';
+    const CHAT_FEED_API = 'https://radiogram-backend-production.up.railway.app/api/get-from-telegram';
+    const CHAT_POLL_MS = 4500;
+    const CHAT_RATE_LIMIT_MS = 5000;
+    const CHAT_DUPLICATE_WINDOW_MS = 45000;
+    const CHAT_BLOCKED_WORDS = ['сука', 'бляд', 'хуй', 'пизд', 'еба', 'нахуй', 'fuck', 'shit', 'bitch'];
+    const CHAT_ALLOWED_LINK_PATTERNS = ['t.me/', 'telegram.me/', 'radiogram.su', 'player.radiogram.su'];
+    const CHAT_MAX_IMAGES_PER_MIN = 3;
+    const CHAT_MUTE_BASE_MS = 60 * 1000;
+    const trackHistory = [];
+    const seenSharedChatIds = new Set();
+    let sharedChatPollTimer = null;
+    let lastChatSentAt = 0;
+    const recentSentFingerprints = [];
+    const recentImageSentAt = [];
+    let chatViolationStrikes = 0;
+    let chatMutedUntil = 0;
     const aquariumThemes = [
       { id: 'deepBlue', name: 'Deep Blue', bg: 0x07172a, fog: 0x082b40, light: 0x83d0ff },
       { id: 'sunsetReef', name: 'Sunset Reef', bg: 0x27161a, fog: 0x4d2e3a, light: 0xffb273 },
-      { id: 'emeraldLagoon', name: 'Emerald', bg: 0x04261c, fog: 0x0a3f33, light: 0x8fffd2 }
+      { id: 'emeraldLagoon', name: 'Emerald', bg: 0x04261c, fog: 0x0a3f33, light: 0x8fffd2 },
+      { id: 'oceanPhoto', name: 'Oceanic', bg: 0x051629, fog: 0x08243d, light: 0x95d9ff, image: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=1600&q=80' }
     ];
     const aquariumShopItems = [
       { id: 'fish-clown', name: 'Clownfish', cost: 40, type: 'fish', color: 0xff8b3d, speed: 0.55, size: 0.22 },
       { id: 'fish-tang', name: 'Blue Tang', cost: 70, type: 'fish', color: 0x3f8dff, speed: 0.65, size: 0.24 },
       { id: 'fish-koi', name: 'Koi', cost: 95, type: 'fish', color: 0xf5d38a, speed: 0.45, size: 0.3 },
-      { id: 'snail-gold', name: 'Golden Snail', cost: 120, type: 'snail', color: 0xd0a15a, speed: 0.12, size: 0.22 }
+      { id: 'snail-gold', name: 'Golden Snail', cost: 120, type: 'snail', color: '#d0a15a', model: 'round' },
+      { id: 'snail-blue', name: 'Blue Snail', cost: 130, type: 'snail', color: '#78b9ff', model: 'spiral' },
+      { id: 'crab-ruby', name: 'Ruby Crab', cost: 155, type: 'crab', color: '#ff6464' },
+      { id: 'crab-sand', name: 'Sand Crab', cost: 145, type: 'crab', color: '#e0bf8f' },
+      { id: 'plant-pack', name: 'Plants Pack', cost: 90, type: 'plant' },
+      { id: 'aerator', name: 'Aerator', cost: 180, type: 'aerator' },
+      { id: 'decor-ship', name: 'Shipwreck', cost: 220, type: 'decor', decorType: 'ship' },
+      { id: 'decor-ruins', name: 'Ancient Ruins', cost: 240, type: 'decor', decorType: 'ruins' },
+      { id: 'theme-oceanic', name: 'Theme: Oceanic Photo', cost: 210, type: 'theme', themeId: 'oceanPhoto' },
+      { id: 'diver-hunter', name: 'Diver Hunter', cost: 460, type: 'diver' }
     ];
+    const aquariumCategoryMap = {
+      all: () => true,
+      fish: (item) => item.type === 'fish',
+      creatures: (item) => ['snail', 'crab', 'diver'].includes(item.type),
+      decor: (item) => ['plant', 'aerator', 'decor'].includes(item.type),
+      themes: (item) => item.type === 'theme'
+    };
     const aquariumProfileDefault = () => ({
       points: 0,
       theme: aquariumThemes[0].id,
       fishPlaced: [],
-      snailPlaced: false,
+      snailsPlaced: [],
+      crabsPlaced: [],
+      plantsLevel: 1,
+      plantsActive: true,
+      hasAerator: false,
+      aeratorActive: true,
+      decorPlaced: [],
+      decorActive: [],
+      diverPlaced: false,
+      diverActive: true,
+      inactiveEntityIds: [],
       updatedAt: Date.now()
     });
     let aquariumProfile = aquariumProfileDefault();
@@ -1089,6 +1414,7 @@
         radio_stream: "RADIO STREAM",
         prev_track: "Предыдущий трек",
         now_playing: "Сейчас играет",
+        open_channel: "↗ Telegram",
         loading: "Загрузка...",
         channels: "Наши каналы",
         support: "Помочь проекту",
@@ -1107,6 +1433,7 @@
         radio_stream: "RADIO STREAM",
         prev_track: "Previous Track",
         now_playing: "Now Playing",
+        open_channel: "↗ Telegram",
         loading: "Loading...",
         channels: "Our Channels",
         support: "Support Project",
@@ -1166,21 +1493,7 @@
       isImmersive = !isImmersive;
       document.getElementById('immersive-toggle').classList.toggle('active', isImmersive);
       document.body.classList.toggle('visual-only', isImmersive);
-
-      if (isImmersive) {
-        if (vizMode === 'aquarium') {
-          activateAquariumMode();
-          return;
-        }
-        if (isPlaying && audioContextInitialized) {
-          canvas.classList.add('active');
-          startVisualization();
-        }
-      } else {
-        canvas.classList.remove('active');
-        stopVisualization();
-        deactivateAquariumMode();
-      }
+      syncVisualModeState();
     }
 
     function toggleNightMode() {
@@ -1201,6 +1514,100 @@
       }, 2600);
     }
 
+    function showTrackToast(text) {
+      const toast = document.getElementById('track-toast');
+      if (!toast) return;
+      toast.textContent = text;
+      toast.classList.add('show');
+      clearTimeout(trackToastTimeout);
+      trackToastTimeout = setTimeout(() => toast.classList.remove('show'), 3200);
+    }
+
+    function renderTrackHistory() {
+      const container = document.getElementById('track-history-list');
+      if (!container) return;
+      container.innerHTML = trackHistory.slice(0, 10)
+        .map((name, idx) => `<div class="track-history-item">${idx + 1}. ${name}</div>`)
+        .join('');
+    }
+
+    function pushTrackHistory(trackName) {
+      if (!trackName) return;
+      if (trackHistory[0] === trackName) return;
+      trackHistory.unshift(trackName);
+      if (trackHistory.length > 10) trackHistory.length = 10;
+      localStorage.setItem(TRACK_HISTORY_KEY, JSON.stringify(trackHistory));
+      renderTrackHistory();
+    }
+
+    function applyAtmosphereTheme(variant) {
+      const themes = {
+        dawn: {
+          bg: 'radial-gradient(circle at 20% 18%, rgba(255,170,126,0.22), transparent 45%), radial-gradient(circle at 80% 76%, rgba(101, 138, 255, 0.2), transparent 50%), linear-gradient(120deg, #2c1830, #1f2b58, #1b3f5a)'
+        },
+        day: {
+          bg: 'radial-gradient(circle at 20% 18%, rgba(90,205,255,0.22), transparent 45%), radial-gradient(circle at 80% 76%, rgba(140, 182, 255, 0.2), transparent 50%), linear-gradient(120deg, #0d2f59, #114d73, #1f6f85)'
+        },
+        evening: {
+          bg: 'radial-gradient(circle at 20% 18%, rgba(255,140,110,0.2), transparent 45%), radial-gradient(circle at 80% 76%, rgba(158, 105, 255, 0.2), transparent 50%), linear-gradient(120deg, #2a163f, #3a245f, #2e3a73)'
+        },
+        night: {
+          bg: 'radial-gradient(circle at 20% 18%, rgba(62,105,255,0.2), transparent 45%), radial-gradient(circle at 80% 76%, rgba(105, 92, 160, 0.2), transparent 50%), linear-gradient(120deg, #081227, #0b1f42, #12294a)'
+        },
+        rain: {
+          bg: 'radial-gradient(circle at 20% 18%, rgba(125,175,205,0.14), transparent 45%), radial-gradient(circle at 80% 76%, rgba(110, 135, 180, 0.16), transparent 50%), linear-gradient(120deg, #1b2734, #21384c, #24475d)'
+        },
+        clouds: {
+          bg: 'radial-gradient(circle at 20% 18%, rgba(190,220,245,0.15), transparent 45%), radial-gradient(circle at 80% 76%, rgba(130, 170, 205, 0.18), transparent 50%), linear-gradient(120deg, #27364a, #32455b, #3f5569)'
+        }
+      };
+      const chosen = themes[variant] || themes.day;
+      reactiveBg.style.background = chosen.bg;
+    }
+
+    async function updateAtmosphereByTimeWeather() {
+      const hour = new Date().getHours();
+      let fallback = 'day';
+      if (hour < 5) fallback = 'night';
+      else if (hour < 10) fallback = 'dawn';
+      else if (hour < 18) fallback = 'day';
+      else if (hour < 22) fallback = 'evening';
+      else fallback = 'night';
+
+      try {
+        const cache = JSON.parse(localStorage.getItem(WEATHER_CACHE_KEY) || '{}');
+        if (cache.variant && cache.ts && Date.now() - cache.ts < 30 * 60 * 1000) {
+          applyAtmosphereTheme(cache.variant);
+          return;
+        }
+      } catch (_) {}
+
+      try {
+        if (!navigator.geolocation) {
+          applyAtmosphereTheme(fallback);
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+          try {
+            const { latitude, longitude } = pos.coords;
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=weather_code&timezone=auto`;
+            const res = await fetch(url);
+            const data = await res.json();
+            const code = data?.current?.weather_code;
+            let variant = fallback;
+            if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) variant = 'rain';
+            else if ([1, 2, 3, 45, 48].includes(code)) variant = 'clouds';
+            applyAtmosphereTheme(variant);
+            localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({ variant, ts: Date.now() }));
+          } catch (e) {
+            applyAtmosphereTheme(fallback);
+          }
+        }, () => applyAtmosphereTheme(fallback), { timeout: 5000 });
+      } catch (e) {
+        applyAtmosphereTheme(fallback);
+      }
+    }
+
     function updateAquariumHud() {
       const pointsEl = document.getElementById('aquarium-points');
       if (pointsEl) {
@@ -1215,24 +1622,94 @@
         const themeName = aquariumThemes[aquariumThemeIndex]?.name || aquariumThemes[0].name;
         themeBtn.textContent = `${prefix}: ${themeName}`;
       }
+      const shopBtn = document.getElementById('aquarium-shop-toggle-btn');
+      if (shopBtn) shopBtn.textContent = aquariumShopHidden
+        ? (currentLang === 'ru' ? 'Показать магазин' : 'Show shop')
+        : (currentLang === 'ru' ? 'Скрыть магазин' : 'Hide shop');
+      const inventory = document.getElementById('aquarium-inventory');
+      if (inventory) {
+        const chips = [];
+        const hidden = new Set(aquariumProfile.inactiveEntityIds || []);
+        (aquariumProfile.fishPlaced || []).forEach((f, idx) => {
+          chips.push(`<button class="aquarium-inv-chip ${hidden.has(f.id) ? 'off' : ''}" onclick="toggleAquariumInventory('entity','${f.id}')">F${idx + 1}</button>`);
+        });
+        (aquariumProfile.snailsPlaced || []).forEach((s, idx) => {
+          chips.push(`<button class="aquarium-inv-chip ${hidden.has(s.id) ? 'off' : ''}" onclick="toggleAquariumInventory('entity','${s.id}')">S${idx + 1}</button>`);
+        });
+        (aquariumProfile.crabsPlaced || []).forEach((c, idx) => {
+          chips.push(`<button class="aquarium-inv-chip ${hidden.has(c.id) ? 'off' : ''}" onclick="toggleAquariumInventory('entity','${c.id}')">C${idx + 1}</button>`);
+        });
+        chips.push(`<button class="aquarium-inv-chip ${(aquariumProfile.plantsActive === false) ? 'off' : ''}" onclick="toggleAquariumInventory('plants')">${currentLang === 'ru' ? 'Растения' : 'Plants'}</button>`);
+        if (aquariumProfile.hasAerator) chips.push(`<button class="aquarium-inv-chip ${(aquariumProfile.aeratorActive === false) ? 'off' : ''}" onclick="toggleAquariumInventory('aerator')">${currentLang === 'ru' ? 'Аэратор' : 'Aerator'}</button>`);
+        (aquariumProfile.decorPlaced || []).forEach((d) => {
+          const isOff = !(aquariumProfile.decorActive || []).includes(d);
+          chips.push(`<button class="aquarium-inv-chip ${isOff ? 'off' : ''}" onclick="toggleAquariumInventory('decor','${d}')">${d}</button>`);
+        });
+        if (aquariumProfile.diverPlaced) chips.push(`<button class="aquarium-inv-chip ${(aquariumProfile.diverActive === false) ? 'off' : ''}" onclick="toggleAquariumInventory('diver')">${currentLang === 'ru' ? 'Водолаз' : 'Diver'}</button>`);
+        inventory.innerHTML = `
+          <div class="aquarium-inv-title">${currentLang === 'ru' ? 'Инвентарь: нажми чтобы скрыть/показать' : 'Inventory: tap to show/hide'}</div>
+          <div class="aquarium-inv-list">${chips.join('')}</div>
+        `;
+      }
       renderAquariumShop();
+    }
+
+    function toggleAquariumInventory(kind, payload) {
+      if (kind === 'entity') {
+        const hidden = new Set(aquariumProfile.inactiveEntityIds || []);
+        if (hidden.has(payload)) hidden.delete(payload);
+        else hidden.add(payload);
+        aquariumProfile.inactiveEntityIds = Array.from(hidden);
+      } else if (kind === 'plants') {
+        aquariumProfile.plantsActive = aquariumProfile.plantsActive === false;
+      } else if (kind === 'aerator') {
+        aquariumProfile.aeratorActive = aquariumProfile.aeratorActive === false;
+      } else if (kind === 'decor') {
+        const set = new Set(aquariumProfile.decorActive || aquariumProfile.decorPlaced || []);
+        if (set.has(payload)) set.delete(payload);
+        else set.add(payload);
+        aquariumProfile.decorActive = Array.from(set);
+      } else if (kind === 'diver') {
+        aquariumProfile.diverActive = aquariumProfile.diverActive === false;
+      }
+      rebuildAquariumCreatures();
+      queueAquariumSave();
+      updateAquariumHud();
     }
 
     function renderAquariumShop() {
       const container = document.getElementById('aquarium-shop');
       if (!container) return;
-      container.innerHTML = aquariumShopItems.map((item) => {
+      container.innerHTML = aquariumShopItems.filter((item) => {
+        const predicate = aquariumCategoryMap[aquariumShopCategory] || aquariumCategoryMap.all;
+        return predicate(item);
+      }).map((item) => {
         const canBuy = aquariumProfile.points >= item.cost;
-        const isSnailPlaced = item.type === 'snail' && aquariumProfile.snailPlaced;
-        const disabled = !canBuy || isSnailPlaced;
+        const snailCount = item.type === 'snail'
+          ? aquariumProfile.snailsPlaced.filter((s) => s.type === item.id).length
+          : 0;
+        const crabCount = item.type === 'crab'
+          ? aquariumProfile.crabsPlaced.filter((c) => c.type === item.id).length
+          : 0;
+        const hasDecor = item.type === 'decor'
+          ? aquariumProfile.decorPlaced.includes(item.decorType)
+          : false;
+        const disabled = !canBuy ||
+          (item.type === 'aerator' && aquariumProfile.hasAerator) ||
+          (item.type === 'diver' && aquariumProfile.diverPlaced) ||
+          (item.type === 'theme' && aquariumProfile.theme === item.themeId) ||
+          hasDecor;
         const buyText = currentLang === 'ru' ? 'Добавить' : 'Add';
-        const placedText = currentLang === 'ru' ? 'Уже в аквариуме' : 'Already placed';
+        const placedText = currentLang === 'ru' ? 'Уже есть' : 'Already placed';
+        const countText = item.type === 'snail' && snailCount > 0 ? ` x${snailCount}`
+          : item.type === 'crab' && crabCount > 0 ? ` x${crabCount}`
+          : '';
         return `
           <div class="aquarium-item">
-            <div class="aquarium-item-name">${item.name}</div>
+            <div class="aquarium-item-name">${item.name}${countText}</div>
             <div class="aquarium-item-meta">${item.cost} ${currentLang === 'ru' ? 'очк' : 'pts'}</div>
             <button class="aquarium-buy-btn" data-item-id="${item.id}" ${disabled ? 'disabled' : ''}>
-              ${isSnailPlaced ? placedText : buyText}
+              ${disabled && (item.type === 'aerator' || item.type === 'diver' || item.type === 'decor') ? placedText : buyText}
             </button>
           </div>
         `;
@@ -1242,23 +1719,41 @@
       });
     }
 
+    function setAquariumShopCategory(category, btn) {
+      aquariumShopCategory = category;
+      document.querySelectorAll('.aquarium-cat-btn').forEach((b) => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderAquariumShop();
+    }
+
+    function toggleAquariumShop() {
+      aquariumShopHidden = !aquariumShopHidden;
+      aquariumUi.classList.toggle('shop-hidden', aquariumShopHidden);
+      updateAquariumHud();
+    }
+
     function setVizMode(mode, btn) {
       vizMode = mode;
       document.querySelectorAll('.viz-mode-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       if (mode === 'particles') initParticles();
-      if (mode === 'aquarium') {
-        if (isImmersive) {
-          activateAquariumMode();
-        }
-      } else {
-        deactivateAquariumMode();
-      }
+      syncVisualModeState();
+    }
+
+    function syncVisualModeState() {
+      const showAquarium = vizMode === 'aquarium';
+      const showOverlayEffects = vizMode !== 'aquarium' && (isPlaying || isImmersive);
+      canvas.classList.toggle('active', showOverlayEffects);
+      if (showOverlayEffects && isPlaying && audioContextInitialized) startVisualization();
+      if (!showOverlayEffects) stopVisualization();
+      if (showAquarium) activateAquariumMode();
+      else deactivateAquariumMode();
     }
 
     function activateAquariumMode() {
       aquariumStage.classList.add('active');
       aquariumUi.classList.add('active');
+      aquariumUi.classList.toggle('shop-hidden', aquariumShopHidden);
       if (!aquariumReady) initAquarium();
       applyAquariumTheme();
       startAquarium();
@@ -1272,7 +1767,17 @@
 
     function clearAquariumCreatures() {
       aquariumProfile.fishPlaced = [];
-      aquariumProfile.snailPlaced = false;
+      aquariumProfile.snailsPlaced = [];
+      aquariumProfile.crabsPlaced = [];
+      aquariumProfile.decorPlaced = [];
+      aquariumProfile.decorActive = [];
+      aquariumProfile.inactiveEntityIds = [];
+      aquariumProfile.diverPlaced = false;
+      aquariumProfile.diverActive = true;
+      aquariumProfile.hasAerator = false;
+      aquariumProfile.aeratorActive = true;
+      aquariumProfile.plantsLevel = 1;
+      aquariumProfile.plantsActive = true;
       rebuildAquariumCreatures();
       queueAquariumSave();
       updateAquariumHud();
@@ -1290,7 +1795,10 @@
       const item = aquariumShopItems.find((it) => it.id === itemId);
       if (!item) return;
       if (aquariumProfile.points < item.cost) return;
-      if (item.type === 'snail' && aquariumProfile.snailPlaced) return;
+      if (item.type === 'aerator' && aquariumProfile.hasAerator) return;
+      if (item.type === 'diver' && aquariumProfile.diverPlaced) return;
+      if (item.type === 'decor' && aquariumProfile.decorPlaced.includes(item.decorType)) return;
+      if (item.type === 'theme' && aquariumProfile.theme === item.themeId) return;
       aquariumProfile.points -= item.cost;
       if (item.type === 'fish') {
         aquariumProfile.fishPlaced.push({
@@ -1298,7 +1806,30 @@
           type: item.id
         });
       } else if (item.type === 'snail') {
-        aquariumProfile.snailPlaced = true;
+        aquariumProfile.snailsPlaced.push({
+          id: `${item.id}-${Date.now()}-${Math.floor(Math.random() * 9999)}`,
+          type: item.id
+        });
+      } else if (item.type === 'crab') {
+        aquariumProfile.crabsPlaced.push({
+          id: `${item.id}-${Date.now()}-${Math.floor(Math.random() * 9999)}`,
+          type: item.id
+        });
+      } else if (item.type === 'plant') {
+        aquariumProfile.plantsLevel = Math.min(4, (aquariumProfile.plantsLevel || 1) + 1);
+        aquariumProfile.plantsActive = true;
+      } else if (item.type === 'aerator') {
+        aquariumProfile.hasAerator = true;
+        aquariumProfile.aeratorActive = true;
+      } else if (item.type === 'decor') {
+        aquariumProfile.decorPlaced.push(item.decorType);
+        aquariumProfile.decorActive = Array.from(new Set([...(aquariumProfile.decorActive || []), item.decorType]));
+      } else if (item.type === 'theme') {
+        aquariumProfile.theme = item.themeId;
+        aquariumThemeIndex = Math.max(0, aquariumThemes.findIndex((t) => t.id === item.themeId));
+      } else if (item.type === 'diver') {
+        aquariumProfile.diverPlaced = true;
+        aquariumProfile.diverActive = true;
       }
       rebuildAquariumCreatures();
       queueAquariumSave();
@@ -1334,166 +1865,482 @@
     }
 
     function initAquarium() {
-      if (aquariumReady || typeof THREE === 'undefined') return;
-      aquariumScene = new THREE.Scene();
-      aquariumCamera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
-      aquariumCamera.position.set(0, 1.7, 6.4);
-
-      aquariumRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      aquariumRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-      aquariumRenderer.setSize(window.innerWidth, window.innerHeight);
-      aquariumStage.appendChild(aquariumRenderer.domElement);
-
-      const ambient = new THREE.AmbientLight(0x7ec9ff, 0.7);
-      const key = new THREE.DirectionalLight(0xaadfff, 1.1);
-      key.position.set(3, 4, 2);
-      aquariumScene.add(ambient, key);
-
-      const glass = new THREE.Mesh(
-        new THREE.BoxGeometry(8, 4.8, 3),
-        new THREE.MeshPhysicalMaterial({
-          color: 0x9ad8ff,
-          transparent: true,
-          opacity: 0.12,
-          roughness: 0.03,
-          metalness: 0,
-          transmission: 0.95
-        })
-      );
-      glass.position.y = 1;
-      aquariumScene.add(glass);
-
-      const floor = new THREE.Mesh(
-        new THREE.CylinderGeometry(3.8, 3.6, 0.25, 32),
-        new THREE.MeshStandardMaterial({ color: 0x253a4a, roughness: 0.95, metalness: 0.05 })
-      );
-      floor.position.y = -1.25;
-      aquariumScene.add(floor);
-
-      const plantMat = new THREE.MeshStandardMaterial({ color: 0x2fa26f, roughness: 0.7 });
-      for (let i = 0; i < 8; i++) {
-        const plant = new THREE.Mesh(new THREE.ConeGeometry(0.08 + Math.random() * 0.1, 0.6 + Math.random() * 0.5, 8), plantMat);
-        plant.position.set((Math.random() - 0.5) * 6.8, -1.02, (Math.random() - 0.5) * 2.1);
-        aquariumScene.add(plant);
-      }
-
-      aquariumClock = new THREE.Clock();
+      if (aquariumReady) return;
+      aquariumCanvas = document.createElement('canvas');
+      aquariumCanvas.id = 'aquarium-canvas-2d';
+      aquariumCanvas.style.width = '100%';
+      aquariumCanvas.style.height = '100%';
+      aquariumCanvas.style.display = 'block';
+      aquariumStage.appendChild(aquariumCanvas);
+      aquariumCtx = aquariumCanvas.getContext('2d');
+      aquariumPlants = Array.from({ length: 16 }, (_, i) => ({
+        x: (i + 0.5) / 16,
+        h: 0.1 + Math.random() * 0.18,
+        w: 0.01 + Math.random() * 0.018,
+        sway: Math.random() * Math.PI * 2
+      }));
       aquariumReady = true;
+      resizeCanvas();
       rebuildAquariumCreatures();
       applyAquariumTheme();
     }
 
-    function createFishMesh(itemDef) {
-      const group = new THREE.Group();
-      const body = new THREE.Mesh(
-        new THREE.SphereGeometry(itemDef.size, 16, 12),
-        new THREE.MeshStandardMaterial({ color: itemDef.color, roughness: 0.4, metalness: 0.05 })
-      );
-      body.scale.set(1.5, 0.9, 0.7);
-      const tail = new THREE.Mesh(
-        new THREE.ConeGeometry(itemDef.size * 0.55, itemDef.size * 0.95, 10),
-        new THREE.MeshStandardMaterial({ color: itemDef.color, roughness: 0.5 })
-      );
-      tail.rotation.z = Math.PI / 2;
-      tail.position.x = -itemDef.size * 1.5;
-      const fin = new THREE.Mesh(
-        new THREE.ConeGeometry(itemDef.size * 0.22, itemDef.size * 0.42, 8),
-        new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.68 })
-      );
-      fin.position.set(itemDef.size * 0.1, itemDef.size * 0.75, 0);
-      fin.rotation.x = Math.PI;
-      group.add(body, tail, fin);
-      return { group, tail };
-    }
-
-    function createSnailMesh() {
-      const group = new THREE.Group();
-      const shell = new THREE.Mesh(
-        new THREE.TorusGeometry(0.18, 0.08, 10, 24),
-        new THREE.MeshStandardMaterial({ color: 0xc49756, roughness: 0.85 })
-      );
-      shell.rotation.x = Math.PI / 2;
-      const body = new THREE.Mesh(
-        new THREE.CapsuleGeometry(0.1, 0.24, 5, 8),
-        new THREE.MeshStandardMaterial({ color: 0x7b6f61, roughness: 0.9 })
-      );
-      body.rotation.z = Math.PI / 2;
-      body.position.set(-0.08, -0.07, 0);
-      group.add(shell, body);
-      return group;
-    }
-
     function rebuildAquariumCreatures() {
-      if (!aquariumReady || !aquariumScene) return;
-      aquariumFish.forEach((fish) => aquariumScene.remove(fish.group));
-      aquariumFish = [];
-      if (aquariumSnail) {
-        aquariumScene.remove(aquariumSnail.group);
-        aquariumSnail = null;
-      }
-
-      aquariumProfile.fishPlaced.forEach((entry, idx) => {
+      if (!aquariumReady) return;
+      const w = aquariumCanvas.clientWidth || window.innerWidth;
+      const h = aquariumCanvas.clientHeight || window.innerHeight;
+      const hidden = new Set(aquariumProfile.inactiveEntityIds || []);
+      const activeDecor = new Set(aquariumProfile.decorActive || aquariumProfile.decorPlaced || []);
+      aquariumFish = aquariumProfile.fishPlaced.filter((entry) => !hidden.has(entry.id)).map((entry, idx) => {
         const def = aquariumShopItems.find((it) => it.id === entry.type);
-        if (!def) return;
-        const mesh = createFishMesh(def);
-        const group = mesh.group;
-        group.position.set((Math.random() - 0.5) * 6, -0.4 + Math.random() * 2.6, (Math.random() - 0.5) * 2);
-        aquariumScene.add(group);
-        aquariumFish.push({
+        if (!def) return null;
+        const dir = Math.random() > 0.5 ? 1 : -1;
+        return {
           id: entry.id,
-          group,
-          tail: mesh.tail,
-          speed: def.speed,
-          target: new THREE.Vector3((Math.random() - 0.5) * 6, -0.5 + Math.random() * 2.6, (Math.random() - 0.5) * 2),
-          tailPhase: Math.random() * Math.PI * 2 + idx
-        });
-      });
-
-      if (aquariumProfile.snailPlaced) {
-        const snailGroup = createSnailMesh();
-        snailGroup.position.set(-2.8, -1.12, 0);
-        aquariumScene.add(snailGroup);
-        aquariumSnail = {
-          group: snailGroup,
-          direction: 1
+          def,
+          x: Math.random() * w,
+          y: h * (0.18 + Math.random() * 0.58),
+          vx: dir * (def.speed * 70 + Math.random() * 16),
+          vy: (Math.random() - 0.5) * 20,
+          phase: Math.random() * Math.PI * 2,
+          targetY: h * (0.2 + Math.random() * 0.5),
+          size: 24 + def.size * 85 + idx * 1.5
         };
+      }).filter(Boolean);
+      aquariumSnails = (aquariumProfile.snailsPlaced || []).filter((entry) => !hidden.has(entry.id)).map((entry, idx) => {
+        const def = aquariumShopItems.find((it) => it.id === entry.type);
+        return {
+          id: entry.id,
+          model: def?.model || 'round',
+          color: def?.color || '#d0a15a',
+          x: w * (0.1 + (idx % 5) * 0.16),
+          dir: idx % 2 ? -1 : 1,
+          phase: Math.random() * Math.PI * 2
+        };
+      });
+      aquariumCrabs = (aquariumProfile.crabsPlaced || []).filter((entry) => !hidden.has(entry.id)).map((entry, idx) => {
+        const def = aquariumShopItems.find((it) => it.id === entry.type);
+        return {
+          id: entry.id,
+          color: def?.color || '#ff6464',
+          x: w * (0.2 + (idx % 4) * 0.18),
+          dir: idx % 2 ? -1 : 1,
+          phase: Math.random() * Math.PI * 2
+        };
+      });
+      aquariumDecor = (aquariumProfile.decorPlaced || []).filter((d) => activeDecor.has(d));
+      aquariumHideSpots = [];
+      if (aquariumDecor.includes('ship')) aquariumHideSpots.push({ x: w * 0.72, y: h * 0.74 });
+      if (aquariumDecor.includes('ruins')) aquariumHideSpots.push({ x: w * 0.24, y: h * 0.74 });
+      aquariumHideSpots.push({ x: w * 0.1, y: h * 0.72 });
+      aquariumDiver = aquariumProfile.diverPlaced && aquariumProfile.diverActive !== false ? {
+        x: w * 0.78,
+        y: h * 0.45,
+        vx: -34,
+        vy: 10,
+        hideTimer: 0,
+        chaseTimer: 0,
+        hideSpotIdx: 0
+      } : null;
+      aquariumBubbles = [];
+    }
+
+    function drawFish2D(fish, delta) {
+      const c = aquariumCtx;
+      fish.phase += delta * 7;
+      const wobble = Math.sin(fish.phase) * 0.55;
+      c.save();
+      c.translate(fish.x, fish.y);
+      c.scale(fish.vx >= 0 ? 1 : -1, 1);
+      c.rotate(wobble * 0.06);
+
+      const bodyLen = fish.size * 1.35;
+      const bodyH = fish.size * 0.55;
+      const g = c.createLinearGradient(-bodyLen * 0.8, -bodyH, bodyLen * 0.8, bodyH);
+      const baseHex = fish.def.color.toString(16).padStart(6, '0');
+      g.addColorStop(0, `#${baseHex}`);
+      g.addColorStop(0.56, 'rgba(255,255,255,0.24)');
+      g.addColorStop(1, 'rgba(255,255,255,0.9)');
+      c.fillStyle = g;
+      c.beginPath();
+      c.ellipse(0, 0, bodyLen * 0.55, bodyH, 0, 0, Math.PI * 2);
+      c.fill();
+      c.globalAlpha = 0.32;
+      c.fillStyle = '#09111a';
+      c.beginPath();
+      c.ellipse(-bodyLen * 0.04, bodyH * 0.64, bodyLen * 0.46, bodyH * 0.3, 0, 0, Math.PI * 2);
+      c.fill();
+      c.globalAlpha = 1;
+
+      c.fillStyle = 'rgba(255,255,255,0.35)';
+      c.beginPath();
+      c.ellipse(-fish.size * 0.18, -fish.size * 0.18, fish.size * 0.34, fish.size * 0.15, -0.2, 0, Math.PI * 2);
+      c.fill();
+
+      c.strokeStyle = 'rgba(255,255,255,0.28)';
+      c.lineWidth = 1.2;
+      for (let i = -2; i <= 2; i++) {
+        c.beginPath();
+        c.moveTo(-bodyLen * 0.22 + i * 4, -bodyH * 0.72);
+        c.quadraticCurveTo(-bodyLen * 0.16 + i * 4, 0, -bodyLen * 0.23 + i * 4, bodyH * 0.72);
+        c.stroke();
       }
+
+      c.fillStyle = `#${baseHex}`;
+      c.beginPath();
+      c.moveTo(-bodyLen * 0.58, 0);
+      c.lineTo(-bodyLen * 0.98, -fish.size * 0.42 + Math.sin(fish.phase * 2.6) * 2);
+      c.lineTo(-bodyLen * 0.98, fish.size * 0.42 - Math.sin(fish.phase * 2.6) * 2);
+      c.closePath();
+      c.fill();
+      c.strokeStyle = 'rgba(0,0,0,0.22)';
+      c.lineWidth = 1;
+      c.stroke();
+
+      c.fillStyle = 'rgba(255,255,255,0.6)';
+      c.beginPath();
+      c.moveTo(-fish.size * 0.1, -fish.size * 0.1);
+      c.lineTo(fish.size * 0.2, -fish.size * 0.48);
+      c.lineTo(fish.size * 0.36, -fish.size * 0.1);
+      c.closePath();
+      c.fill();
+      c.fillStyle = 'rgba(255,255,255,0.42)';
+      c.beginPath();
+      c.moveTo(-fish.size * 0.02, fish.size * 0.1);
+      c.lineTo(fish.size * 0.2, fish.size * 0.38);
+      c.lineTo(fish.size * 0.3, fish.size * 0.12);
+      c.closePath();
+      c.fill();
+
+      c.fillStyle = '#fff';
+      c.beginPath();
+      c.arc(bodyLen * 0.25, -fish.size * 0.09, fish.size * 0.11, 0, Math.PI * 2);
+      c.fill();
+      c.fillStyle = '#09111a';
+      c.beginPath();
+      c.arc(bodyLen * 0.28, -fish.size * 0.09, fish.size * 0.06, 0, Math.PI * 2);
+      c.fill();
+      c.restore();
     }
 
     function updateFishAI(delta) {
+      if (!aquariumReady) return;
+      const w = aquariumCanvas.clientWidth || window.innerWidth;
+      const h = aquariumCanvas.clientHeight || window.innerHeight;
       aquariumFish.forEach((fish) => {
-        const toTarget = fish.target.clone().sub(fish.group.position);
-        if (toTarget.length() < 0.2) {
-          fish.target.set((Math.random() - 0.5) * 6.4, -0.6 + Math.random() * 2.8, (Math.random() - 0.5) * 2.2);
+        fish.targetY += (Math.random() - 0.5) * 20 * delta;
+        fish.targetY = Math.max(h * 0.15, Math.min(h * 0.72, fish.targetY));
+        fish.vy += (fish.targetY - fish.y) * 0.06 * delta;
+        fish.vy *= 0.98;
+        fish.x += fish.vx * delta;
+        fish.y += fish.vy * delta;
+        if (fish.x > w + fish.size) fish.x = -fish.size;
+        if (fish.x < -fish.size) fish.x = w + fish.size;
+        if (fish.y < h * 0.12 || fish.y > h * 0.78) fish.vy *= -0.7;
+        if (Math.random() < 0.03) {
+          aquariumBubbles.push({
+            x: fish.x + fish.size * 0.15,
+            y: fish.y - fish.size * 0.18,
+            r: 1.8 + Math.random() * 3.8,
+            vy: 16 + Math.random() * 22,
+            drift: (Math.random() - 0.5) * 12
+          });
         }
-        toTarget.normalize();
-        fish.group.position.addScaledVector(toTarget, fish.speed * delta);
-        fish.group.rotation.y = Math.atan2(toTarget.x, toTarget.z);
-        fish.tailPhase += delta * 11;
-        fish.tail.rotation.y = Math.sin(fish.tailPhase) * 0.55;
       });
     }
 
     function updateSnailAI(delta) {
-      if (!aquariumSnail) return;
-      aquariumSnail.group.position.x += aquariumSnail.direction * delta * 0.18;
-      if (aquariumSnail.group.position.x > 3.1) aquariumSnail.direction = -1;
-      if (aquariumSnail.group.position.x < -3.1) aquariumSnail.direction = 1;
-      aquariumSnail.group.rotation.y = aquariumSnail.direction > 0 ? Math.PI / 2 : -Math.PI / 2;
+      if (!aquariumReady) return;
+      const w = aquariumCanvas.clientWidth || window.innerWidth;
+      const h = aquariumCanvas.clientHeight || window.innerHeight;
+      aquariumSnails.forEach((snail) => {
+        snail.phase += delta * 6;
+        snail.x += snail.dir * delta * 18;
+        const min = w * 0.08;
+        const max = w * 0.92;
+        if (snail.x > max) snail.dir = -1;
+        if (snail.x < min) snail.dir = 1;
+        if (Math.random() < 0.02) {
+          aquariumBubbles.push({
+            x: snail.x,
+            y: h * 0.82,
+            r: 2 + Math.random() * 3,
+            vy: 14 + Math.random() * 16,
+            drift: (Math.random() - 0.5) * 8
+          });
+        }
+      });
+      aquariumCrabs.forEach((crab) => {
+        crab.phase += delta * 7;
+        crab.x += crab.dir * delta * 24;
+        if (crab.x > w * 0.92 || crab.x < w * 0.08) crab.dir *= -1;
+      });
+      if (aquariumDiver) {
+        if (aquariumDiver.hideTimer > 0) {
+          aquariumDiver.hideTimer -= delta;
+          const hideSpot = aquariumHideSpots[aquariumDiver.hideSpotIdx] || { x: w * 0.08, y: h * 0.7 };
+          aquariumDiver.x += (hideSpot.x - aquariumDiver.x) * Math.min(1, delta * 3.4);
+          aquariumDiver.y += (hideSpot.y - aquariumDiver.y) * Math.min(1, delta * 3.4);
+        } else {
+          const target = aquariumFish.length ? aquariumFish[Math.floor(Math.random() * aquariumFish.length)] : null;
+          if (target) {
+            const dx = target.x - aquariumDiver.x;
+            const dy = target.y - aquariumDiver.y;
+            const len = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+            aquariumDiver.vx = (dx / len) * 35;
+            aquariumDiver.vy = (dy / len) * 30;
+          }
+          aquariumDiver.x += aquariumDiver.vx * delta;
+          aquariumDiver.y += aquariumDiver.vy * delta;
+          if (aquariumDiver.x < w * 0.05 || aquariumDiver.x > w * 0.95) aquariumDiver.vx *= -1;
+          if (aquariumDiver.y < h * 0.16 || aquariumDiver.y > h * 0.7) aquariumDiver.vy *= -1;
+          aquariumDiver.chaseTimer += delta;
+          if (aquariumDiver.chaseTimer > 9) {
+            aquariumDiver.chaseTimer = 0;
+            aquariumDiver.hideTimer = 2 + Math.random() * 3;
+            aquariumDiver.hideSpotIdx = Math.floor(Math.random() * aquariumHideSpots.length);
+          }
+        }
+      }
+    }
+
+    function drawAquariumBackground(delta) {
+      const c = aquariumCtx;
+      const w = aquariumCanvas.clientWidth || window.innerWidth;
+      const h = aquariumCanvas.clientHeight || window.innerHeight;
+      const theme = aquariumThemes[aquariumThemeIndex] || aquariumThemes[0];
+      const bgHex = `#${theme.bg.toString(16).padStart(6, '0')}`;
+      const lightHex = `#${theme.light.toString(16).padStart(6, '0')}`;
+      const fogHex = `#${theme.fog.toString(16).padStart(6, '0')}`;
+      aquariumLightPhase += delta * 0.7;
+
+      const water = c.createLinearGradient(0, 0, 0, h);
+      water.addColorStop(0, lightHex + 'cc');
+      water.addColorStop(0.5, bgHex);
+      water.addColorStop(1, fogHex);
+      c.fillStyle = water;
+      c.fillRect(0, 0, w, h);
+      if (theme.image) {
+        if (!aquariumThemeImageCache[theme.id]) {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.src = theme.image;
+          aquariumThemeImageCache[theme.id] = img;
+        }
+        const img = aquariumThemeImageCache[theme.id];
+        if (img && img.complete) {
+          c.globalAlpha = 0.24;
+          c.drawImage(img, 0, 0, w, h);
+          c.globalAlpha = 1;
+        }
+      }
+
+      c.globalAlpha = 0.16;
+      for (let i = 0; i < 6; i++) {
+        const x = ((i + 1) / 7) * w + Math.sin(aquariumLightPhase + i) * 45;
+        const ray = c.createLinearGradient(x, 0, x + 100, h);
+        ray.addColorStop(0, 'rgba(255,255,255,0.38)');
+        ray.addColorStop(1, 'rgba(255,255,255,0)');
+        c.fillStyle = ray;
+        c.fillRect(x - 50, 0, 120, h);
+      }
+      c.globalAlpha = 1;
+
+      c.strokeStyle = 'rgba(170, 225, 255, 0.16)';
+      c.lineWidth = 2;
+      for (let y = h * 0.14; y < h * 0.82; y += 36) {
+        c.beginPath();
+        for (let x = 0; x <= w; x += 20) {
+          const wave = y + Math.sin(x * 0.02 + aquariumLightPhase * 2 + y * 0.01) * 5;
+          if (x === 0) c.moveTo(x, wave);
+          else c.lineTo(x, wave);
+        }
+        c.stroke();
+      }
+
+      c.fillStyle = 'rgba(26, 57, 71, 0.86)';
+      c.beginPath();
+      c.moveTo(0, h * 0.83);
+      c.quadraticCurveTo(w * 0.3, h * 0.74, w * 0.55, h * 0.8);
+      c.quadraticCurveTo(w * 0.78, h * 0.86, w, h * 0.79);
+      c.lineTo(w, h);
+      c.lineTo(0, h);
+      c.closePath();
+      c.fill();
+
+      if (aquariumProfile.plantsActive !== false) {
+        const plantBoost = Math.max(1, aquariumProfile.plantsLevel || 1);
+        const plantsToDraw = aquariumPlants.slice(0, Math.min(aquariumPlants.length, 10 + plantBoost * 3));
+        plantsToDraw.forEach((p, idx) => {
+          const px = p.x * w;
+          const ph = p.h * h * (1 + plantBoost * 0.14);
+          const pw = p.w * w;
+          const sway = Math.sin(aquariumLightPhase * 1.7 + p.sway + idx * 0.4) * 12;
+          c.fillStyle = `rgba(${40 + idx * 5}, ${120 + idx * 4}, ${80 + idx * 3}, 0.75)`;
+          c.beginPath();
+          c.moveTo(px, h * 0.86);
+          c.quadraticCurveTo(px + sway * 0.3, h * 0.86 - ph * 0.5, px + sway, h * 0.86 - ph);
+          c.quadraticCurveTo(px + sway * 0.2 + pw, h * 0.86 - ph * 0.56, px + pw, h * 0.86);
+          c.closePath();
+          c.fill();
+        });
+      }
+      if (aquariumDecor.includes('ship')) {
+        c.fillStyle = 'rgba(92, 78, 64, 0.92)';
+        c.beginPath();
+        c.moveTo(w * 0.62, h * 0.82);
+        c.lineTo(w * 0.84, h * 0.82);
+        c.lineTo(w * 0.8, h * 0.72);
+        c.lineTo(w * 0.65, h * 0.72);
+        c.closePath();
+        c.fill();
+        c.fillStyle = 'rgba(136, 112, 90, 0.85)';
+        c.fillRect(w * 0.7, h * 0.66, w * 0.04, h * 0.06);
+        c.fillStyle = 'rgba(18, 24, 31, 0.6)';
+        c.fillRect(w * 0.69, h * 0.75, w * 0.06, h * 0.04); // shelter opening
+      }
+      if (aquariumDecor.includes('ruins')) {
+        c.fillStyle = 'rgba(120, 133, 141, 0.86)';
+        c.fillRect(w * 0.17, h * 0.74, w * 0.06, h * 0.12);
+        c.fillRect(w * 0.24, h * 0.71, w * 0.06, h * 0.15);
+        c.fillRect(w * 0.31, h * 0.75, w * 0.05, h * 0.11);
+        c.fillStyle = 'rgba(24, 33, 46, 0.52)';
+        c.beginPath();
+        c.arc(w * 0.245, h * 0.81, w * 0.03, Math.PI, 0);
+        c.closePath();
+        c.fill();
+      }
+      if (aquariumProfile.hasAerator && aquariumProfile.aeratorActive !== false) {
+        c.fillStyle = 'rgba(148, 163, 177, 0.9)';
+        c.fillRect(w * 0.49, h * 0.78, w * 0.03, h * 0.08);
+        if (Math.random() < 0.16) {
+          aquariumBubbles.push({
+            x: w * 0.505 + (Math.random() - 0.5) * 8,
+            y: h * 0.75,
+            r: 1.5 + Math.random() * 3.5,
+            vy: 18 + Math.random() * 20,
+            drift: (Math.random() - 0.5) * 4
+          });
+        }
+      }
+    }
+
+    function drawSnail2D() {
+      if (!aquariumReady) return;
+      const c = aquariumCtx;
+      const h = aquariumCanvas.clientHeight || window.innerHeight;
+      aquariumSnails.forEach((snail) => {
+        const y = h * 0.84 + Math.sin(snail.phase) * 1.2;
+        c.save();
+        c.translate(snail.x, y);
+        c.scale(snail.dir > 0 ? 1 : -1, 1);
+        c.fillStyle = 'rgba(115, 102, 88, 0.9)';
+        c.beginPath();
+        c.ellipse(-8, 0, 14, 8, 0, 0, Math.PI * 2);
+        c.fill();
+        const shell = c.createRadialGradient(4, -2, 1, 4, -2, 11);
+        shell.addColorStop(0, snail.color);
+        shell.addColorStop(1, '#6a4e31');
+        c.fillStyle = shell;
+        c.beginPath();
+        c.arc(4, -6, 10, 0, Math.PI * 2);
+        c.fill();
+        c.strokeStyle = 'rgba(95, 66, 37, 0.8)';
+        c.lineWidth = 1.6;
+        c.beginPath();
+        c.arc(4, -6, snail.model === 'spiral' ? 6 : 4, 0, Math.PI * 2);
+        c.stroke();
+        c.fillStyle = 'rgba(255,255,255,0.45)';
+        c.beginPath();
+        c.arc(8, -10, 2.1, 0, Math.PI * 2);
+        c.fill();
+        c.restore();
+      });
+      aquariumCrabs.forEach((crab) => {
+        const y = h * 0.82 + Math.sin(crab.phase) * 2;
+        c.save();
+        c.translate(crab.x, y);
+        c.scale(crab.dir > 0 ? 1 : -1, 1);
+        c.fillStyle = crab.color;
+        c.beginPath();
+        c.ellipse(0, 0, 12, 8, 0, 0, Math.PI * 2);
+        c.fill();
+        c.globalAlpha = 0.3;
+        c.fillStyle = '#000';
+        c.beginPath();
+        c.ellipse(0, 6, 9, 3, 0, 0, Math.PI * 2);
+        c.fill();
+        c.globalAlpha = 1;
+        c.fillStyle = crab.color;
+        c.fillRect(-16, -1, 8, 2);
+        c.fillRect(8, -1, 8, 2);
+        c.fillStyle = 'rgba(255,255,255,0.75)';
+        c.beginPath();
+        c.arc(-3, -2, 1.1, 0, Math.PI * 2);
+        c.arc(3, -2, 1.1, 0, Math.PI * 2);
+        c.fill();
+        c.restore();
+      });
+      if (aquariumDiver) {
+        c.save();
+        c.translate(aquariumDiver.x, aquariumDiver.y);
+        c.scale(aquariumDiver.vx > 0 ? 1 : -1, 1);
+        c.globalAlpha = aquariumDiver.hideTimer > 0 ? 0.66 : 1;
+        c.fillStyle = 'rgba(33, 44, 58, 0.92)';
+        c.fillRect(-10, -14, 22, 20);
+        c.fillStyle = 'rgba(119, 203, 255, 0.8)';
+        c.beginPath();
+        c.arc(6, -10, 6, 0, Math.PI * 2);
+        c.fill();
+        c.fillStyle = 'rgba(245, 183, 123, 0.9)';
+        c.beginPath();
+        c.arc(-8, -10, 4, 0, Math.PI * 2);
+        c.fill();
+        c.fillStyle = 'rgba(30, 38, 50, 0.92)';
+        c.fillRect(-14, -8, 4, 10);
+        c.globalAlpha = 1;
+        c.restore();
+      }
+    }
+
+    function drawBubbles(delta) {
+      if (!aquariumReady) return;
+      const c = aquariumCtx;
+      const h = aquariumCanvas.clientHeight || window.innerHeight;
+      aquariumBubbles = aquariumBubbles.filter((b) => b.y > -20);
+      aquariumBubbles.forEach((b) => {
+        b.y -= b.vy * delta;
+        b.x += Math.sin(aquariumLightPhase + b.y * 0.02) * 0.4 + b.drift * delta * 0.08;
+        c.strokeStyle = 'rgba(207, 242, 255, 0.6)';
+        c.lineWidth = 1.1;
+        c.beginPath();
+        c.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        c.stroke();
+        c.fillStyle = 'rgba(255,255,255,0.12)';
+        c.beginPath();
+        c.arc(b.x - b.r * 0.3, b.y - b.r * 0.3, b.r * 0.35, 0, Math.PI * 2);
+        c.fill();
+      });
+      while (aquariumBubbles.length > Math.min(180, Math.floor(h * 0.25))) aquariumBubbles.shift();
     }
 
     function startAquarium() {
       if (!aquariumReady || aquariumRunning) return;
       aquariumRunning = true;
-      const tick = () => {
+      aquariumLastTs = performance.now();
+      const tick = (ts) => {
         if (!aquariumRunning) return;
-        const delta = Math.min(aquariumClock.getDelta(), 0.05);
+        const delta = Math.min((ts - aquariumLastTs) / 1000, 0.05);
+        aquariumLastTs = ts;
+        drawAquariumBackground(delta);
         updateFishAI(delta);
         updateSnailAI(delta);
-        aquariumRenderer.render(aquariumScene, aquariumCamera);
+        aquariumFish.forEach((fish) => drawFish2D(fish, delta));
+        drawSnail2D();
+        drawBubbles(delta);
         aquariumAnimationId = requestAnimationFrame(tick);
       };
-      tick();
+      aquariumAnimationId = requestAnimationFrame(tick);
     }
 
     function stopAquarium() {
@@ -1505,13 +2352,8 @@
     }
 
     function applyAquariumTheme() {
-      const theme = aquariumThemes[aquariumThemeIndex] || aquariumThemes[0];
-      if (aquariumScene) {
-        aquariumScene.fog = new THREE.Fog(theme.fog, 6, 14);
-        aquariumScene.background = new THREE.Color(theme.bg);
-        const light = aquariumScene.children.find((obj) => obj.isDirectionalLight);
-        if (light) light.color = new THREE.Color(theme.light);
-      }
+      if (!aquariumReady) return;
+      drawAquariumBackground(0.016);
     }
 
     function loadLocalAquariumProfile() {
@@ -1520,6 +2362,15 @@
         if (!raw) return;
         const parsed = JSON.parse(raw);
         aquariumProfile = { ...aquariumProfileDefault(), ...parsed };
+        aquariumProfile.decorActive = Array.isArray(aquariumProfile.decorActive) && aquariumProfile.decorActive.length
+          ? aquariumProfile.decorActive.filter((d) => (aquariumProfile.decorPlaced || []).includes(d))
+          : [...(aquariumProfile.decorPlaced || [])];
+        aquariumProfile.inactiveEntityIds = Array.isArray(aquariumProfile.inactiveEntityIds)
+          ? aquariumProfile.inactiveEntityIds
+          : [];
+        if (parsed.snailPlaced && (!parsed.snailsPlaced || !parsed.snailsPlaced.length)) {
+          aquariumProfile.snailsPlaced = [{ id: `snail-gold-${Date.now()}`, type: 'snail-gold' }];
+        }
       } catch (e) {
         console.warn('Failed to load local aquarium profile', e);
       }
@@ -1636,10 +2487,16 @@
     function resizeCanvas() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      if (aquariumRenderer && aquariumCamera) {
-        aquariumRenderer.setSize(window.innerWidth, window.innerHeight);
-        aquariumCamera.aspect = window.innerWidth / window.innerHeight;
-        aquariumCamera.updateProjectionMatrix();
+      if (aquariumCanvas) {
+        aquariumCanvas.width = Math.floor(window.innerWidth * Math.min(window.devicePixelRatio || 1, 2));
+        aquariumCanvas.height = Math.floor(window.innerHeight * Math.min(window.devicePixelRatio || 1, 2));
+        aquariumCanvas.style.width = `${window.innerWidth}px`;
+        aquariumCanvas.style.height = `${window.innerHeight}px`;
+        if (aquariumCtx) {
+          aquariumCtx.setTransform(1, 0, 0, 1, 0, 0);
+          aquariumCtx.scale(Math.min(window.devicePixelRatio || 1, 2), Math.min(window.devicePixelRatio || 1, 2));
+        }
+        rebuildAquariumCreatures();
       }
     }
     window.addEventListener('resize', resizeCanvas);
@@ -1816,8 +2673,9 @@
             playBtn.classList.remove('playing');
             ring.classList.remove('active');
             document.getElementById('live-badge').style.display = 'none';
-            if (isImmersive) stopVisualization();
             stopReactiveBackground();
+            scheduleInstallPromptCheck(false);
+            syncVisualModeState();
             if (masterGain && audioContext) {
               masterGain.gain.setValueAtTime(1, audioContext.currentTime);
             }
@@ -1828,8 +2686,9 @@
           playBtn.classList.remove('playing');
           ring.classList.remove('active');
           document.getElementById('live-badge').style.display = 'none';
-          if (isImmersive) stopVisualization();
           stopReactiveBackground();
+          scheduleInstallPromptCheck(false);
+          syncVisualModeState();
         }
       } else {
         try {
@@ -1849,7 +2708,8 @@
             const now = audioContext.currentTime;
             masterGain.gain.linearRampToValueAtTime(1, now + FADE_IN_MS / 1000);
           }
-          if (isImmersive) startVisualization();
+          scheduleInstallPromptCheck(true);
+          syncVisualModeState();
         } catch (e) {
           showStatusMessage(currentLang === 'ru' ? 'Не удалось запустить поток. Повторите попытку.' : 'Unable to start stream. Please try again.');
           console.error('Playback error:', e);
@@ -1895,9 +2755,10 @@
           
           const currentTextEl = document.getElementById('current-track-text');
           if (currentTextEl.textContent !== fullName) {
-            document.getElementById('prev-track-text').textContent = currentTextEl.textContent || '—';
             currentTextEl.textContent = fullName;
             if (song.art) document.getElementById('current-art').src = song.art;
+            pushTrackHistory(fullName);
+            showTrackToast((currentLang === 'ru' ? 'Сейчас играет: ' : 'Now playing: ') + fullName);
           }
         }
       } catch (e) {}
@@ -1932,6 +2793,14 @@
       activeModalId = id;
       const modalContent = modal.querySelector('.modal-content');
       if (modalContent) modalContent.focus();
+      if (id === 'chat-modal') {
+        const nameInput = document.getElementById('chat-name-input');
+        if (nameInput) {
+          if (!nameInput.value) nameInput.value = getChatName();
+          if (!nameInput.value) nameInput.focus();
+        }
+        renderChatMessages();
+      }
     }
     function closePopups(e) {
       if (e.target.classList.contains('modal-overlay')) {
@@ -1939,11 +2808,275 @@
         if (activeModalId === e.target.id) activeModalId = null;
       }
     }
+
+    function getChatName() {
+      return (localStorage.getItem(CHAT_NAME_KEY) || '').trim();
+    }
+
+    function saveChatName() {
+      const input = document.getElementById('chat-name-input');
+      if (!input) return;
+      const name = (input.value || '').trim().slice(0, 24);
+      if (!name) {
+        showStatusMessage(currentLang === 'ru' ? 'Введите имя для чата.' : 'Enter a name for chat.');
+        return;
+      }
+      localStorage.setItem(CHAT_NAME_KEY, name);
+      showStatusMessage(currentLang === 'ru' ? 'Имя сохранено.' : 'Name saved.');
+    }
+
+    function loadChatMessages() {
+      try {
+        return JSON.parse(localStorage.getItem(CHAT_MESSAGES_KEY) || '[]');
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function persistChatMessages(list) {
+      localStorage.setItem(CHAT_MESSAGES_KEY, JSON.stringify(list.slice(-120)));
+    }
+
+    function renderChatMessages() {
+      const rows = document.getElementById('chat-rows');
+      if (!rows) return;
+      const messages = loadChatMessages();
+      rows.innerHTML = messages.map((msg) => {
+        const safeName = (msg.name || 'Anon').replace(/[<>&"]/g, '');
+        const safeText = (msg.text || '').replace(/[<>&"]/g, '');
+        const image = msg.image ? `<img class="chat-row-image" src="${msg.image}" alt="chat image">` : '';
+        return `
+          <div class="chat-row">
+            <div class="chat-row-name">${safeName}</div>
+            <div class="chat-row-text">${safeText}</div>
+            ${image}
+          </div>
+        `;
+      }).join('');
+      rows.scrollTop = rows.scrollHeight;
+    }
+
+    function sanitizeChatText(text) {
+      if (!text) return '';
+      let out = text.replace(/\s+/g, ' ').trim().slice(0, 240);
+      CHAT_BLOCKED_WORDS.forEach((w) => {
+        const re = new RegExp(w, 'ig');
+        out = out.replace(re, '***');
+      });
+      return out;
+    }
+
+    function containsDisallowedLink(text) {
+      const links = text.match(/https?:\/\/[^\s]+|www\.[^\s]+/ig) || [];
+      return links.some((link) => !CHAT_ALLOWED_LINK_PATTERNS.some((allowed) => link.toLowerCase().includes(allowed)));
+    }
+
+    function registerViolation(reasonKey) {
+      chatViolationStrikes += 1;
+      if (chatViolationStrikes >= 3) {
+        const muteMs = CHAT_MUTE_BASE_MS * Math.min(chatViolationStrikes - 1, 5);
+        chatMutedUntil = Date.now() + muteMs;
+        const sec = Math.ceil(muteMs / 1000);
+        showStatusMessage(currentLang === 'ru'
+          ? `Чат временно ограничен на ${sec} сек. Причина: флуд.`
+          : `Chat muted for ${sec}s due to spam.`);
+        return true;
+      }
+      if (reasonKey === 'links') {
+        showStatusMessage(currentLang === 'ru'
+          ? 'Разрешены только ссылки Telegram и Radio Gram.'
+          : 'Only Telegram and Radio Gram links are allowed.');
+      } else if (reasonKey === 'images') {
+        showStatusMessage(currentLang === 'ru'
+          ? 'Слишком много картинок. Подождите минуту.'
+          : 'Too many images. Wait one minute.');
+      }
+      return false;
+    }
+
+    function isChatFlood(text, name) {
+      const now = Date.now();
+      if (now < chatMutedUntil) {
+        const left = Math.ceil((chatMutedUntil - now) / 1000);
+        showStatusMessage(currentLang === 'ru'
+          ? `Чат на паузе: ${left} сек.`
+          : `Chat muted: ${left}s left.`);
+        return true;
+      }
+      if (now - lastChatSentAt < CHAT_RATE_LIMIT_MS) {
+        registerViolation('speed');
+        showStatusMessage(currentLang === 'ru' ? 'Слишком быстро. Подождите пару секунд.' : 'Too fast. Please wait a few seconds.');
+        return true;
+      }
+      const key = `${name}|${text}`;
+      while (recentSentFingerprints.length && now - recentSentFingerprints[0].ts > CHAT_DUPLICATE_WINDOW_MS) {
+        recentSentFingerprints.shift();
+      }
+      if (recentSentFingerprints.some((x) => x.key === key)) {
+        registerViolation('duplicate');
+        showStatusMessage(currentLang === 'ru' ? 'Похоже на дубликат сообщения.' : 'Duplicate message detected.');
+        return true;
+      }
+      if (containsDisallowedLink(text)) {
+        registerViolation('links');
+        return true;
+      }
+      recentSentFingerprints.push({ key, ts: now });
+      lastChatSentAt = now;
+      chatViolationStrikes = Math.max(0, chatViolationStrikes - 1);
+      return false;
+    }
+
+    function pushChatMessage(message) {
+      const messages = loadChatMessages();
+      const fingerprint = `${message.name || ''}|${message.text || ''}|${message.ts || 0}`;
+      if (messages.some((m) => `${m.name || ''}|${m.text || ''}|${m.ts || 0}` === fingerprint)) return;
+      messages.push(message);
+      persistChatMessages(messages);
+    }
+
+    async function sendChatMessage(imageData = '') {
+      const input = document.getElementById('chat-message-input');
+      if (!input) return;
+      const name = getChatName();
+      if (!name) {
+        openModal('chat-modal');
+        showStatusMessage(currentLang === 'ru' ? 'Сначала укажите имя в чате.' : 'Set chat name first.');
+        return;
+      }
+      const text = sanitizeChatText((input.value || '').trim().slice(0, 240));
+      if (!text && !imageData) return;
+      if (isChatFlood(text || '[image]', name)) return;
+      if (imageData) {
+        const now = Date.now();
+        while (recentImageSentAt.length && now - recentImageSentAt[0] > 60 * 1000) recentImageSentAt.shift();
+        if (recentImageSentAt.length >= CHAT_MAX_IMAGES_PER_MIN) {
+          registerViolation('images');
+          return;
+        }
+        recentImageSentAt.push(now);
+      }
+      const composedText = imageData ? `${text ? `${text}\n` : ''}[image] ${imageData}` : text;
+      const localMessage = { name, text, image: imageData, ts: Date.now() };
+      pushChatMessage(localMessage);
+      input.value = '';
+      renderChatMessages();
+      try {
+        await fetch(CHAT_SEND_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: `${name}: ${composedText}` })
+        });
+      } catch (e) {
+        showStatusMessage(currentLang === 'ru' ? 'Сообщение сохранено локально, сеть недоступна.' : 'Saved locally, network unavailable.');
+      }
+    }
+
+    function openEmojiPicker() {
+      const input = document.getElementById('chat-message-input');
+      if (!input) return;
+      input.value += ' 😊';
+      input.focus();
+    }
+
+    async function syncSharedChat() {
+      try {
+        const res = await fetch(CHAT_FEED_API, { cache: 'no-store' });
+        const data = await res.json();
+        const list = Array.isArray(data?.messages) ? data.messages : [];
+        list.forEach((msg) => {
+          const id = msg.id || `${msg.user || 'anon'}|${msg.message || ''}|${msg.date || ''}`;
+          if (seenSharedChatIds.has(id)) return;
+          seenSharedChatIds.add(id);
+          const raw = `${msg.message || ''}`.slice(0, 600);
+          const parts = raw.split(':');
+          const parsedName = parts.length > 1 ? parts.shift().trim() : (msg.user || 'Listener');
+          const parsedText = sanitizeChatText(parts.length > 0 ? parts.join(':').trim() : raw);
+          const imageMatch = parsedText.match(/\[image\]\s+(data:image\/[a-zA-Z]+;base64,[^\s]+)/);
+          pushChatMessage({
+            name: (parsedName || 'Listener').slice(0, 24),
+            text: imageMatch ? parsedText.replace(imageMatch[0], '').trim() : parsedText,
+            image: imageMatch ? imageMatch[1] : '',
+            ts: Date.now()
+          });
+        });
+        renderChatMessages();
+      } catch (e) {
+        // silent: local chat still works
+      }
+    }
+
+    function startSharedChatPolling() {
+      if (sharedChatPollTimer) clearInterval(sharedChatPollTimer);
+      syncSharedChat();
+      sharedChatPollTimer = setInterval(syncSharedChat, CHAT_POLL_MS);
+    }
     function copyWallet() {
       navigator.clipboard.writeText('UQDNJZb6MPyqP1P1JONmZ5Que0_UMA1n4k3ugAYcVEv7XH3Q');
       const text = document.getElementById('wallet-text');
       text.style.display = 'block';
       setTimeout(() => text.style.display = 'none', 2000);
+    }
+
+    function scheduleInstallPromptCheck(isNowPlaying) {
+      if (installPromptTimer) {
+        clearTimeout(installPromptTimer);
+        installPromptTimer = null;
+      }
+      if (!isNowPlaying) return;
+      if (localStorage.getItem(INSTALL_PROMPT_SEEN_KEY) === '1') return;
+      installPromptTimer = setTimeout(() => {
+        if (!isPlaying || localStorage.getItem(INSTALL_PROMPT_SEEN_KEY) === '1') return;
+        localStorage.setItem(INSTALL_PROMPT_SEEN_KEY, '1');
+        openModal('install-modal');
+      }, 60000);
+    }
+
+    async function triggerInstallPrompt() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const choice = await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        closeModal('install-modal');
+        if (choice.outcome === 'accepted') {
+          showStatusMessage(currentLang === 'ru' ? 'Приложение установлено.' : 'App installed.');
+        }
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        showStatusMessage(currentLang === 'ru'
+          ? 'Ссылка скопирована. Добавьте сайт на главный экран через меню браузера.'
+          : 'Link copied. Add this site to home screen from browser menu.');
+      } catch (e) {
+        showStatusMessage(currentLang === 'ru'
+          ? 'Откройте меню браузера и нажмите "Добавить на главный экран".'
+          : 'Use browser menu to add this site to home screen.');
+      }
+      closeModal('install-modal');
+    }
+
+    async function attemptAutoplayOnLoad() {
+      if (autoplayAttempted || isPlaying) return;
+      autoplayAttempted = true;
+      try {
+        if (!audioContextInitialized) await setupAudioVisualization();
+        audio.muted = true;
+        await audio.play();
+        playBtn.classList.add('playing');
+        document.getElementById('play-ring').classList.add('active');
+        document.getElementById('live-badge').style.display = 'inline-flex';
+        startReactiveBackground();
+        isPlaying = true;
+        scheduleInstallPromptCheck(true);
+        syncVisualModeState();
+        setTimeout(() => { audio.muted = false; }, 900);
+      } catch (e) {
+        audio.muted = false;
+        showStatusMessage(currentLang === 'ru'
+          ? 'Автозапуск ограничен браузером. Нажмите Play.'
+          : 'Autoplay blocked by browser. Tap Play.');
+      }
     }
 
     // === ТАЙМЕР СНА ===
@@ -1994,6 +3127,15 @@
       }
     });
 
+    document.querySelectorAll('.track-card.clickable').forEach((el) => {
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          el.click();
+        }
+      });
+    });
+
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && activeModalId) {
         closeModal(activeModalId);
@@ -2003,13 +3145,80 @@
       }
     });
 
+    const chatMessageInput = document.getElementById('chat-message-input');
+    if (chatMessageInput) {
+      chatMessageInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          sendChatMessage();
+        }
+      });
+    }
+    const chatNameInput = document.getElementById('chat-name-input');
+    if (chatNameInput) {
+      chatNameInput.value = getChatName();
+      chatNameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          saveChatName();
+        }
+      });
+    }
+    const chatImageInput = document.getElementById('chat-image-input');
+    if (chatImageInput) {
+      chatImageInput.addEventListener('change', () => {
+        const file = chatImageInput.files && chatImageInput.files[0];
+        if (!file) return;
+        if (Date.now() < chatMutedUntil) {
+          const left = Math.ceil((chatMutedUntil - Date.now()) / 1000);
+          showStatusMessage(currentLang === 'ru'
+            ? `Чат на паузе: ${left} сек.`
+            : `Chat muted: ${left}s left.`);
+          chatImageInput.value = '';
+          return;
+        }
+        if (file.size > 700 * 1024) {
+          showStatusMessage(currentLang === 'ru' ? 'Картинка слишком большая (до 700 КБ для общего чата).' : 'Image too large (max 700 KB for shared chat).');
+          chatImageInput.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          sendChatMessage(reader.result || '');
+          chatImageInput.value = '';
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      localStorage.setItem(INSTALL_PROMPT_SEEN_KEY, '1');
+      deferredInstallPrompt = null;
+    });
+
     loadLocalAquariumProfile();
+    try {
+      const persistedTracks = JSON.parse(localStorage.getItem(TRACK_HISTORY_KEY) || '[]');
+      if (Array.isArray(persistedTracks)) trackHistory.push(...persistedTracks.slice(0, 10));
+    } catch (_) {}
     updateSyncStatus('Saved locally');
     rebuildAquariumCreatures();
     applyAquariumTheme();
     updateAquariumHud();
+    renderTrackHistory();
+    renderChatMessages();
+    startSharedChatPolling();
+    updateAtmosphereByTimeWeather();
+    setInterval(updateAtmosphereByTimeWeather, 20 * 60 * 1000);
     startListeningPointsTicker();
     updateTexts();
+    syncVisualModeState();
+    attemptAutoplayOnLoad();
   </script>
 </body>
 </html>
