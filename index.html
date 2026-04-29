@@ -2100,6 +2100,7 @@
         targetY: 0,
         hasWorm: true,
         feedTime: 0,
+        feedingStarted: false,
         cooldown: 45 + Math.random() * 25,
         wiggle: 0
       };
@@ -2410,8 +2411,9 @@
           hook.x = w * (0.22 + Math.random() * 0.56);
           hook.y = -24;
           hook.targetY = h * (0.38 + Math.random() * 0.2);
-          hook.feedTime = 5;
+          hook.feedTime = 0;
           hook.hasWorm = true;
+          hook.feedingStarted = false;
         }
         return;
       }
@@ -2419,20 +2421,22 @@
         hook.y += delta * 62;
         if (hook.y >= hook.targetY) {
           hook.y = hook.targetY;
+          hook.phase = 'attract';
+        }
+      } else if (hook.phase === 'attract') {
+        const nearCount = aquariumFish.reduce((acc, f) => acc + (Math.hypot(f.x - hook.x, f.y - (hook.y + 14)) < Math.max(30, f.size * 0.85) ? 1 : 0), 0);
+        const minNeeded = aquariumFish.length > 4 ? 2 : 1;
+        if (nearCount >= minNeeded) {
           hook.phase = 'feeding';
+          hook.feedTime = 5;
+          hook.feedingStarted = true;
         }
       } else if (hook.phase === 'feeding') {
         hook.feedTime -= delta;
-        if (hook.hasWorm) {
-          const eater = aquariumFish.find((f) => Math.hypot(f.x - hook.x, f.y - (hook.y + 14)) < Math.max(18, f.size * 0.5));
-          if (eater) {
-            hook.hasWorm = false;
-            hook.feedTime = Math.min(hook.feedTime, 0.6);
-          }
-        }
         if (hook.feedTime <= 0) {
           hook.phase = 'raising';
           hook.hasWorm = false;
+          hook.feedingStarted = false;
         }
       } else if (hook.phase === 'raising') {
         hook.y -= delta * 70;
@@ -2664,9 +2668,13 @@
               ? { speed: 0.58, turn: 1.2, zig: 6 }
               : { speed: 0.72, turn: 1.35, zig: 7 }; // calm fish
         fish.moveTimer -= delta;
-        if (aquariumFishingHook && aquariumFishingHook.active && aquariumFishingHook.phase === 'feeding' && aquariumFishingHook.hasWorm) {
-          fish.targetX += (aquariumFishingHook.x - fish.targetX) * Math.min(1, delta * 1.8);
-          fish.targetY += ((aquariumFishingHook.y + 14) - fish.targetY) * Math.min(1, delta * 1.8);
+        const hookAttract = aquariumFishingHook
+          && aquariumFishingHook.active
+          && aquariumFishingHook.hasWorm
+          && (aquariumFishingHook.phase === 'attract' || aquariumFishingHook.phase === 'feeding');
+        if (hookAttract) {
+          fish.targetX += (aquariumFishingHook.x - fish.targetX) * Math.min(1, delta * 3.6);
+          fish.targetY += ((aquariumFishingHook.y + 14) - fish.targetY) * Math.min(1, delta * 3.2);
         }
         if (fish.moveTimer <= 0) {
           fish.moveTimer = 0.8 + Math.random() * (fish.def.id === 'fish-tang' ? 1.8 : 2.8);
@@ -2677,11 +2685,15 @@
         const dx = fish.targetX - fish.x;
         const dy = fish.targetY - fish.y;
         const len = Math.max(1, Math.hypot(dx, dy));
-        const baseSpeed = (fish.def.speed * 55 + 16) * movementPreset.speed;
+        const hookRushMul = hookAttract
+          ? (aquariumFishingHook.phase === 'attract' ? 2.25 : 1.65)
+          : 1;
+        const baseSpeed = (fish.def.speed * 55 + 16) * movementPreset.speed * hookRushMul;
         const desiredVx = (dx / len) * baseSpeed;
         const desiredVy = (dy / len) * baseSpeed;
-        fish.vx += (desiredVx - fish.vx) * Math.min(1, delta * movementPreset.turn);
-        fish.vy += (desiredVy - fish.vy) * Math.min(1, delta * movementPreset.turn);
+        const turnMul = hookAttract ? 2.05 : 1;
+        fish.vx += (desiredVx - fish.vx) * Math.min(1, delta * movementPreset.turn * turnMul);
+        fish.vy += (desiredVy - fish.vy) * Math.min(1, delta * movementPreset.turn * turnMul);
         fish.x += fish.vx * delta;
         fish.y += fish.vy * delta;
         if (fish.x < fish.size * 0.6) { fish.x = fish.size * 0.6; fish.targetX = w * 0.85; }
@@ -2714,11 +2726,11 @@
         const max = w * 0.92;
         if (snail.x > max) snail.dir = -1;
         if (snail.x < min) snail.dir = 1;
-        const nearPlant = aquariumProfile.plantsActive !== false && Math.random() < 0.007;
-        if (nearPlant) snail.climb = 0.3 + Math.random() * 0.35;
-        snail.climb = Math.max(0, snail.climb - delta * 0.06);
-        snail.y = getAquariumBottomYAt(snail.x, w, h) - h * snail.climb;
-        if (snail.climb < 0.06 && Math.random() < 0.2) stirPebblesAt(snail.x, snail.y + 4, 24, 0.24);
+        snail.climb = 0; // keep snail grounded: no random climbing/falling
+        const groundY = getAquariumBottomYAt(snail.x, w, h);
+        if (typeof snail.y !== 'number' || Number.isNaN(snail.y)) snail.y = groundY;
+        snail.y += (groundY - snail.y) * Math.min(1, delta * 14);
+        if (Math.random() < 0.2) stirPebblesAt(snail.x, snail.y + 4, 24, 0.24);
         if (Math.random() < 0.02) {
           aquariumBubbles.push({
             x: snail.x,
