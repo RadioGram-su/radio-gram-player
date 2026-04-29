@@ -738,7 +738,7 @@
     }
 
     .viz-mode-modal-btn {
-      display: none;
+      display: inline-flex;
       align-self: flex-end;
       border: none;
       border-radius: 14px;
@@ -809,12 +809,7 @@
     }
 
     .viz-mode-selector {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
-      background: rgba(0,0,0,0.3);
-      padding: 4px;
-      border-radius: 12px;
+      display: none;
     }
 
     .viz-mode-btn {
@@ -1087,12 +1082,6 @@
         border-radius: 12px;
         padding: 6px;
       }
-      .viz-mode-selector {
-        display: none;
-      }
-      .viz-mode-modal-btn {
-        display: inline-flex;
-      }
       #aquarium-ui {
         top: 12px;
         left: 12px;
@@ -1115,12 +1104,6 @@
       }
       body.visual-only .bottom-controls {
         pointer-events: auto;
-      }
-      .viz-mode-selector {
-        display: none;
-      }
-      .viz-mode-modal-btn {
-        display: inline-flex;
       }
     }
 
@@ -1378,7 +1361,7 @@
       <button class="viz-mode-btn" onclick="setVizMode('aquarium', this)">Aquarium</button>
     </div>
 
-      <button class="viz-mode-modal-btn" onclick="openModal('viz-modes-modal')">Визуал</button>
+      <button class="viz-mode-modal-btn" onclick="openModal('viz-modes-modal')">Режимы</button>
 
     <!-- Переключатель режима погружения -->
     <div class="immersive-switch" id="immersive-toggle" onclick="toggleImmersive()">
