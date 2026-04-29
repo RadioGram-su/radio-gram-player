@@ -1499,9 +1499,13 @@
       { id: 'abyss', name: 'Бездна', bg: 0x020b16, fog: 0x11253c, light: 0x6fa3e6, image: 'https://images.unsplash.com/photo-1572715376701-98568319fd0b?auto=format&fit=crop&w=1600&q=80' }
     ];
     const aquariumShopItems = [
-      { id: 'fish-clown', name: 'Clownfish', cost: 40, type: 'fish', color: 0xff8b3d, speed: 0.55, size: 0.22 },
-      { id: 'fish-tang', name: 'Blue Tang', cost: 70, type: 'fish', color: 0x3f8dff, speed: 0.65, size: 0.24 },
-      { id: 'fish-koi', name: 'Koi', cost: 95, type: 'fish', color: 0xf5d38a, speed: 0.45, size: 0.3 },
+      { id: 'fish-clown', name: 'Clownfish', cost: 40, type: 'fish', color: 0xff8b3d, speed: 0.55, size: 0.22, body: 'classic' },
+      { id: 'fish-tang', name: 'Blue Tang', cost: 70, type: 'fish', color: 0x3f8dff, speed: 0.65, size: 0.24, body: 'classic' },
+      { id: 'fish-koi', name: 'Koi', cost: 95, type: 'fish', color: 0xf5d38a, speed: 0.45, size: 0.3, body: 'wide' },
+      { id: 'fish-neon', name: 'Neon Tetra', cost: 75, type: 'fish', color: 0x4ad9ff, speed: 0.78, size: 0.17, body: 'thin' },
+      { id: 'fish-betta', name: 'Betta', cost: 120, type: 'fish', color: 0xa86bff, speed: 0.52, size: 0.23, body: 'fancy' },
+      { id: 'fish-angel', name: 'Angelfish', cost: 135, type: 'fish', color: 0xffd68f, speed: 0.5, size: 0.28, body: 'tall' },
+      { id: 'fish-lion', name: 'Lionfish', cost: 170, type: 'fish', color: 0xff8f6b, speed: 0.42, size: 0.32, body: 'predator' },
       { id: 'snail-gold', name: 'Golden Snail', cost: 120, type: 'snail', color: '#d0a15a', model: 'round' },
       { id: 'snail-blue', name: 'Blue Snail', cost: 130, type: 'snail', color: '#78b9ff', model: 'spiral' },
       { id: 'crab-ruby', name: 'Ruby Crab', cost: 155, type: 'crab', color: '#ff6464' },
@@ -2029,11 +2033,12 @@
       aquariumCanvas.style.display = 'block';
       aquariumStage.appendChild(aquariumCanvas);
       aquariumCtx = aquariumCanvas.getContext('2d');
-      aquariumPlants = Array.from({ length: 16 }, (_, i) => ({
+      aquariumPlants = Array.from({ length: 24 }, (_, i) => ({
         x: (i + 0.5) / 16,
-        h: 0.1 + Math.random() * 0.18,
-        w: 0.01 + Math.random() * 0.018,
-        sway: Math.random() * Math.PI * 2
+        h: 0.1 + Math.random() * 0.22,
+        w: 0.008 + Math.random() * 0.02,
+        sway: Math.random() * Math.PI * 2,
+        kind: i % 3
       }));
       aquariumGlassSnail = {
         x: (window.innerWidth || 1280) * 0.7,
@@ -2052,7 +2057,7 @@
         turnTimer: 1.2
       };
       aquariumVolcano = {
-        xN: 0.86,
+        xN: 0.66,
         yN: 0.84,
         eruptIn: 4 + Math.random() * 6,
         eruptingFor: 0,
@@ -2312,12 +2317,15 @@
         const y = getAquariumBottomYAt(x, w, h) + h * 0.015;
         c.fillStyle = '#3a2e2a';
         c.beginPath();
-        c.moveTo(x - w * 0.045, y + h * 0.02);
-        c.lineTo(x + w * 0.045, y + h * 0.02);
-        c.lineTo(x + w * 0.018, y - h * 0.06);
-        c.lineTo(x - w * 0.018, y - h * 0.06);
+        c.moveTo(x - w * 0.055, y + h * 0.028);
+        c.lineTo(x + w * 0.055, y + h * 0.028);
+        c.lineTo(x + w * 0.024, y - h * 0.082);
+        c.lineTo(x - w * 0.024, y - h * 0.082);
         c.closePath();
         c.fill();
+        c.strokeStyle = 'rgba(18, 12, 10, 0.65)';
+        c.lineWidth = 2;
+        c.stroke();
         c.fillStyle = `rgba(255, 130, 64, ${0.2 + aquariumVolcano.glow * 0.35})`;
         c.beginPath();
         c.ellipse(x, y - h * 0.06, w * 0.012, h * 0.01, 0, 0, Math.PI * 2);
@@ -2450,8 +2458,9 @@
       c.scale(fish.vx >= 0 ? 1 : -1, 1);
       c.rotate(wobble * 0.08);
 
-      const bodyLen = fish.size * 1.35;
-      const bodyH = fish.size * 0.55;
+      const bodyType = fish.def.body || 'classic';
+      const bodyLen = fish.size * (bodyType === 'thin' ? 1.6 : bodyType === 'predator' ? 1.5 : 1.35);
+      const bodyH = fish.size * (bodyType === 'thin' ? 0.38 : bodyType === 'tall' ? 0.74 : bodyType === 'wide' ? 0.62 : 0.55);
       const g = c.createLinearGradient(-bodyLen * 0.9, -bodyH, bodyLen * 0.85, bodyH);
       const baseHex = fish.def.color.toString(16).padStart(6, '0');
       g.addColorStop(0, `#${baseHex}`);
@@ -2459,7 +2468,7 @@
       g.addColorStop(1, 'rgba(255,255,255,0.96)');
       c.fillStyle = g;
       c.beginPath();
-      c.ellipse(0, 0, bodyLen * 0.55, bodyH, 0, 0, Math.PI * 2);
+      c.ellipse(0, 0, bodyLen * (bodyType === 'predator' ? 0.58 : 0.55), bodyH, 0, 0, Math.PI * 2);
       c.fill();
       c.globalAlpha = 0.28;
       c.fillStyle = '#08111a';
@@ -2484,8 +2493,8 @@
       c.fillStyle = `#${baseHex}`;
       c.beginPath();
       c.moveTo(-bodyLen * 0.58, 0);
-      c.lineTo(-bodyLen * 0.98, -fish.size * 0.42 + Math.sin(fish.phase * 2.6) * 2);
-      c.lineTo(-bodyLen * 0.98, fish.size * 0.42 - Math.sin(fish.phase * 2.6) * 2);
+      c.lineTo(-bodyLen * 0.98, -fish.size * (bodyType === 'thin' ? 0.28 : 0.42) + Math.sin(fish.phase * 2.6) * 2);
+      c.lineTo(-bodyLen * 0.98, fish.size * (bodyType === 'thin' ? 0.28 : 0.42) - Math.sin(fish.phase * 2.6) * 2);
       c.closePath();
       c.fill();
       c.strokeStyle = 'rgba(0,0,0,0.35)';
@@ -2495,7 +2504,7 @@
       c.fillStyle = 'rgba(255,255,255,0.72)';
       c.beginPath();
       c.moveTo(-fish.size * 0.18, -fish.size * 0.06);
-      c.lineTo(fish.size * 0.05, -fish.size * 0.52);
+      c.lineTo(fish.size * 0.05, -fish.size * (bodyType === 'tall' ? 0.7 : 0.52));
       c.lineTo(fish.size * 0.28, -fish.size * 0.08);
       c.closePath();
       c.fill();
@@ -2537,9 +2546,11 @@
       aquariumFish.forEach((fish) => {
         const movementPreset = fish.def.id === 'fish-clown'
           ? { speed: 0.82, turn: 2.4, zig: 22 }
-          : fish.def.id === 'fish-tang'
-            ? { speed: 1.08, turn: 1.7, zig: 12 }
-            : { speed: 0.72, turn: 1.35, zig: 7 }; // koi is calmer
+          : fish.def.id === 'fish-tang' || fish.def.id === 'fish-neon'
+            ? { speed: 1.08, turn: 1.9, zig: 16 }
+            : fish.def.id === 'fish-lion'
+              ? { speed: 0.58, turn: 1.2, zig: 6 }
+              : { speed: 0.72, turn: 1.35, zig: 7 }; // calm fish
         fish.moveTimer -= delta;
         if (fish.moveTimer <= 0) {
           fish.moveTimer = 0.8 + Math.random() * (fish.def.id === 'fish-tang' ? 1.8 : 2.8);
@@ -2703,15 +2714,6 @@
       c.globalCompositeOperation = 'source-over';
       c.globalAlpha = 1;
 
-      c.globalAlpha = 0.16;
-      for (let i = 0; i < 6; i++) {
-        const x = ((i + 1) / 7) * w + Math.sin(aquariumLightPhase + i) * 45;
-        const ray = c.createLinearGradient(x, 0, x + 100, h);
-        ray.addColorStop(0, 'rgba(255,255,255,0.38)');
-        ray.addColorStop(1, 'rgba(255,255,255,0)');
-        c.fillStyle = ray;
-        c.fillRect(x - 50, 0, 120, h);
-      }
       c.globalAlpha = 1;
       drawUnderwaterWorldFX(w, h);
       if (aquariumVolcano && aquariumVolcano.ashCloud > 0.01) {
@@ -2733,7 +2735,6 @@
       c.lineTo(0, h);
       c.closePath();
       c.fill();
-      drawVolcanoAndFrog(w, h);
       drawPebbleBed(delta, w, h);
 
       if (aquariumProfile.plantsActive !== false) {
@@ -2743,32 +2744,76 @@
           const px = p.x * w;
           const ph = p.h * h * (1 + plantBoost * 0.14);
           const pw = p.w * w;
-          const sway = Math.sin(aquariumLightPhase * 1.7 + p.sway + idx * 0.4) * 12;
-          c.fillStyle = `rgba(${40 + idx * 5}, ${120 + idx * 4}, ${80 + idx * 3}, 0.75)`;
-          c.beginPath();
-          c.moveTo(px, h * 0.86);
-          c.quadraticCurveTo(px + sway * 0.3, h * 0.86 - ph * 0.5, px + sway, h * 0.86 - ph);
-          c.quadraticCurveTo(px + sway * 0.2 + pw, h * 0.86 - ph * 0.56, px + pw, h * 0.86);
-          c.closePath();
-          c.fill();
+          const swayBase = Math.sin(aquariumLightPhase * 1.7 + p.sway + idx * 0.4) * (9 + p.kind * 4);
+          if (p.kind === 0) {
+            c.fillStyle = `rgba(${38 + idx * 3}, ${116 + idx * 3}, ${82 + idx * 2}, 0.82)`;
+            c.beginPath();
+            c.moveTo(px, h * 0.86);
+            c.quadraticCurveTo(px + swayBase * 0.25, h * 0.86 - ph * 0.45, px + swayBase * 0.7, h * 0.86 - ph);
+            c.quadraticCurveTo(px + swayBase * 0.15 + pw, h * 0.86 - ph * 0.56, px + pw, h * 0.86);
+            c.closePath();
+            c.fill();
+          } else if (p.kind === 1) {
+            c.strokeStyle = `rgba(${46 + idx * 2}, ${140 + idx * 2}, ${96 + idx}, 0.84)`;
+            c.lineWidth = Math.max(1.2, pw * 0.6);
+            c.lineCap = 'round';
+            c.beginPath();
+            c.moveTo(px, h * 0.86);
+            c.quadraticCurveTo(px + swayBase * 0.5, h * 0.86 - ph * 0.46, px + swayBase * 0.2, h * 0.86 - ph);
+            c.stroke();
+            for (let k = 0; k < 3; k++) {
+              const yy = h * 0.86 - ph * (0.35 + k * 0.18);
+              c.beginPath();
+              c.moveTo(px + swayBase * 0.25, yy);
+              c.quadraticCurveTo(px + swayBase * 0.7 + (k - 1) * 3, yy - 8, px + swayBase * 0.92 + (k - 1) * 6, yy - 3);
+              c.stroke();
+            }
+          } else {
+            c.fillStyle = `rgba(${56 + idx * 2}, ${132 + idx * 2}, ${92 + idx * 2}, 0.72)`;
+            for (let leaf = 0; leaf < 3; leaf++) {
+              const leafY = h * 0.86 - ph * (0.42 + leaf * 0.2);
+              const leafSway = swayBase * (0.45 + leaf * 0.2);
+              c.beginPath();
+              c.ellipse(px + leafSway, leafY, pw * (1.2 + leaf * 0.2), ph * 0.07, -0.45 + leaf * 0.25, 0, Math.PI * 2);
+              c.fill();
+            }
+          }
         });
       }
       if (aquariumDecor.includes('ship')) {
-        c.fillStyle = '#70543f';
+        const shipGrad = c.createLinearGradient(w * 0.6, h * 0.7, w * 0.85, h * 0.84);
+        shipGrad.addColorStop(0, '#7e5b43');
+        shipGrad.addColorStop(1, '#3f2c22');
+        c.fillStyle = shipGrad;
         c.beginPath();
-        c.moveTo(w * 0.62, h * 0.82);
-        c.lineTo(w * 0.84, h * 0.82);
-        c.lineTo(w * 0.8, h * 0.72);
-        c.lineTo(w * 0.65, h * 0.72);
+        c.moveTo(w * 0.6, h * 0.83);
+        c.lineTo(w * 0.85, h * 0.84);
+        c.lineTo(w * 0.79, h * 0.71);
+        c.lineTo(w * 0.67, h * 0.69);
         c.closePath();
         c.fill();
         c.strokeStyle = 'rgba(20, 12, 8, 0.65)';
         c.lineWidth = 2;
         c.stroke();
-        c.fillStyle = '#b28761';
-        c.fillRect(w * 0.7, h * 0.66, w * 0.04, h * 0.06);
+        c.fillStyle = '#a97f5e';
+        c.fillRect(w * 0.69, h * 0.62, w * 0.018, h * 0.11);
+        c.fillRect(w * 0.73, h * 0.64, w * 0.014, h * 0.09);
+        c.strokeStyle = 'rgba(226, 194, 156, 0.35)';
+        c.lineWidth = 1.4;
+        c.beginPath();
+        c.moveTo(w * 0.695, h * 0.67);
+        c.lineTo(w * 0.78, h * 0.74);
+        c.moveTo(w * 0.734, h * 0.69);
+        c.lineTo(w * 0.79, h * 0.76);
+        c.stroke();
         c.fillStyle = '#1a222d';
-        c.fillRect(w * 0.69, h * 0.75, w * 0.06, h * 0.04);
+        c.fillRect(w * 0.665, h * 0.75, w * 0.038, h * 0.03);
+        c.fillRect(w * 0.72, h * 0.76, w * 0.042, h * 0.03);
+        c.fillStyle = 'rgba(74, 130, 92, 0.45)';
+        c.beginPath();
+        c.ellipse(w * 0.64, h * 0.83, w * 0.02, h * 0.013, 0, 0, Math.PI * 2);
+        c.ellipse(w * 0.79, h * 0.84, w * 0.025, h * 0.015, 0, 0, Math.PI * 2);
+        c.fill();
       }
       if (aquariumDecor.includes('ruins')) {
         c.fillStyle = '#8e9eaa';
@@ -2788,7 +2833,33 @@
         c.ellipse(w * 0.54, h * 0.81, w * 0.05, h * 0.04, 0, 0, Math.PI * 2);
         c.ellipse(w * 0.59, h * 0.825, w * 0.04, h * 0.03, 0, 0, Math.PI * 2);
         c.fill();
+        c.fillStyle = 'rgba(141, 160, 176, 0.28)';
+        c.beginPath();
+        c.ellipse(w * 0.54, h * 0.795, w * 0.026, h * 0.014, 0, 0, Math.PI * 2);
+        c.fill();
+        c.strokeStyle = 'rgba(43, 61, 74, 0.6)';
+        c.lineWidth = 2;
+        c.beginPath();
+        c.moveTo(w * 0.47, h * 0.84);
+        c.lineTo(w * 0.51, h * 0.82);
+        c.lineTo(w * 0.56, h * 0.84);
+        c.stroke();
       }
+      c.strokeStyle = 'rgba(85, 98, 112, 0.8)';
+      c.lineWidth = 3;
+      c.beginPath();
+      c.moveTo(w * 0.87, h * 0.85);
+      c.lineTo(w * 0.91, h * 0.82);
+      c.stroke();
+      c.fillStyle = '#4e5b66';
+      c.beginPath();
+      c.moveTo(w * 0.91, h * 0.82);
+      c.lineTo(w * 0.925, h * 0.79);
+      c.lineTo(w * 0.94, h * 0.82);
+      c.lineTo(w * 0.93, h * 0.84);
+      c.lineTo(w * 0.91, h * 0.82);
+      c.closePath();
+      c.fill();
       if (aquariumProfile.hasAerator && aquariumProfile.aeratorActive !== false) {
         c.fillStyle = 'rgba(148, 163, 177, 0.9)';
         c.fillRect(w * 0.49, h * 0.78, w * 0.03, h * 0.08);
@@ -2802,6 +2873,7 @@
           });
         }
       }
+      drawVolcanoAndFrog(w, h);
     }
 
     function drawSnail2D() {
