@@ -1430,6 +1430,10 @@
     let aquariumPebbles = [];
     let aquariumGlassSnail = null;
     let aquariumGlassTrail = [];
+    let aquariumFrog = null;
+    let aquariumVolcano = null;
+    let aquariumVolcanoParticles = [];
+    let aquariumAmbientMotes = [];
     let aquariumLightPhase = 0;
     let aquariumShopHidden = false;
     let aquariumShopCategory = 'all';
@@ -2039,6 +2043,32 @@
         phase: Math.random() * Math.PI * 2,
         nextTurn: 1.6 + Math.random() * 2.6
       };
+      aquariumFrog = {
+        x: (window.innerWidth || 1280) * 0.36,
+        y: (window.innerHeight || 720) * 0.5,
+        vx: 16,
+        vy: -8,
+        phase: Math.random() * Math.PI * 2,
+        turnTimer: 1.2
+      };
+      aquariumVolcano = {
+        xN: 0.86,
+        yN: 0.84,
+        eruptIn: 4 + Math.random() * 6,
+        eruptingFor: 0,
+        glow: 0,
+        majorEruptIn: 55 + Math.random() * 35,
+        majorEruptingFor: 0,
+        ashCloud: 0
+      };
+      aquariumVolcanoParticles = [];
+      aquariumAmbientMotes = Array.from({ length: 90 }, () => ({
+        xN: Math.random(),
+        yN: 0.12 + Math.random() * 0.72,
+        r: 0.8 + Math.random() * 2.2,
+        drift: 0.2 + Math.random() * 0.8,
+        speed: 0.01 + Math.random() * 0.03
+      }));
       aquariumGlassTrail = [];
       aquariumReady = true;
       aquariumCanvas.addEventListener('pointerdown', (e) => {
@@ -2190,6 +2220,143 @@
       c.ellipse(0, 10.7, 4.3, 2, 0, 0, Math.PI * 2);
       c.fill();
       c.restore();
+    }
+
+    function updateFrogAndVolcano(delta) {
+      if (!aquariumReady || !aquariumCanvas) return;
+      const w = aquariumCanvas.clientWidth || window.innerWidth;
+      const h = aquariumCanvas.clientHeight || window.innerHeight;
+      if (aquariumFrog) {
+        const f = aquariumFrog;
+        f.phase += delta * 7.5;
+        f.turnTimer -= delta;
+        if (f.turnTimer <= 0) {
+          f.turnTimer = 1.1 + Math.random() * 2.1;
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 10 + Math.random() * 16;
+          f.vx = Math.cos(angle) * speed;
+          f.vy = Math.sin(angle) * speed * 0.75;
+        }
+        f.x += f.vx * delta;
+        f.y += f.vy * delta;
+        if (f.x < w * 0.08 || f.x > w * 0.92) f.vx *= -1;
+        if (f.y < h * 0.2 || f.y > h * 0.76) f.vy *= -1;
+        f.x = Math.max(w * 0.08, Math.min(w * 0.92, f.x));
+        f.y = Math.max(h * 0.2, Math.min(h * 0.76, f.y));
+      }
+      if (aquariumVolcano) {
+        aquariumVolcano.eruptIn -= delta;
+        aquariumVolcano.majorEruptIn -= delta;
+        if (aquariumVolcano.eruptIn <= 0 && aquariumVolcano.eruptingFor <= 0) {
+          aquariumVolcano.eruptingFor = 2.2 + Math.random() * 1.8;
+          aquariumVolcano.eruptIn = 8 + Math.random() * 10;
+          aquariumVolcano.glow = 1;
+        }
+        if (aquariumVolcano.majorEruptIn <= 0 && aquariumVolcano.majorEruptingFor <= 0) {
+          aquariumVolcano.majorEruptingFor = 4 + Math.random() * 2;
+          aquariumVolcano.majorEruptIn = 65 + Math.random() * 55; // around 1-2 min
+          aquariumVolcano.ashCloud = 1;
+          aquariumVolcano.glow = 1.35;
+          aquariumVolcano.eruptingFor = Math.max(aquariumVolcano.eruptingFor, 3.4);
+        }
+        const isMajor = aquariumVolcano.majorEruptingFor > 0;
+        if (isMajor) aquariumVolcano.majorEruptingFor -= delta;
+        if (aquariumVolcano.eruptingFor > 0) {
+          aquariumVolcano.eruptingFor -= delta;
+          aquariumVolcano.glow = Math.max(0.25, aquariumVolcano.eruptingFor / 3.5) + (isMajor ? 0.35 : 0);
+          const ventX = w * aquariumVolcano.xN;
+          const ventY = getAquariumBottomYAt(ventX, w, h) - h * 0.02;
+          if (Math.random() < (isMajor ? 0.94 : 0.75)) {
+            aquariumVolcanoParticles.push({
+              x: ventX + (Math.random() - 0.5) * (isMajor ? 14 : 8),
+              y: ventY,
+              vx: (Math.random() - 0.5) * (isMajor ? 34 : 22),
+              vy: -((isMajor ? 56 : 36) + Math.random() * (isMajor ? 48 : 35)),
+              r: (isMajor ? 2.4 : 1.8) + Math.random() * (isMajor ? 4.1 : 3.2),
+              life: (isMajor ? 1.8 : 1.2) + Math.random() * (isMajor ? 1.9 : 1.4)
+            });
+          }
+        } else {
+          aquariumVolcano.glow *= 0.96;
+        }
+        if (!isMajor) aquariumVolcano.ashCloud *= 0.992;
+      }
+      aquariumVolcanoParticles = aquariumVolcanoParticles.filter((p) => p.life > 0);
+      aquariumVolcanoParticles.forEach((p) => {
+        p.life -= delta;
+        p.x += p.vx * delta;
+        p.y += p.vy * delta;
+        p.vy += 40 * delta;
+      });
+    }
+
+    function drawUnderwaterWorldFX(w, h) {
+      const c = aquariumCtx;
+      if (!aquariumAmbientMotes.length) return;
+      c.globalAlpha = 0.45;
+      aquariumAmbientMotes.forEach((m, i) => {
+        const x = ((m.xN + Math.sin(aquariumLightPhase * m.drift + i) * 0.01 + 1) % 1) * w;
+        const y = (m.yN - aquariumLightPhase * m.speed + 1) % 1 * h;
+        c.fillStyle = 'rgba(220,240,255,0.22)';
+        c.beginPath();
+        c.arc(x, y, m.r, 0, Math.PI * 2);
+        c.fill();
+      });
+      c.globalAlpha = 1;
+    }
+
+    function drawVolcanoAndFrog(w, h) {
+      const c = aquariumCtx;
+      if (aquariumVolcano) {
+        const x = w * aquariumVolcano.xN;
+        const y = getAquariumBottomYAt(x, w, h) + h * 0.015;
+        c.fillStyle = '#3a2e2a';
+        c.beginPath();
+        c.moveTo(x - w * 0.045, y + h * 0.02);
+        c.lineTo(x + w * 0.045, y + h * 0.02);
+        c.lineTo(x + w * 0.018, y - h * 0.06);
+        c.lineTo(x - w * 0.018, y - h * 0.06);
+        c.closePath();
+        c.fill();
+        c.fillStyle = `rgba(255, 130, 64, ${0.2 + aquariumVolcano.glow * 0.35})`;
+        c.beginPath();
+        c.ellipse(x, y - h * 0.06, w * 0.012, h * 0.01, 0, 0, Math.PI * 2);
+        c.fill();
+        aquariumVolcanoParticles.forEach((p) => {
+          const a = Math.max(0, Math.min(1, p.life / 1.8));
+          c.fillStyle = `rgba(255, ${85 + Math.floor(130 * a)}, ${52 + Math.floor(70 * a)}, ${0.35 + a * 0.45})`;
+          c.beginPath();
+          c.arc(p.x, p.y, p.r * a, 0, Math.PI * 2);
+          c.fill();
+        });
+      }
+      if (aquariumFrog) {
+        const f = aquariumFrog;
+        c.save();
+        c.translate(f.x, f.y);
+        c.rotate(Math.atan2(f.vy, f.vx));
+        const kick = Math.sin(f.phase) * 0.9;
+        c.fillStyle = '#68b95a';
+        c.beginPath();
+        c.ellipse(0, 0, 8.5, 6, 0, 0, Math.PI * 2);
+        c.fill();
+        c.fillStyle = '#7fd06e';
+        c.beginPath();
+        c.ellipse(4, -1, 4.5, 3.2, 0, 0, Math.PI * 2);
+        c.fill();
+        c.fillStyle = '#4d9b45';
+        c.fillRect(-8, 2 + kick * 0.2, 4, 2);
+        c.fillRect(-8, -4 - kick * 0.2, 4, 2);
+        c.fillStyle = '#fff';
+        c.beginPath();
+        c.arc(6, -2.5, 1.4, 0, Math.PI * 2);
+        c.fill();
+        c.fillStyle = '#1b2918';
+        c.beginPath();
+        c.arc(6.2, -2.5, 0.6, 0, Math.PI * 2);
+        c.fill();
+        c.restore();
+      }
     }
 
     function getOrLoadThemeImage(themeId) {
@@ -2546,17 +2713,15 @@
         c.fillRect(x - 50, 0, 120, h);
       }
       c.globalAlpha = 1;
-
-      c.strokeStyle = 'rgba(170, 225, 255, 0.16)';
-      c.lineWidth = 2;
-      for (let y = h * 0.14; y < h * 0.82; y += 36) {
-        c.beginPath();
-        for (let x = 0; x <= w; x += 20) {
-          const wave = y + Math.sin(x * 0.02 + aquariumLightPhase * 2 + y * 0.01) * 5;
-          if (x === 0) c.moveTo(x, wave);
-          else c.lineTo(x, wave);
-        }
-        c.stroke();
+      drawUnderwaterWorldFX(w, h);
+      if (aquariumVolcano && aquariumVolcano.ashCloud > 0.01) {
+        const vx = w * aquariumVolcano.xN;
+        const vy = h * 0.54;
+        const ash = c.createRadialGradient(vx, vy, 20, vx, vy, w * 0.44);
+        ash.addColorStop(0, `rgba(28, 34, 42, ${0.14 * aquariumVolcano.ashCloud})`);
+        ash.addColorStop(1, 'rgba(28, 34, 42, 0)');
+        c.fillStyle = ash;
+        c.fillRect(0, 0, w, h);
       }
 
       c.fillStyle = 'rgba(26, 57, 71, 0.86)';
@@ -2568,6 +2733,7 @@
       c.lineTo(0, h);
       c.closePath();
       c.fill();
+      drawVolcanoAndFrog(w, h);
       drawPebbleBed(delta, w, h);
 
       if (aquariumProfile.plantsActive !== false) {
@@ -2866,6 +3032,7 @@
         updateFishAI(delta);
         updateSnailAI(delta);
         updateGlassSnail(delta);
+        updateFrogAndVolcano(delta);
         aquariumFish.forEach((fish) => drawFish2D(fish, delta));
         drawSnail2D();
         drawBubbles(delta);
