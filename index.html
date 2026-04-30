@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   
   <!-- === SEO META TAGS === -->
-  <title>Radio Gram — Deep House, Techno, Lo-Fi, Reggae & Chill Music 24/7</title>
-  <meta name="description" content="🎧 Radio Gram (Грам) — атмосферное радио Deep House, Techno, Lo-Fi, Reggae и Lounge. Музыка для работы, кодинга, учёбы и отдыха 24/7. GramCoin сообщество.">
-  <meta name="keywords" content="Radio Gram, Грам, gram radio, deep house, techno, lo-fi hip hop, reggae, lounge, chillout, coding music, music for work, music for programming, study music, relax radio, gramcoin, грамкоин, радио онлайн, музыка для медитации">
+  <title>Radio Gram — Chill, Techno, Trance, Dubstep & Nature Streams 24/7</title>
+  <meta name="description" content="🎧 Radio Gram (Грам) — мультипотоковое интернет-радио 24/7: Chill, Techno, Trance, Dubstep и Nature Sounds. Выбирайте настроение и переключайте поток в один клик.">
+  <meta name="keywords" content="Radio Gram, Грам, gram radio, internet radio, online radio, chill music stream, techno stream, trance stream, dubstep stream, nature sounds stream, relaxing music 24/7, coding music, study music, focus music, deep house, lo-fi, lounge, радио онлайн, музыка 24/7, чилл радио, техно радио, транс радио, дабстеп радио, звуки природы">
   <meta name="author" content="Radio Gram">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://player.radiogram.su">
@@ -41,8 +41,8 @@
   <!-- === OPEN GRAPH === -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://player.radiogram.su/">
-  <meta property="og:title" content="Radio Gram — Deep House, Techno, Lo-Fi & Chill 24/7">
-  <meta property="og:description" content="🎧 Атмосферное радио для работы, кодинга и отдыха. Deep House, Techno, Lo-Fi, Reggae, Lounge. Слушай бесплатно!">
+  <meta property="og:title" content="Radio Gram — Multi-Stream Radio 24/7">
+  <meta property="og:description" content="🎧 Переключайте потоки Radio Gram: Chill, Techno, Trance, Dubstep и Nature Sounds. Музыка и атмосфера 24/7.">
   <meta property="og:image" content="https://player.radiogram.su/images/i.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -51,8 +51,8 @@
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Radio Gram — Music for Work & Relax">
-  <meta name="twitter:description" content="Deep House, Techno, Lo-Fi, Reggae, Lounge & Chillout 24/7.">
+  <meta name="twitter:title" content="Radio Gram — Chill, Techno, Trance, Dubstep 24/7">
+  <meta name="twitter:description" content="Multi-stream internet radio: switch between Chill, Techno, Trance, Dubstep and Nature sounds.">
   
   <!-- Structured Data -->
   <script type="application/ld+json">
@@ -64,8 +64,8 @@
     "url": "https://player.radiogram.su",
     "logo": "https://player.radiogram.su/apple-touch-icon.png",
     "image": "https://player.radiogram.su/images/i.jpg",
-    "description": "Атмосферное интернет-радио Deep House, Techno, Lo-Fi, Reggae и Lounge. Музыка для работы, кодинга, учёбы и отдыха 24/7.",
-    "genre": ["Deep House", "Melodic Techno", "Lo-Fi Hip Hop", "Reggae", "Lounge", "Chillout", "Coding Music", "Study Music", "Relax"],
+    "description": "Мультипотоковое интернет-радио 24/7 с переключением стилей: Chill, Techno, Trance, Dubstep и природные звуки.",
+    "genre": ["Chill", "Deep House", "Melodic Techno", "Trance", "Dubstep", "Nature Sounds", "Lo-Fi", "Lounge", "Coding Music", "Study Music"],
     "inLanguage": "ru-RU",
     "broadcastChannel": {
       "@type": "BroadcastChannel",
@@ -435,11 +435,82 @@
       color: var(--text-secondary);
       margin-bottom: 6px;
       font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .track-label-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
     }
     .track-hint {
-      margin-left: 6px;
       color: #7fd8ff;
       font-weight: 600;
+    }
+    .stream-quality-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 20px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.86);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+    }
+    .stream-quality-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 6px;
+      background: #8fa7bc;
+      box-shadow: 0 0 0 rgba(143, 167, 188, 0.45);
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stream-quality-badge.state-live {
+      border-color: rgba(66, 214, 133, 0.45);
+      color: #d8ffea;
+      background: rgba(40, 135, 87, 0.22);
+    }
+    .stream-quality-badge.state-live::before {
+      background: #45de8e;
+      animation: livePulseDot 1.3s ease-in-out infinite;
+      box-shadow: 0 0 0 0 rgba(69, 222, 142, 0.45);
+    }
+    .stream-quality-badge.state-buffer {
+      border-color: rgba(255, 192, 91, 0.45);
+      color: #ffe8bd;
+      background: rgba(140, 106, 31, 0.24);
+    }
+    .stream-quality-badge.state-buffer::before {
+      background: #ffc66e;
+      animation: bufferBlinkDot 1s ease-in-out infinite;
+    }
+    .stream-quality-badge.state-ready {
+      border-color: rgba(143, 167, 188, 0.42);
+      color: rgba(232, 241, 255, 0.86);
+      background: rgba(58, 78, 102, 0.24);
+    }
+    .stream-quality-badge.state-ready::before {
+      background: #9db7cf;
+      animation: none;
+    }
+    @keyframes livePulseDot {
+      0% { box-shadow: 0 0 0 0 rgba(69, 222, 142, 0.45); }
+      70% { box-shadow: 0 0 0 8px rgba(69, 222, 142, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(69, 222, 142, 0); }
+    }
+    @keyframes bufferBlinkDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
     }
 
     .track-info-row {
@@ -463,6 +534,24 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+    .track-art.loading {
+      background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.22), rgba(255,255,255,0.08));
+      background-size: 200% 100%;
+      animation: skeletonShift 1.1s ease-in-out infinite;
+      object-fit: cover;
+      filter: grayscale(0.25);
+    }
+    .track-text.loading {
+      color: transparent;
+      border-radius: 6px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.22), rgba(255,255,255,0.08));
+      background-size: 200% 100%;
+      animation: skeletonShift 1.1s ease-in-out infinite;
+    }
+    @keyframes skeletonShift {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
     .track-history {
       margin-top: 10px;
@@ -609,6 +698,75 @@
 
     .viz-mode-selector {
       display: none;
+    }
+
+    .stream-switcher {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: min(92vw, 430px);
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(9, 14, 24, 0.45);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .stream-switcher-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: var(--text-secondary);
+    }
+    .stream-switcher-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .stream-btn {
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.07);
+      color: #fff;
+      padding: 8px 10px;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+    .stream-btn:hover { background: rgba(255,255,255,0.14); }
+    .stream-btn.active {
+      border-color: rgba(73, 178, 255, 0.85);
+      background: linear-gradient(135deg, rgba(0,122,255,0.5), rgba(123,78,255,0.4));
+      transform: translateY(-1px);
+    }
+    .stream-btn-name {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .stream-btn-desc {
+      display: block;
+      margin-top: 3px;
+      font-size: 10px;
+      opacity: 0.8;
+      line-height: 1.2;
+    }
+    .stream-btn-tag {
+      display: inline-flex;
+      margin-top: 6px;
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-size: 9px;
+      letter-spacing: 0.2px;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.86);
+      background: rgba(255,255,255,0.08);
+    }
+    .stream-btn.active .stream-btn-tag {
+      border-color: rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.2);
+      color: #fff;
     }
 
     .viz-mode-btn {
@@ -958,6 +1116,8 @@
       .chat-name-input { width: 100%; }
       .chat-compose { flex-wrap: wrap; }
       #track-toast { bottom: 110px; font-size: 11px; }
+      .stream-switcher { width: 100%; padding: 8px; }
+      .stream-switcher-row { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
       .bottom-controls {
@@ -1090,8 +1250,11 @@
     <div class="track-grid">
       <div class="track-card clickable" role="button" tabindex="0" aria-label="Open Telegram channel" onclick="window.open('https://t.me/gramradiochill', '_blank', 'noopener,noreferrer')">
         <div class="track-label">
-          <span data-i18n="now_playing">Now Playing</span>
-          <span class="track-hint" data-i18n="open_channel">↗ Telegram</span>
+          <div class="track-label-left">
+            <span data-i18n="now_playing">Now Playing</span>
+            <span class="track-hint" data-i18n="open_channel">↗ Telegram</span>
+          </div>
+          <div class="stream-quality-badge" id="stream-quality-badge">LIVE · -- kbps</div>
         </div>
         <div class="track-info-row">
           <img class="track-art" id="current-art" src="images/i.jpg" onerror="this.src='https://player.radiogram.su/apple-touch-icon.png'" alt="Art">
@@ -1199,6 +1362,11 @@
 
   <!-- НИЖНИЕ КОНТРОЛЫ -->
   <div class="bottom-controls">
+    <div class="stream-switcher" id="stream-switcher">
+      <div class="stream-switcher-title" data-i18n="streams_title">Потоки музыки</div>
+      <div class="stream-switcher-row" id="stream-switcher-row"></div>
+    </div>
+
     <!-- Переключатель режима визуализатора -->
     <div class="viz-mode-selector" id="viz-selector">
       <button class="viz-mode-btn active" onclick="setVizMode('bars', this)">Bars</button>
@@ -1273,16 +1441,20 @@
     let trackToastTimeout = null;
     let activeModalId = null;
     let isFading = false;
+    let streamSwitching = false;
     let hourlyVoiceTimer = null;
     let lastHourlyAnnounceKey = '';
     let hourlyAnnouncementRunning = false;
     let deferredInstallPrompt = null;
     let installPromptTimer = null;
     let autoplayAttempted = false;
+    let currentStreamKey = 'chill';
     const FADE_IN_MS = 500;
     const FADE_OUT_MS = 350;
     const bgState = { bass: 0.12, mid: 0.12, treble: 0.12 };
     const VOLUME_STORAGE_KEY = 'radiogram_output_volume_v1';
+    const STREAM_STORAGE_KEY = 'radiogram_selected_stream_v1';
+    const AUTOPLAY_CONSENT_KEY = 'radiogram_autoplay_consent_v1';
     const INSTALL_PROMPT_SEEN_KEY = 'radiogram_install_prompt_seen_v1';
     const CHAT_NAME_KEY = 'radiogram_chat_name_v1';
     const CHAT_MESSAGES_KEY = 'radiogram_chat_messages_v1';
@@ -1306,6 +1478,31 @@
     const recentImageSentAt = [];
     let chatViolationStrikes = 0;
     let chatMutedUntil = 0;
+    let streamBitrate = '--';
+    let streamBufferState = 'LIVE';
+    const vizPerf = { low: false, secFrames: 0, secStart: 0, lowHits: 0, highHits: 0 };
+    const STREAMS = {
+      chill: {
+        key: 'chill',
+        url: 'https://radiogram.su/listen/radio_gram/radio.mp3',
+        apiPath: 'radio_gram',
+        tag: 'CHILL',
+        nameRu: 'Chill Horizon',
+        nameEn: 'Chill Horizon',
+        descRu: 'Основной поток · мягкий грув',
+        descEn: 'Main stream · soft groove'
+      },
+      pulse: {
+        key: 'pulse',
+        url: 'https://radiogram.su/listen/techno/radio.mp3',
+        apiPath: 'techno',
+        tag: 'ENERGY',
+        nameRu: 'Pulse Reactor',
+        nameEn: 'Pulse Reactor',
+        descRu: 'Динамика · Techno / Trance',
+        descEn: 'Dynamic · Techno / Trance'
+      }
+    };
 
     // === СЛОВАРЬ ===
     const translations = {
@@ -1325,6 +1522,7 @@
         donate_title: "Поддержать проект",
         close: "Закрыть",
         immersive: "Визуал",
+        streams_title: "Потоки музыки",
         volume_label: "Громкость",
         listeners: "слушают",
         night_mode: "Ночь"
@@ -1345,6 +1543,7 @@
         donate_title: "Support Developer",
         close: "Close",
         immersive: "Visual",
+        streams_title: "Music streams",
         volume_label: "Volume",
         listeners: "listening",
         night_mode: "Night"
@@ -1386,11 +1585,158 @@
       if (volumeSlider) {
         volumeSlider.setAttribute('aria-label', currentLang === 'ru' ? 'Громкость' : 'Volume');
       }
+      renderStreamButtons();
+      syncStreamButtons();
     }
 
     function toggleLang() {
       currentLang = currentLang === 'ru' ? 'en' : 'ru';
       updateTexts();
+    }
+
+    function getActiveStream() {
+      return STREAMS[currentStreamKey] || STREAMS.chill;
+    }
+
+    function updateQualityBadge() {
+      const badge = document.getElementById('stream-quality-badge');
+      if (!badge) return;
+      badge.textContent = `${streamBufferState} · ${streamBitrate} kbps`;
+      badge.classList.remove('state-live', 'state-buffer', 'state-ready');
+      const state = `${streamBufferState || ''}`.toLowerCase();
+      if (state === 'live') badge.classList.add('state-live');
+      else if (state === 'buffer') badge.classList.add('state-buffer');
+      else badge.classList.add('state-ready');
+    }
+
+    function setTrackLoadingState(loading) {
+      const art = document.getElementById('current-art');
+      const text = document.getElementById('current-track-text');
+      if (art) art.classList.toggle('loading', loading);
+      if (text) text.classList.toggle('loading', loading);
+      if (loading && text) {
+        text.textContent = currentLang === 'ru' ? 'Обновляем поток...' : 'Switching stream...';
+      }
+      streamBufferState = loading ? (currentLang === 'ru' ? 'BUFFER' : 'BUFFER') : 'LIVE';
+      updateQualityBadge();
+    }
+
+    function setBufferState(state) {
+      streamBufferState = state;
+      updateQualityBadge();
+    }
+
+    function monitorVisualizationFps(ts) {
+      if (!vizPerf.secStart) vizPerf.secStart = ts;
+      vizPerf.secFrames += 1;
+      const diff = ts - vizPerf.secStart;
+      if (diff < 1000) return;
+      const fps = (vizPerf.secFrames * 1000) / diff;
+      vizPerf.secFrames = 0;
+      vizPerf.secStart = ts;
+      if (fps < 33) {
+        vizPerf.lowHits += 1;
+        vizPerf.highHits = 0;
+        if (vizPerf.lowHits >= 2) vizPerf.low = true;
+      } else if (fps > 50) {
+        vizPerf.highHits += 1;
+        if (vizPerf.highHits >= 3) {
+          vizPerf.low = false;
+          vizPerf.lowHits = 0;
+        }
+      } else {
+        vizPerf.lowHits = Math.max(0, vizPerf.lowHits - 1);
+        vizPerf.highHits = 0;
+      }
+    }
+
+    function getStreamLabel(stream) {
+      return currentLang === 'ru'
+        ? (stream.nameRu || stream.nameEn || stream.key)
+        : (stream.nameEn || stream.nameRu || stream.key);
+    }
+
+    function getStreamDescription(stream) {
+      return currentLang === 'ru'
+        ? (stream.descRu || stream.descEn || '')
+        : (stream.descEn || stream.descRu || '');
+    }
+
+    function renderStreamButtons() {
+      const row = document.getElementById('stream-switcher-row');
+      if (!row) return;
+      const streams = Object.values(STREAMS);
+      row.innerHTML = streams.map((stream) => `
+        <button class="stream-btn ${stream.key === currentStreamKey ? 'active' : ''}" data-stream-key="${stream.key}">
+          <span class="stream-btn-name">${getStreamLabel(stream)}</span>
+          <span class="stream-btn-desc">${getStreamDescription(stream)}</span>
+          <span class="stream-btn-tag">${stream.tag || 'STREAM'}</span>
+        </button>
+      `).join('');
+      row.querySelectorAll('.stream-btn').forEach((btn) => {
+        btn.addEventListener('click', () => setMusicStream(btn.getAttribute('data-stream-key')));
+      });
+    }
+
+    function syncStreamButtons() {
+      document.querySelectorAll('.stream-btn').forEach((b) => {
+        b.classList.toggle('active', b.getAttribute('data-stream-key') === currentStreamKey);
+      });
+    }
+
+    async function setMusicStream(streamKey) {
+      const next = STREAMS[streamKey];
+      if (!next || streamKey === currentStreamKey || streamSwitching) return;
+      streamSwitching = true;
+      currentStreamKey = streamKey;
+      syncStreamButtons();
+      try { localStorage.setItem(STREAM_STORAGE_KEY, currentStreamKey); } catch (_) {}
+
+      const wasPlaying = isPlaying;
+      const fadeMs = 520;
+      try {
+        setTrackLoadingState(true);
+        if (wasPlaying && audioContextInitialized && masterGain && audioContext) {
+          const now = audioContext.currentTime;
+          masterGain.gain.cancelScheduledValues(now);
+          masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+          masterGain.gain.linearRampToValueAtTime(0.001, now + fadeMs / 1000);
+          await new Promise((resolve) => setTimeout(resolve, fadeMs));
+        }
+        audio.src = next.url;
+        audio.load();
+        if (audioContextInitialized && audioContext && audioContext.state === 'suspended') {
+          await audioContext.resume();
+        }
+        if (wasPlaying) {
+          await audio.play();
+          if (audioContextInitialized && masterGain && audioContext) {
+            const now = audioContext.currentTime;
+            masterGain.gain.cancelScheduledValues(now);
+            masterGain.gain.setValueAtTime(0.001, now);
+            masterGain.gain.linearRampToValueAtTime(userVolume, now + 0.58);
+          }
+        } else {
+          const currentTextEl = document.getElementById('current-track-text');
+          if (currentTextEl) currentTextEl.textContent = currentLang === 'ru'
+            ? `Выбран поток: ${getStreamLabel(next)}. Нажмите Play.`
+            : `Selected stream: ${getStreamLabel(next)}. Press Play.`;
+        }
+        setTrackLoadingState(false);
+        setBufferState(wasPlaying ? 'LIVE' : 'READY');
+        showStatusMessage(currentLang === 'ru'
+          ? `Поток переключен: ${getStreamLabel(next)}`
+          : `Stream switched: ${getStreamLabel(next)}`);
+        updateTrackInfo();
+        updateRadioListeners();
+      } catch (e) {
+        setTrackLoadingState(false);
+        showStatusMessage(currentLang === 'ru'
+          ? 'Не удалось переключить поток.'
+          : 'Failed to switch stream.');
+      } finally {
+        streamSwitching = false;
+      }
     }
 
     function updateVizChrome() {
@@ -1644,6 +1990,14 @@
       } catch (_) {}
     }
 
+    function loadStreamFromStorage() {
+      try {
+        const raw = localStorage.getItem(STREAM_STORAGE_KEY);
+        if (!raw || !STREAMS[raw]) return;
+        currentStreamKey = raw;
+      } catch (_) {}
+    }
+
     function applyOutputVolume() {
       if (audioContextInitialized && masterGain && audioContext && !isFading) {
         try {
@@ -1787,11 +2141,14 @@
 
     function startVisualization() {
       if (animationId || !audioContextInitialized) return;
+      vizPerf.secFrames = 0;
+      vizPerf.secStart = 0;
       
-      function animate() {
+      function animate(ts) {
         if (!analyser) { animationId = null; return; }
         analyser.getByteFrequencyData(dataArray);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        monitorVisualizationFps(ts || performance.now());
         
         switch(vizMode) {
           case 'bars': drawBars(); break;
@@ -1815,7 +2172,7 @@
 
     // 1. СТОЛБИКИ
     function drawBars() {
-      const barCount = 64;
+      const barCount = vizPerf.low ? 40 : 64;
       const barWidth = canvas.width / barCount;
       const gap = 2;
       
@@ -1836,7 +2193,9 @@
     // 2. ЧАСТИЦЫ С ЛОГОТИПОМ
     function initParticles() {
       particles = [];
-      const n = Math.min(48, Math.max(28, Math.floor((canvas.width * canvas.height) / 18000)));
+      const n = vizPerf.low
+        ? Math.min(26, Math.max(18, Math.floor((canvas.width * canvas.height) / 26000)))
+        : Math.min(48, Math.max(28, Math.floor((canvas.width * canvas.height) / 18000)));
       for (let i = 0; i < n; i++) {
         particles.push({
           x: Math.random() * canvas.width,
@@ -1876,6 +2235,8 @@
     function drawParticles() {
       const avgValue = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
       const energy = avgValue / 255;
+      const linkR = vizPerf.low ? 60 : 88;
+      const step = vizPerf.low ? 3 : 2;
       
       particles.forEach((p, i) => {
         p.x += p.vx * (1 + energy * 2);
@@ -1889,8 +2250,7 @@
         const size = Math.max(p.size + (value / 255) * 5, 5);
         
         drawGramLogo(p.x, p.y, size, p.alpha * (0.4 + energy * 0.6));
-        const linkR = 88;
-        for (let j = i + 1; j < particles.length; j += 2) {
+        for (let j = i + 1; j < particles.length; j += step) {
           const p2 = particles[j];
           const dx = p.x - p2.x;
           const dy = p.y - p2.y;
@@ -1917,7 +2277,7 @@
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
 
-      for (let i = 0; i < dataArray.length; i += 9) {
+      for (let i = 0; i < dataArray.length; i += (vizPerf.low ? 14 : 9)) {
         const value = dataArray[i] / 255;
         const angle = (i / dataArray.length) * Math.PI * 2 + performance.now() * 0.0002;
         const radius = baseRadius + value * Math.min(canvas.width, canvas.height) * 0.35;
@@ -1947,7 +2307,7 @@
       for (let i = 0; i < dataArray.length; i += 2) sum += dataArray[i];
       const energy = (sum / (Math.ceil(dataArray.length / 2))) / 255;
       const rot = performance.now() * 0.00011;
-      const n = 64;
+      const n = vizPerf.low ? 36 : 64;
       ctx.save();
       ctx.globalCompositeOperation = 'lighter';
       for (let k = 0; k < n; k++) {
@@ -2020,6 +2380,7 @@
           playBtn.classList.add('playing');
           ring.classList.add('active');
           document.getElementById('live-badge').style.display = 'inline-flex';
+          try { localStorage.setItem(AUTOPLAY_CONSENT_KEY, '1'); } catch (_) {}
           if (vizUserEnabled) startReactiveBackground();
           if (masterGain && audioContext) {
             const now = audioContext.currentTime;
@@ -2045,7 +2406,7 @@
 
     async function updateRadioListeners() {
       try {
-        const res = await fetch('https://radiogram.su/api/nowplaying/radio_gram');
+        const res = await fetch(`https://radiogram.su/api/nowplaying/${getActiveStream().apiPath}`);
         const data = await res.json();
         const realListeners = data.listeners?.unique || 0;
         const fakeListeners = getConsistentFakeListeners();
@@ -2061,8 +2422,15 @@
     // === ТРЕКИ ===
     async function updateTrackInfo() {
       try {
-        const res = await fetch('https://radiogram.su/api/nowplaying/radio_gram');
+        const res = await fetch(`https://radiogram.su/api/nowplaying/${getActiveStream().apiPath}`);
         const data = await res.json();
+        const mounts = data?.station?.mounts || [];
+        const defaultMount = mounts.find((m) => m?.is_default) || mounts[0];
+        const mountBitrate = Number(defaultMount?.bitrate || 0);
+        if (mountBitrate > 0) {
+          streamBitrate = `${mountBitrate}`;
+          updateQualityBadge();
+        }
         
         if (data.now_playing && data.now_playing.song) {
           const song = data.now_playing.song;
@@ -2074,6 +2442,7 @@
           if (currentTextEl.textContent !== fullName) {
             currentTextEl.textContent = fullName;
             if (song.art) document.getElementById('current-art').src = song.art;
+            setTrackLoadingState(false);
             pushTrackHistory(fullName);
             showTrackToast((currentLang === 'ru' ? 'Сейчас играет: ' : 'Now playing: ') + fullName);
           }
@@ -2375,6 +2744,7 @@
 
     async function attemptAutoplayOnLoad() {
       if (autoplayAttempted || isPlaying) return;
+      if (localStorage.getItem(AUTOPLAY_CONSENT_KEY) !== '1') return;
       autoplayAttempted = true;
       try {
         if (!audioContextInitialized) await setupAudioVisualization();
@@ -2390,9 +2760,6 @@
         setTimeout(() => { audio.muted = false; }, 900);
       } catch (e) {
         audio.muted = false;
-        showStatusMessage(currentLang === 'ru'
-          ? 'Автозапуск ограничен браузером. Нажмите Play.'
-          : 'Autoplay blocked by browser. Tap Play.');
       }
     }
 
@@ -2442,6 +2809,13 @@
         e.preventDefault();
         togglePlay();
       }
+    });
+    audio.addEventListener('waiting', () => setBufferState('BUFFER'));
+    audio.addEventListener('stalled', () => setBufferState('BUFFER'));
+    audio.addEventListener('playing', () => setBufferState('LIVE'));
+    audio.addEventListener('canplay', () => {
+      if (isPlaying) setBufferState('LIVE');
+      else setBufferState('READY');
     });
 
     document.querySelectorAll('.track-card.clickable').forEach((el) => {
@@ -2519,6 +2893,11 @@
     });
 
     loadVolumeFromStorage();
+    loadStreamFromStorage();
+    renderStreamButtons();
+    syncStreamButtons();
+    audio.src = getActiveStream().url;
+    setBufferState('READY');
     if (volumeSlider) {
       volumeSlider.value = String(Math.round(userVolume * 100));
       volumeSlider.addEventListener('input', () => {
