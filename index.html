@@ -1407,7 +1407,7 @@
 
   <!-- НИЖНИЕ КОНТРОЛЫ -->
   <div class="bottom-controls">
-    <button class="stream-modal-btn" id="streams-open-btn" onclick="openModal('streams-modal')">Потоки · CHILL</button>
+    <button class="stream-modal-btn" id="streams-open-btn" onclick="openModal('streams-modal')">Стиль музыки · CHILL</button>
     <div class="stream-hint-pop" id="stream-hint-pop">Выбери музыку по вкусу</div>
 
     <!-- Переключатель режима визуализатора -->
@@ -1568,7 +1568,7 @@
         close: "Закрыть",
         immersive: "Визуал",
         streams_title: "Потоки музыки",
-        streams_button: "Потоки",
+        streams_button: "Стиль музыки",
         streams_hint: "Выбери музыку по вкусу",
         volume_label: "Громкость",
         listeners: "слушают",
@@ -1591,7 +1591,7 @@
         close: "Close",
         immersive: "Visual",
         streams_title: "Music streams",
-        streams_button: "Streams",
+        streams_button: "Music style",
         streams_hint: "Pick music to match your mood",
         volume_label: "Volume",
         listeners: "listening",
@@ -1654,7 +1654,7 @@
       const btn = document.getElementById('streams-open-btn');
       if (!btn) return;
       const active = getActiveStream();
-      const base = currentLang === 'ru' ? 'Потоки' : 'Streams';
+      const base = currentLang === 'ru' ? 'Стиль музыки' : 'Music style';
       btn.textContent = `${base} · ${active.tag || 'STREAM'}`;
     }
 
