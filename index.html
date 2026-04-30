@@ -927,8 +927,8 @@
       pointer-events: none;
     }
     body.visual-only .bottom-controls {
-      opacity: 1;
-      pointer-events: auto;
+      opacity: 0;
+      pointer-events: none;
     }
     body.visual-only #visualizer-canvas {
       opacity: 1;
@@ -1071,9 +1071,7 @@
       .bottom-controls {
         max-width: min(96vw, 430px);
       }
-      body.visual-only .bottom-controls {
-        pointer-events: auto;
-      }
+      body.visual-only .bottom-controls { pointer-events: none; }
     }
 
     @media (max-width: 360px) {
