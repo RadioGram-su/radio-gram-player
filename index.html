@@ -716,6 +716,43 @@
       white-space: nowrap;
     }
     .stream-modal-btn:hover { filter: brightness(1.06); }
+    .stream-hint-pop {
+      position: fixed;
+      right: 20px;
+      bottom: 78px;
+      z-index: 170;
+      width: min(280px, calc(100vw - 28px));
+      border-radius: 12px;
+      padding: 10px 12px;
+      border: 1px solid rgba(136, 209, 255, 0.5);
+      background: rgba(10, 18, 32, 0.92);
+      color: #e8f6ff;
+      font-size: 12px;
+      line-height: 1.35;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.42);
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(6px);
+      transition: opacity 0.24s ease, transform 0.24s ease;
+    }
+    .stream-hint-pop.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .stream-hint-pop::after {
+      content: '';
+      position: absolute;
+      right: 24px;
+      bottom: -8px;
+      width: 14px;
+      height: 14px;
+      transform: rotate(45deg);
+      background: rgba(10, 18, 32, 0.92);
+      border-right: 1px solid rgba(136, 209, 255, 0.5);
+      border-bottom: 1px solid rgba(136, 209, 255, 0.5);
+    }
     .stream-switcher-row {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1115,6 +1152,10 @@
       .chat-compose { flex-wrap: wrap; }
       #track-toast { bottom: 110px; font-size: 11px; }
       .stream-switcher-row { grid-template-columns: 1fr; }
+      .stream-hint-pop {
+        right: 12px;
+        bottom: 70px;
+      }
     }
     @media (max-width: 768px) {
       .bottom-controls {
@@ -1367,6 +1408,7 @@
   <!-- НИЖНИЕ КОНТРОЛЫ -->
   <div class="bottom-controls">
     <button class="stream-modal-btn" id="streams-open-btn" onclick="openModal('streams-modal')">Потоки · CHILL</button>
+    <div class="stream-hint-pop" id="stream-hint-pop">Выбери музыку по вкусу</div>
 
     <!-- Переключатель режима визуализатора -->
     <div class="viz-mode-selector" id="viz-selector">
@@ -1455,6 +1497,7 @@
     const bgState = { bass: 0.12, mid: 0.12, treble: 0.12 };
     const VOLUME_STORAGE_KEY = 'radiogram_output_volume_v1';
     const STREAM_STORAGE_KEY = 'radiogram_selected_stream_v1';
+    const STREAM_HINT_SEEN_KEY = 'radiogram_stream_hint_seen_v1';
     const AUTOPLAY_CONSENT_KEY = 'radiogram_autoplay_consent_v1';
     const INSTALL_PROMPT_SEEN_KEY = 'radiogram_install_prompt_seen_v1';
     const CHAT_NAME_KEY = 'radiogram_chat_name_v1';
@@ -1481,6 +1524,7 @@
     let chatMutedUntil = 0;
     let streamBitrate = '--';
     let streamBufferState = 'LIVE';
+    let streamHintTimer = null;
     const vizPerf = { low: false, secFrames: 0, secStart: 0, lowHits: 0, highHits: 0 };
     const STREAMS = {
       chill: {
@@ -1525,6 +1569,7 @@
         immersive: "Визуал",
         streams_title: "Потоки музыки",
         streams_button: "Потоки",
+        streams_hint: "Выбери музыку по вкусу",
         volume_label: "Громкость",
         listeners: "слушают",
         night_mode: "Ночь"
@@ -1547,6 +1592,7 @@
         immersive: "Visual",
         streams_title: "Music streams",
         streams_button: "Streams",
+        streams_hint: "Pick music to match your mood",
         volume_label: "Volume",
         listeners: "listening",
         night_mode: "Night"
@@ -1591,6 +1637,8 @@
       renderStreamButtons();
       syncStreamButtons();
       updateStreamOpenButton();
+      const hint = document.getElementById('stream-hint-pop');
+      if (hint) hint.textContent = translations[currentLang]?.streams_hint || hint.textContent;
     }
 
     function toggleLang() {
@@ -1608,6 +1656,32 @@
       const active = getActiveStream();
       const base = currentLang === 'ru' ? 'Потоки' : 'Streams';
       btn.textContent = `${base} · ${active.tag || 'STREAM'}`;
+    }
+
+    function hideStreamHint(markSeen = false) {
+      const hint = document.getElementById('stream-hint-pop');
+      if (!hint) return;
+      hint.classList.remove('show');
+      if (streamHintTimer) {
+        clearTimeout(streamHintTimer);
+        streamHintTimer = null;
+      }
+      if (markSeen) {
+        try { localStorage.setItem(STREAM_HINT_SEEN_KEY, '1'); } catch (_) {}
+      }
+    }
+
+    function maybeShowStreamHint() {
+      const hint = document.getElementById('stream-hint-pop');
+      const btn = document.getElementById('streams-open-btn');
+      if (!hint || !btn) return;
+      if (window.innerWidth < 360) return;
+      if (localStorage.getItem(STREAM_HINT_SEEN_KEY) === '1') return;
+      hint.textContent = translations[currentLang]?.streams_hint || 'Choose your stream';
+      hint.classList.add('show');
+      streamHintTimer = setTimeout(() => hideStreamHint(true), 5200);
+      hint.addEventListener('click', () => hideStreamHint(true), { once: true });
+      btn.addEventListener('click', () => hideStreamHint(true), { once: true });
     }
 
     function updateQualityBadge() {
@@ -2937,6 +3011,7 @@
     updateVizChrome();
     syncVisualModeState();
     attemptAutoplayOnLoad();
+    setTimeout(maybeShowStreamHint, 1000);
   </script>
 </body>
 </html>
