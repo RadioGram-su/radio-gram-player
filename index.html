@@ -700,24 +700,22 @@
       display: none;
     }
 
-    .stream-switcher {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: min(92vw, 430px);
-      padding: 10px;
+    .stream-modal-btn {
+      display: inline-flex;
+      align-self: flex-end;
+      border: 1px solid rgba(255,255,255,0.22);
       border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(9, 14, 24, 0.45);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      padding: 11px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #f5fbff;
+      background: linear-gradient(135deg, rgba(22, 118, 214, 0.86), rgba(100, 79, 230, 0.86));
+      box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+      backdrop-filter: blur(8px);
+      white-space: nowrap;
     }
-    .stream-switcher-title {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-      color: var(--text-secondary);
-    }
+    .stream-modal-btn:hover { filter: brightness(1.06); }
     .stream-switcher-row {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1116,7 +1114,6 @@
       .chat-name-input { width: 100%; }
       .chat-compose { flex-wrap: wrap; }
       #track-toast { bottom: 110px; font-size: 11px; }
-      .stream-switcher { width: 100%; padding: 8px; }
       .stream-switcher-row { grid-template-columns: 1fr; }
     }
     @media (max-width: 768px) {
@@ -1357,15 +1354,19 @@
         <button class="close-modal" style="width:100%; margin-top:16px;" onclick="closeModal('viz-modes-modal')">Скрыть</button>
       </div>
     </div>
+    <div id="streams-modal" class="modal-overlay" onclick="closePopups(event)" role="dialog" aria-modal="true" aria-labelledby="streams-title">
+      <div class="modal-content" tabindex="-1">
+        <div class="modal-title" id="streams-title" data-i18n="streams_title">Потоки музыки</div>
+        <div class="stream-switcher-row" id="stream-switcher-row" style="margin-top:6px;"></div>
+        <button class="close-modal" style="width:100%; margin-top:16px;" onclick="closeModal('streams-modal')">Скрыть</button>
+      </div>
+    </div>
 
   </div>
 
   <!-- НИЖНИЕ КОНТРОЛЫ -->
   <div class="bottom-controls">
-    <div class="stream-switcher" id="stream-switcher">
-      <div class="stream-switcher-title" data-i18n="streams_title">Потоки музыки</div>
-      <div class="stream-switcher-row" id="stream-switcher-row"></div>
-    </div>
+    <button class="stream-modal-btn" id="streams-open-btn" onclick="openModal('streams-modal')">Потоки · CHILL</button>
 
     <!-- Переключатель режима визуализатора -->
     <div class="viz-mode-selector" id="viz-selector">
@@ -1523,6 +1524,7 @@
         close: "Закрыть",
         immersive: "Визуал",
         streams_title: "Потоки музыки",
+        streams_button: "Потоки",
         volume_label: "Громкость",
         listeners: "слушают",
         night_mode: "Ночь"
@@ -1544,6 +1546,7 @@
         close: "Close",
         immersive: "Visual",
         streams_title: "Music streams",
+        streams_button: "Streams",
         volume_label: "Volume",
         listeners: "listening",
         night_mode: "Night"
@@ -1587,6 +1590,7 @@
       }
       renderStreamButtons();
       syncStreamButtons();
+      updateStreamOpenButton();
     }
 
     function toggleLang() {
@@ -1596,6 +1600,14 @@
 
     function getActiveStream() {
       return STREAMS[currentStreamKey] || STREAMS.chill;
+    }
+
+    function updateStreamOpenButton() {
+      const btn = document.getElementById('streams-open-btn');
+      if (!btn) return;
+      const active = getActiveStream();
+      const base = currentLang === 'ru' ? 'Потоки' : 'Streams';
+      btn.textContent = `${base} · ${active.tag || 'STREAM'}`;
     }
 
     function updateQualityBadge() {
@@ -1674,7 +1686,10 @@
         </button>
       `).join('');
       row.querySelectorAll('.stream-btn').forEach((btn) => {
-        btn.addEventListener('click', () => setMusicStream(btn.getAttribute('data-stream-key')));
+        btn.addEventListener('click', async () => {
+          await setMusicStream(btn.getAttribute('data-stream-key'));
+          closeModal('streams-modal');
+        });
       });
     }
 
@@ -1682,6 +1697,7 @@
       document.querySelectorAll('.stream-btn').forEach((b) => {
         b.classList.toggle('active', b.getAttribute('data-stream-key') === currentStreamKey);
       });
+      updateStreamOpenButton();
     }
 
     async function setMusicStream(streamKey) {
