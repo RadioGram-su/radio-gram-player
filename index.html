@@ -74,7 +74,6 @@
     },
     "sameAs": [
       "https://t.me/gramradiochill",
-      "https://t.me/chatradiogram",
       "https://www.youtube.com/@blogcheloveka"
     ]
   }
@@ -590,39 +589,37 @@
     /* === СЕТКА КНОПОК === */
     .buttons-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
       width: 100%;
       margin-bottom: 20px;
     }
 
     .action-btn {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.18);
       color: white;
-      padding: 14px;
-      border-radius: 14px;
-      font-size: 14px;
-      font-weight: 600;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 650;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
       text-align: center;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.22);
     }
 
-    .action-btn:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
-    
-    .btn-support { background: linear-gradient(135deg, #FF9966, #FF5E62); border: none; }
-    .btn-support:hover { opacity: 0.9; }
-    .btn-support {
-      background-size: 240% 240%;
-      background-image: linear-gradient(135deg, #FF9966, #FF5E62, #7C5CFF, #27C7FF, #34C759, #FF9966);
-      animation: supportRainbow 3.2s linear infinite;
-      border: none;
+    .action-btn:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.26);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(0,0,0,0.28);
     }
-    @keyframes supportRainbow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    
+    .btn-support {
+      background: linear-gradient(135deg, rgba(255,146,115,0.72), rgba(255,96,116,0.66));
+      border-color: rgba(255,158,164,0.55);
     }
 
     .viz-mode-modal-btn {
@@ -648,11 +645,11 @@
       100% { background-position: 0% 50%; }
     }
     
-    .btn-partners { background: linear-gradient(135deg, #8E2DE2, #4A00E0); border: none; }
-    .btn-partners:hover { opacity: 0.9; }
+    .btn-partners {
+      background: linear-gradient(135deg, rgba(122,98,255,0.62), rgba(80,124,255,0.54));
+      border-color: rgba(146,172,255,0.5);
+    }
     
-    .btn-chat { background: linear-gradient(135deg, #11998e, #38ef7d); border: none; color: #000; }
-    .btn-chat:hover { opacity: 0.9; }
 
     /* === НИЖНЯЯ ПАНЕЛЬ === */
     .bottom-controls {
@@ -1001,89 +998,6 @@
       cursor: pointer;
       padding: 10px;
     }
-    .chat-modal-content {
-      width: min(640px, 94vw);
-      max-width: 640px;
-      text-align: left;
-      padding: 16px;
-      max-height: min(82vh, 760px);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .chat-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-    .chat-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #dff5ff;
-    }
-    .chat-name-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .chat-name-input, .chat-message-input {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.15);
-      color: #fff;
-      border-radius: 10px;
-      padding: 9px 10px;
-      font-size: 13px;
-      outline: none;
-    }
-    .chat-name-input { width: 220px; }
-    .chat-message-input { flex: 1; }
-    .chat-rows {
-      flex: 1;
-      overflow: auto;
-      background: rgba(6, 16, 24, 0.58);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 12px;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-height: 220px;
-    }
-    .chat-row {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
-      padding: 8px;
-    }
-    .chat-row-name {
-      font-size: 11px;
-      color: #85dcff;
-      margin-bottom: 4px;
-      font-weight: 600;
-    }
-    .chat-row-text { font-size: 13px; line-height: 1.4; word-break: break-word; }
-    .chat-row-image {
-      max-width: min(320px, 100%);
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.15);
-      margin-top: 6px;
-    }
-    .chat-compose {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .chat-pill-btn {
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-      border-radius: 10px;
-      padding: 8px 10px;
-      cursor: pointer;
-      font-size: 12px;
-      white-space: nowrap;
-    }
     #track-toast {
       position: fixed;
       left: 50%;
@@ -1146,10 +1060,6 @@
       .settings-row { justify-content: flex-end; }
       .immersive-switch { width: fit-content; margin-left: auto; }
       .viz-mode-btn { font-size: 10px; padding: 5px 8px; }
-      .chat-modal-content { width: 96vw; padding: 12px; }
-      .chat-name-row { flex-direction: column; align-items: stretch; }
-      .chat-name-input { width: 100%; }
-      .chat-compose { flex-wrap: wrap; }
       #track-toast { bottom: 110px; font-size: 11px; }
       .stream-switcher-row { grid-template-columns: 1fr; }
       .stream-hint-pop {
@@ -1313,9 +1223,6 @@
       <button class="action-btn btn-partners" onclick="togglePopup('partners-popup')">
         <span data-i18n="partners">Partners</span> 🤝
       </button>
-      <button class="action-btn btn-chat" onclick="openModal('chat-modal')">
-        <span data-i18n="chat">Join Chat</span> 💬
-      </button>
     </div>
 
     <!-- ПОПАПЫ -->
@@ -1358,27 +1265,6 @@
         </div>
         <button class="modal-btn" style="width:100%;" onclick="triggerInstallPrompt()">📲 Установить</button>
         <button class="close-modal" onclick="closeModal('install-modal')">Позже</button>
-      </div>
-    </div>
-
-    <div id="chat-modal" class="modal-overlay" onclick="closePopups(event)" role="dialog" aria-modal="true" aria-labelledby="chat-title">
-      <div class="modal-content chat-modal-content" tabindex="-1">
-        <div class="chat-head">
-          <div class="chat-title" id="chat-title">💬 Чат Radio Gram</div>
-          <button class="chat-pill-btn" onclick="closeModal('chat-modal')">Закрыть</button>
-        </div>
-        <div class="chat-name-row">
-          <input id="chat-name-input" class="chat-name-input" type="text" maxlength="24" placeholder="Ваше имя">
-          <button class="chat-pill-btn" onclick="saveChatName()">Сохранить имя</button>
-        </div>
-        <div class="chat-rows" id="chat-rows"></div>
-        <div class="chat-compose">
-          <input id="chat-message-input" class="chat-message-input" type="text" maxlength="240" placeholder="Сообщение или эмодзи 😊">
-          <button class="chat-pill-btn" onclick="openEmojiPicker()">😀 Эмодзи</button>
-          <label class="chat-pill-btn" for="chat-image-input">🖼 Картинка</label>
-          <input id="chat-image-input" type="file" accept="image/*" style="display:none;">
-          <button class="chat-pill-btn" onclick="sendChatMessage()">Отправить</button>
-        </div>
       </div>
     </div>
 
@@ -1500,28 +1386,10 @@
     const STREAM_HINT_SEEN_KEY = 'radiogram_stream_hint_seen_v1';
     const AUTOPLAY_CONSENT_KEY = 'radiogram_autoplay_consent_v1';
     const INSTALL_PROMPT_SEEN_KEY = 'radiogram_install_prompt_seen_v1';
-    const CHAT_NAME_KEY = 'radiogram_chat_name_v1';
-    const CHAT_MESSAGES_KEY = 'radiogram_chat_messages_v1';
     const TRACK_HISTORY_KEY = 'radiogram_track_history_v1';
     const WEATHER_CACHE_KEY = 'radiogram_weather_cache_v1';
-    const CHAT_SEND_API = 'https://radiogram-backend-production.up.railway.app/api/send-to-telegram';
-    const CHAT_FEED_API = 'https://radiogram-backend-production.up.railway.app/api/get-from-telegram';
-    const CHAT_POLL_MS = 4500;
-    const CHAT_RATE_LIMIT_MS = 5000;
-    const CHAT_DUPLICATE_WINDOW_MS = 45000;
-    const CHAT_BLOCKED_WORDS = ['сука', 'бляд', 'хуй', 'пизд', 'еба', 'нахуй', 'fuck', 'shit', 'bitch'];
-    const CHAT_ALLOWED_LINK_PATTERNS = ['t.me/', 'telegram.me/', 'radiogram.su', 'player.radiogram.su'];
-    const CHAT_MAX_IMAGES_PER_MIN = 3;
-    const CHAT_MUTE_BASE_MS = 60 * 1000;
     const trackHistory = [];
     let trackHistoryExpanded = false;
-    const seenSharedChatIds = new Set();
-    let sharedChatPollTimer = null;
-    let lastChatSentAt = 0;
-    const recentSentFingerprints = [];
-    const recentImageSentAt = [];
-    let chatViolationStrikes = 0;
-    let chatMutedUntil = 0;
     let streamBitrate = '--';
     let streamBufferState = 'LIVE';
     let streamHintTimer = null;
@@ -1561,7 +1429,6 @@
         channels: "Наши каналы",
         support: "Помочь проекту",
         partners: "Партнёры",
-        chat: "Перейти в чат",
         channels_title: "Наши каналы",
         partners_title: "Партнёры",
         donate_title: "Поддержать проект",
@@ -1584,7 +1451,6 @@
         channels: "Our Channels",
         support: "Support Project",
         partners: "Partners",
-        chat: "Join Chat",
         channels_title: "Our Channels",
         partners_title: "Partners",
         donate_title: "Support Developer",
@@ -2569,14 +2435,6 @@
       activeModalId = id;
       const modalContent = modal.querySelector('.modal-content');
       if (modalContent) modalContent.focus();
-      if (id === 'chat-modal') {
-        const nameInput = document.getElementById('chat-name-input');
-        if (nameInput) {
-          if (!nameInput.value) nameInput.value = getChatName();
-          if (!nameInput.value) nameInput.focus();
-        }
-        renderChatMessages();
-      }
     }
     function closePopups(e) {
       if (e.target.classList.contains('modal-overlay')) {
@@ -2585,208 +2443,6 @@
       }
     }
 
-    function getChatName() {
-      return (localStorage.getItem(CHAT_NAME_KEY) || '').trim();
-    }
-
-    function saveChatName() {
-      const input = document.getElementById('chat-name-input');
-      if (!input) return;
-      const name = (input.value || '').trim().slice(0, 24);
-      if (!name) {
-        showStatusMessage(currentLang === 'ru' ? 'Введите имя для чата.' : 'Enter a name for chat.');
-        return;
-      }
-      localStorage.setItem(CHAT_NAME_KEY, name);
-      showStatusMessage(currentLang === 'ru' ? 'Имя сохранено.' : 'Name saved.');
-    }
-
-    function loadChatMessages() {
-      try {
-        return JSON.parse(localStorage.getItem(CHAT_MESSAGES_KEY) || '[]');
-      } catch (e) {
-        return [];
-      }
-    }
-
-    function persistChatMessages(list) {
-      localStorage.setItem(CHAT_MESSAGES_KEY, JSON.stringify(list.slice(-120)));
-    }
-
-    function renderChatMessages() {
-      const rows = document.getElementById('chat-rows');
-      if (!rows) return;
-      const messages = loadChatMessages();
-      rows.innerHTML = messages.map((msg) => {
-        const safeName = (msg.name || 'Anon').replace(/[<>&"]/g, '');
-        const safeText = (msg.text || '').replace(/[<>&"]/g, '');
-        const image = msg.image ? `<img class="chat-row-image" src="${msg.image}" alt="chat image">` : '';
-        return `
-          <div class="chat-row">
-            <div class="chat-row-name">${safeName}</div>
-            <div class="chat-row-text">${safeText}</div>
-            ${image}
-          </div>
-        `;
-      }).join('');
-      rows.scrollTop = rows.scrollHeight;
-    }
-
-    function sanitizeChatText(text) {
-      if (!text) return '';
-      let out = text.replace(/\s+/g, ' ').trim().slice(0, 240);
-      CHAT_BLOCKED_WORDS.forEach((w) => {
-        const re = new RegExp(w, 'ig');
-        out = out.replace(re, '***');
-      });
-      return out;
-    }
-
-    function containsDisallowedLink(text) {
-      const links = text.match(/https?:\/\/[^\s]+|www\.[^\s]+/ig) || [];
-      return links.some((link) => !CHAT_ALLOWED_LINK_PATTERNS.some((allowed) => link.toLowerCase().includes(allowed)));
-    }
-
-    function registerViolation(reasonKey) {
-      chatViolationStrikes += 1;
-      if (chatViolationStrikes >= 3) {
-        const muteMs = CHAT_MUTE_BASE_MS * Math.min(chatViolationStrikes - 1, 5);
-        chatMutedUntil = Date.now() + muteMs;
-        const sec = Math.ceil(muteMs / 1000);
-        showStatusMessage(currentLang === 'ru'
-          ? `Чат временно ограничен на ${sec} сек. Причина: флуд.`
-          : `Chat muted for ${sec}s due to spam.`);
-        return true;
-      }
-      if (reasonKey === 'links') {
-        showStatusMessage(currentLang === 'ru'
-          ? 'Разрешены только ссылки Telegram и Radio Gram.'
-          : 'Only Telegram and Radio Gram links are allowed.');
-      } else if (reasonKey === 'images') {
-        showStatusMessage(currentLang === 'ru'
-          ? 'Слишком много картинок. Подождите минуту.'
-          : 'Too many images. Wait one minute.');
-      }
-      return false;
-    }
-
-    function isChatFlood(text, name) {
-      const now = Date.now();
-      if (now < chatMutedUntil) {
-        const left = Math.ceil((chatMutedUntil - now) / 1000);
-        showStatusMessage(currentLang === 'ru'
-          ? `Чат на паузе: ${left} сек.`
-          : `Chat muted: ${left}s left.`);
-        return true;
-      }
-      if (now - lastChatSentAt < CHAT_RATE_LIMIT_MS) {
-        registerViolation('speed');
-        showStatusMessage(currentLang === 'ru' ? 'Слишком быстро. Подождите пару секунд.' : 'Too fast. Please wait a few seconds.');
-        return true;
-      }
-      const key = `${name}|${text}`;
-      while (recentSentFingerprints.length && now - recentSentFingerprints[0].ts > CHAT_DUPLICATE_WINDOW_MS) {
-        recentSentFingerprints.shift();
-      }
-      if (recentSentFingerprints.some((x) => x.key === key)) {
-        registerViolation('duplicate');
-        showStatusMessage(currentLang === 'ru' ? 'Похоже на дубликат сообщения.' : 'Duplicate message detected.');
-        return true;
-      }
-      if (containsDisallowedLink(text)) {
-        registerViolation('links');
-        return true;
-      }
-      recentSentFingerprints.push({ key, ts: now });
-      lastChatSentAt = now;
-      chatViolationStrikes = Math.max(0, chatViolationStrikes - 1);
-      return false;
-    }
-
-    function pushChatMessage(message) {
-      const messages = loadChatMessages();
-      const fingerprint = `${message.name || ''}|${message.text || ''}|${message.ts || 0}`;
-      if (messages.some((m) => `${m.name || ''}|${m.text || ''}|${m.ts || 0}` === fingerprint)) return;
-      messages.push(message);
-      persistChatMessages(messages);
-    }
-
-    async function sendChatMessage(imageData = '') {
-      const input = document.getElementById('chat-message-input');
-      if (!input) return;
-      const name = getChatName();
-      if (!name) {
-        openModal('chat-modal');
-        showStatusMessage(currentLang === 'ru' ? 'Сначала укажите имя в чате.' : 'Set chat name first.');
-        return;
-      }
-      const text = sanitizeChatText((input.value || '').trim().slice(0, 240));
-      if (!text && !imageData) return;
-      if (isChatFlood(text || '[image]', name)) return;
-      if (imageData) {
-        const now = Date.now();
-        while (recentImageSentAt.length && now - recentImageSentAt[0] > 60 * 1000) recentImageSentAt.shift();
-        if (recentImageSentAt.length >= CHAT_MAX_IMAGES_PER_MIN) {
-          registerViolation('images');
-          return;
-        }
-        recentImageSentAt.push(now);
-      }
-      const composedText = imageData ? `${text ? `${text}\n` : ''}[image] ${imageData}` : text;
-      const localMessage = { name, text, image: imageData, ts: Date.now() };
-      pushChatMessage(localMessage);
-      input.value = '';
-      renderChatMessages();
-      try {
-        await fetch(CHAT_SEND_API, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: `${name}: ${composedText}` })
-        });
-      } catch (e) {
-        showStatusMessage(currentLang === 'ru' ? 'Сообщение сохранено локально, сеть недоступна.' : 'Saved locally, network unavailable.');
-      }
-    }
-
-    function openEmojiPicker() {
-      const input = document.getElementById('chat-message-input');
-      if (!input) return;
-      input.value += ' 😊';
-      input.focus();
-    }
-
-    async function syncSharedChat() {
-      try {
-        const res = await fetch(CHAT_FEED_API, { cache: 'no-store' });
-        const data = await res.json();
-        const list = Array.isArray(data?.messages) ? data.messages : [];
-        list.forEach((msg) => {
-          const id = msg.id || `${msg.user || 'anon'}|${msg.message || ''}|${msg.date || ''}`;
-          if (seenSharedChatIds.has(id)) return;
-          seenSharedChatIds.add(id);
-          const raw = `${msg.message || ''}`.slice(0, 600);
-          const parts = raw.split(':');
-          const parsedName = parts.length > 1 ? parts.shift().trim() : (msg.user || 'Listener');
-          const parsedText = sanitizeChatText(parts.length > 0 ? parts.join(':').trim() : raw);
-          const imageMatch = parsedText.match(/\[image\]\s+(data:image\/[a-zA-Z]+;base64,[^\s]+)/);
-          pushChatMessage({
-            name: (parsedName || 'Listener').slice(0, 24),
-            text: imageMatch ? parsedText.replace(imageMatch[0], '').trim() : parsedText,
-            image: imageMatch ? imageMatch[1] : '',
-            ts: Date.now()
-          });
-        });
-        renderChatMessages();
-      } catch (e) {
-        // silent: local chat still works
-      }
-    }
-
-    function startSharedChatPolling() {
-      if (sharedChatPollTimer) clearInterval(sharedChatPollTimer);
-      syncSharedChat();
-      sharedChatPollTimer = setInterval(syncSharedChat, CHAT_POLL_MS);
-    }
     function copyWallet() {
       navigator.clipboard.writeText('UQDNJZb6MPyqP1P1JONmZ5Que0_UMA1n4k3ugAYcVEv7XH3Q');
       const text = document.getElementById('wallet-text');
@@ -2926,52 +2582,6 @@
       }
     });
 
-    const chatMessageInput = document.getElementById('chat-message-input');
-    if (chatMessageInput) {
-      chatMessageInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          sendChatMessage();
-        }
-      });
-    }
-    const chatNameInput = document.getElementById('chat-name-input');
-    if (chatNameInput) {
-      chatNameInput.value = getChatName();
-      chatNameInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          saveChatName();
-        }
-      });
-    }
-    const chatImageInput = document.getElementById('chat-image-input');
-    if (chatImageInput) {
-      chatImageInput.addEventListener('change', () => {
-        const file = chatImageInput.files && chatImageInput.files[0];
-        if (!file) return;
-        if (Date.now() < chatMutedUntil) {
-          const left = Math.ceil((chatMutedUntil - Date.now()) / 1000);
-          showStatusMessage(currentLang === 'ru'
-            ? `Чат на паузе: ${left} сек.`
-            : `Chat muted: ${left}s left.`);
-          chatImageInput.value = '';
-          return;
-        }
-        if (file.size > 700 * 1024) {
-          showStatusMessage(currentLang === 'ru' ? 'Картинка слишком большая (до 700 КБ для общего чата).' : 'Image too large (max 700 KB for shared chat).');
-          chatImageInput.value = '';
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = () => {
-          sendChatMessage(reader.result || '');
-          chatImageInput.value = '';
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-
     window.addEventListener('beforeinstallprompt', (event) => {
       event.preventDefault();
       deferredInstallPrompt = event;
@@ -3002,8 +2612,6 @@
       if (Array.isArray(persistedTracks)) trackHistory.push(...persistedTracks.slice(0, 5));
     } catch (_) {}
     renderTrackHistory();
-    renderChatMessages();
-    startSharedChatPolling();
     updateAtmosphereByTimeWeather();
     setInterval(updateAtmosphereByTimeWeather, 20 * 60 * 1000);
     startHourlyTimeAnnouncements();
