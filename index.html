@@ -1524,6 +1524,7 @@
     };
 
     let lastNatureScene = 'default';
+    let lastNaturePhotoUrl = '';
 
     function isNatureStreamActive() {
       return !!(getActiveStream().natureScenes);
@@ -1637,29 +1638,37 @@
       return 'default';
     }
 
+    function natureDetectionTextFromSong(song) {
+      if (!song) return '';
+      const parts = [song.artist, song.title, song.album, song.genre, song.text]
+        .map((s) => (typeof s === 'string' ? s.trim() : ''))
+        .filter(Boolean);
+      return parts.join(' ');
+    }
+
     function applyNatureSceneBackground(scene) {
       if (!reactiveBg) return;
       const key = NATURE_BACKGROUNDS[scene] ? scene : 'default';
       lastNatureScene = key;
-      const url = NATURE_BACKGROUNDS[key];
+      lastNaturePhotoUrl = NATURE_BACKGROUNDS[key];
       const overlay = 'linear-gradient(180deg, rgba(6,12,28,0.42) 0%, rgba(6,12,28,0.58) 100%)';
       reactiveBg.classList.add('nature-photo');
-      reactiveBg.style.background = `${overlay}, url(${url})`;
-      reactiveBg.style.backgroundSize = 'cover, cover';
-      reactiveBg.style.backgroundPosition = 'center, center';
-      reactiveBg.style.backgroundRepeat = 'no-repeat, no-repeat';
-      reactiveBg.style.boxShadow = 'inset 0 0 140px rgba(0,0,0,0.38)';
-      reactiveBg.style.filter = isNightMode
-        ? 'brightness(0.5) saturate(0.88)'
-        : 'brightness(0.9) saturate(1.06)';
+      if (!reactiveBgAnimationId) {
+        reactiveBg.style.background = `${overlay}, url(${lastNaturePhotoUrl})`;
+        reactiveBg.style.backgroundSize = 'cover, cover';
+        reactiveBg.style.backgroundPosition = 'center, center';
+        reactiveBg.style.backgroundRepeat = 'no-repeat, no-repeat';
+        reactiveBg.style.boxShadow = 'inset 0 0 140px rgba(0,0,0,0.38)';
+        reactiveBg.style.filter = isNightMode
+          ? 'brightness(0.5) saturate(0.88)'
+          : 'brightness(0.9) saturate(1.06)';
+      } else {
+        renderReactiveBackground();
+      }
     }
 
     function syncBackdropToStream() {
       if (isNatureStreamActive()) {
-        if (reactiveBgAnimationId) {
-          cancelAnimationFrame(reactiveBgAnimationId);
-          reactiveBgAnimationId = null;
-        }
         const el = document.getElementById('current-track-text');
         const tx = (el && el.textContent) ? el.textContent : '';
         const scene = detectNatureScene(tx);
@@ -1952,6 +1961,7 @@
         await updateTrackInfo();
         updateRadioListeners();
         syncBackdropToStream();
+        syncVisualModeState();
       } catch (e) {
         setTrackLoadingState(false);
         showStatusMessage(currentLang === 'ru'
@@ -2000,8 +2010,10 @@
       document.body.classList.toggle('night-mode', isNightMode);
       const nightBtn = document.getElementById('night-mode-btn');
       if (nightBtn) nightBtn.textContent = isNightMode ? '☀️' : '🌙';
-      if (isNatureStreamActive()) applyNatureSceneBackground(lastNatureScene);
-      else if (reactiveBgAnimationId) renderReactiveBackground();
+      if (isNatureStreamActive()) {
+        if (reactiveBgAnimationId) renderReactiveBackground();
+        else applyNatureSceneBackground(lastNatureScene);
+      } else if (reactiveBgAnimationId) renderReactiveBackground();
     }
 
     function showStatusMessage(message) {
@@ -2277,13 +2289,39 @@
     }
 
     function renderReactiveBackground() {
-      if (!reactiveBg || isNatureStreamActive()) return;
-      const coreOpacity = 0.12 + bgState.bass * 0.45;
-      const sideOpacity = 0.1 + bgState.mid * 0.35;
-      const lowOpacity = 0.08 + bgState.treble * 0.32;
+      if (!reactiveBg) return;
       const y1 = Math.round(28 + bgState.treble * 14);
       const y2 = Math.round(72 - bgState.bass * 16);
       const h = Math.round(205 + bgState.mid * 120 + bgState.treble * 80);
+
+      if (isNatureStreamActive() && lastNaturePhotoUrl) {
+        const mix = 0.32;
+        const coreOpacity = (0.12 + bgState.bass * 0.45) * mix;
+        const sideOpacity = (0.1 + bgState.mid * 0.35) * mix;
+        const lowOpacity = (0.08 + bgState.treble * 0.32) * mix;
+        const overlay = 'linear-gradient(180deg, rgba(6,12,28,0.42) 0%, rgba(6,12,28,0.58) 100%)';
+        reactiveBg.style.background = `
+          radial-gradient(circle at 22% ${y1}%, rgba(26, 123, 255, ${coreOpacity.toFixed(3)}), transparent 52%),
+          radial-gradient(circle at 78% ${y2}%, rgba(139, 83, 255, ${sideOpacity.toFixed(3)}), transparent 58%),
+          radial-gradient(circle at 50% 100%, rgba(0, 210, 255, ${lowOpacity.toFixed(3)}), transparent 48%),
+          ${overlay},
+          url(${lastNaturePhotoUrl})
+        `;
+        reactiveBg.style.backgroundSize = 'cover, cover, cover, cover, cover';
+        reactiveBg.style.backgroundPosition = 'center, center, center, center, center';
+        reactiveBg.style.backgroundRepeat = 'no-repeat';
+        reactiveBg.style.boxShadow = `inset 0 0 160px rgba(0, 0, 0, ${0.18 + bgState.bass * 0.18})`;
+        const baseB = isNightMode ? 0.5 : 0.86;
+        reactiveBg.style.filter = isNightMode
+          ? `brightness(${baseB + bgState.mid * 0.14}) saturate(0.86)`
+          : `brightness(${baseB + bgState.mid * 0.2}) saturate(${1.02 + bgState.treble * 0.18})`;
+        return;
+      }
+      if (isNatureStreamActive()) return;
+
+      const coreOpacity = 0.12 + bgState.bass * 0.45;
+      const sideOpacity = 0.1 + bgState.mid * 0.35;
+      const lowOpacity = 0.08 + bgState.treble * 0.32;
 
       reactiveBg.style.background = `
         radial-gradient(circle at 22% ${y1}%, rgba(26, 123, 255, ${coreOpacity.toFixed(3)}), transparent 52%),
@@ -2298,7 +2336,7 @@
     }
 
     function startReactiveBackground() {
-      if (reactiveBgAnimationId || isNatureStreamActive()) return;
+      if (reactiveBgAnimationId) return;
       const animateBg = () => {
         if (audioContextInitialized && analyser && isPlaying) {
           analyser.getByteFrequencyData(dataArray);
@@ -2645,13 +2683,14 @@
             pushTrackHistory(fullName);
             showTrackToast((currentLang === 'ru' ? 'Сейчас играет: ' : 'Now playing: ') + fullName);
             if (getActiveStream().natureScenes) {
-              applyNatureSceneBackground(detectNatureScene(fullName));
+              const forScene = natureDetectionTextFromSong(song) || fullName;
+              applyNatureSceneBackground(detectNatureScene(forScene));
             }
           }
         }
       } catch (e) {}
     }
-    setInterval(updateTrackInfo, 10000);
+    setInterval(updateTrackInfo, 7000);
 
     // === МОДАЛКИ ===
     function closeModal(id) {
