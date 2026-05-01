@@ -133,8 +133,13 @@
       background: radial-gradient(circle at 25% 30%, rgba(0, 122, 255, 0.24), transparent 50%),
                   radial-gradient(circle at 75% 70%, rgba(140, 90, 255, 0.22), transparent 56%),
                   linear-gradient(120deg, #080d2c, #041b39, #05374a);
-      transition: opacity 0.25s ease;
+      transition: opacity 0.25s ease, background 0.75s ease, filter 0.35s ease;
       opacity: 1;
+    }
+    #reactive-bg.nature-photo {
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
     @keyframes vibrantGradient {
@@ -1385,7 +1390,6 @@
     const AUTOPLAY_CONSENT_KEY = 'radiogram_autoplay_consent_v1';
     const INSTALL_PROMPT_SEEN_KEY = 'radiogram_install_prompt_seen_v1';
     const TRACK_HISTORY_KEY = 'radiogram_track_history_v1';
-    const WEATHER_CACHE_KEY = 'radiogram_weather_cache_v1';
     const trackHistory = [];
     let trackHistoryExpanded = false;
     let streamBitrate = '--';
@@ -1412,8 +1416,179 @@
         nameEn: 'Pulse Reactor',
         descRu: 'Динамика · Techno / Trance',
         descEn: 'Dynamic · Techno / Trance'
+      },
+      nature: {
+        key: 'nature',
+        url: 'https://radiogram.su/listen/radio_gram_geografick/radio.mp3',
+        apiPath: 'radio_gram_geografick',
+        tag: 'RELAX',
+        natureScenes: true,
+        nameRu: 'Звуки природы · релакс',
+        nameEn: 'Nature Sounds · Relax',
+        descRu: 'Море, лес, горы, водопады — фон по названию трека',
+        descEn: 'Sea, forest, mountains, waterfalls — backdrop from track title'
       }
     };
+
+    const NATURE_BACKGROUNDS = {
+      sea: 'https://images.unsplash.com/photo-1505118388667-8c9e91487692?auto=format&fit=crop&w=1920&q=80',
+      mountains: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80',
+      forest: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=80',
+      waterfall: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1920&q=80',
+      default: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80'
+    };
+
+    let lastNatureScene = 'default';
+
+    function isNatureStreamActive() {
+      return !!(getActiveStream().natureScenes);
+    }
+
+    function detectNatureScene(text) {
+      const t = ((text || '').toLowerCase()).replace(/[—–\-_/.,;:!?()[\]«»"'+]+/g, ' ');
+      function mentions(phrase) {
+        if (!phrase) return false;
+        if (phrase.includes(' ')) return t.includes(phrase);
+        if (phrase.length >= 5) return t.includes(phrase);
+        try {
+          const esc = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          return new RegExp(`(^|[^a-zа-яё0-9])${esc}([^a-zа-яё0-9]|$)`, 'i').test(t);
+        } catch (e) {
+          return t.includes(phrase);
+        }
+      }
+      const rules = [
+        {
+          scene: 'waterfall',
+          keys: [
+            'waterfall', 'водопад', 'водопады', 'cascade', 'каскад', 'niagara', 'ниагар', 'victoria falls', 'angel falls',
+            'iguazu', 'игуасу', 'geyser', 'гейзер', 'spring water', 'родник', 'родники', 'ключ', 'ключи', 'родников',
+            'падающ', 'спад', 'порог', 'пороги', 'шум воды', 'шумит вода', 'бурлит', 'пенист', 'поток воды',
+            'torrent', 'поток', 'струя', 'струи', 'брызг', 'spray', 'подкова', 'horseshoe falls',
+            'dam flow', 'плотин', 'сброс воды', 'sluice', 'водослив', 'водопадн'
+          ]
+        },
+        {
+          scene: 'sea',
+          keys: [
+            'ocean', 'океан', 'море', 'морск', 'моря', 'морской', 'морская', 'морские', 'морем', 'морю',
+            'sea ', ' sea', 'seaside', 'seashore', 'seascape', 'морской бриз', 'морской прибой', 'прибой', 'прибоем',
+            'beach', 'пляж', 'пляжн', 'берег', 'берегу', 'берега', 'берегов', 'песчан', 'sand beach', 'coast', 'побереж',
+            'bay', 'залив', 'bight', 'gulf', 'лагуна', 'lagoon', 'atoll', 'атолл', 'архипелаг', 'archipelago', 'остров',
+            'island', 'острова', 'островн', 'коралл', 'coral', 'reef', 'риф', 'подводн', 'underwater', 'deep sea',
+            'abyss', 'марин', 'marine', 'nautical', 'яхт', 'sailing', 'surf', 'серф', 'прилив', 'tide', 'отлив',
+            'волна', 'волны', 'волн', 'wave', 'waves', 'шторм на море', 'штормовое море', 'штормовой океан',
+            'whale', 'кит', 'киты', 'dolphin', 'дельфин', 'дельфины', 'касатк', 'orca',
+            'seagull', 'чайк', 'albatross', 'альбатрос', 'морской пейзаж', 'sea breeze', 'salt water', 'солёная вода',
+            'тропическ', 'tropical sea', 'кариб', 'caribbean', 'мальдив', 'maldives', 'baltic', 'балтий',
+            'чёрное море', 'black sea', 'средизем', 'mediterranean', 'tyrrhenian', 'эгейск', 'aegean', 'индийск', 'indian ocean',
+            'тихий океан', 'pacific', 'atlantic', 'атлант', 'арктическ', 'arctic ocean', 'антаркт', 'antarctic',
+            'fjord', 'фьорд', 'fiord', 'лодк', 'rowing', 'яхта', 'harbor', 'гавань', 'порт', 'dock', 'причал', 'pier', 'мол'
+          ]
+        },
+        {
+          scene: 'mountains',
+          keys: [
+            'mountain', 'mountains', 'mountaineer', 'горы', 'гора ', ' гора', 'горная', 'горный', 'горное', 'горные',
+            'горным', 'гору', 'горе', 'горках', 'горист', 'высокогор', 'альп', 'alps', 'alpine', 'альпийск',
+            'summit', 'peak', 'пик ', ' пик', 'пики', 'вершин', 'вершина', 'вершину', 'хребет', 'хребта', 'перевал',
+            'pass', 'ridge', 'гребень', 'скал', 'скала', 'скалы', 'ущель', 'canyon', 'каньон', 'ущел', 'обрыв', 'cliff',
+            'кавказ', 'caucasus', 'алтай', 'altai', 'урал', 'ural', 'гимала', 'himalaya', 'everest', 'эверест',
+            'эльбрус', 'elbrus', 'mont blanc', 'монблан', 'dolomit', 'доломит', 'andes', 'андам', 'rockies', 'скалист',
+            'скалистые', 'высота', 'altitude', 'эlevation', 'ледник', 'glacier', 'снег в горах', 'snow peak', 'снежн верш',
+            'avalanche', 'лавин', 'tundra', 'тундр', 'плато', 'plateau', 'mesa', 'степь гор', 'highland', 'нагор',
+            'ветер в горах', 'mountain wind', 'эхо в горах', 'эхо гор', 'долина', 'valley', 'овраг', 'ravine',
+            'пещер', 'cave', 'грот', 'grotto', 'карст', 'karst', 'облака над горами', 'above clouds', 'above the clouds',
+            'northern lights', 'полярн сия', 'aurora', 'аврора', 'северное сияние', 'звёзды над горами', 'starry mountain',
+            'закат в горах', 'sunset mountain', 'рассвет в горах', 'dawn mountain', 'лунн гор', 'moonlit peak',
+            'desert', 'пустын', 'dune', 'дюн', 'sahara', 'сахар', 'gobi', 'гоби', 'mesa desert', 'каменист',
+            'meadow', 'луг', 'луга', 'лугов', 'поле', 'поля', 'полев', 'prairie', 'степь', 'steppe', 'саванн', 'savanna',
+            'ветер в степи', 'wind over field', 'ветер в поле', 'hill', 'холм', 'холмы', 'rolling hills', 'поднож',
+            'moor', 'вереск', 'heath'
+          ]
+        },
+        {
+          scene: 'forest',
+          keys: [
+            'forest', 'forests', 'лес', 'леса', 'лесу', 'лесной', 'лесная', 'лесные', 'лесным', 'чащ', 'чаш', 'дебр',
+            'jungle', 'джунгл', 'тропическ лес', 'rainforest', 'тайг', 'taiga', 'бор', 'хвой', 'conifer', 'ел', 'елов',
+            'сосн', 'pine', 'дубр', 'oak forest', 'берёз', 'birch', 'роща', 'grove', 'рощ', 'глуш', 'wildwood',
+            'дерев', 'деревь', 'trees', 'tree ', ' tree', 'листв', 'foliage', 'крона', 'canopy', 'под кронами',
+            'тропа', 'trail', 'тропин', 'path in forest', 'мох', 'moss', 'папорот', 'fern', 'гриб', 'mushroom pick',
+            'птиц', 'птица', 'пение птиц', 'birds', 'bird song', 'birdsong', 'солов', 'nightingale', 'сова', 'owl',
+            'дятел', 'woodpecker', 'ворон', 'crow', 'кукушк', 'cuckoo', 'журавл', 'crane', 'лесн птиц',
+            'rain', 'дожд', 'дождя', 'дождик', 'морос', 'drizzle', 'гром', 'thunder', 'гроза', 'storm in forest',
+            'лес после дожд', 'forest rain', 'rain in woods', 'капли', 'drops on leaves', 'кап по лист',
+            'insect', 'насеком', 'цикады', 'cicada', 'сверч', 'cricket', 'лягушк', 'frog', 'лягушач', 'болотн',
+            'swamp', 'болото', 'топ', 'marsh', 'тростник', 'reed', 'камыш', 'рисов', 'рисник',
+            'костёр', 'campfire', 'костра', 'огонь в лесу', 'fire crackle', 'треск дров', 'треск полень',
+            'ночь в лесу', 'night forest', 'тёмн лес', 'dark woods', 'светляч', 'firefly', 'волк', 'wolf', 'олен', 'deer',
+            'лось', 'moose', 'медвед', 'bear', 'белк', 'squirrel', 'ёж', 'hedgehog', 'лис', 'fox',
+            'ambient forest', 'forest ambience', 'лесная тишин', 'silence forest', 'wind in trees', 'ветер в кронах',
+            'шелест', 'rustle', 'листв шелест', 'осенн лес', 'autumn forest', 'зимн лес', 'winter forest', 'снег в лесу'
+          ]
+        }
+      ];
+      for (const r of rules) {
+        if (r.keys.some((k) => mentions(k))) return r.scene;
+      }
+      if (
+        mentions('wind') || mentions('ветер') || mentions('breeze') || mentions('бриз') ||
+        mentions('howling wind') || mentions('завыван') || mentions('шум ветра')
+      ) {
+        return 'mountains';
+      }
+      if (mentions('river') || mentions('река') || mentions('реки') || mentions('ручей') || mentions('ручь') ||
+          mentions('brook') || mentions('stream') || mentions('струйк') || mentions('ручеёк')) {
+        return 'waterfall';
+      }
+      if (
+        mentions('lake') || mentions('озеро') || mentions('озёр') || mentions('озера') || mentions('озер') ||
+        mentions('loch') || mentions('lough') || mentions('водоём') || mentions('водоем') || mentions('пруд') ||
+        mentions('pond') || mentions('болото') || mentions('swamp')
+      ) {
+        return 'sea';
+      }
+      return 'default';
+    }
+
+    function applyNatureSceneBackground(scene) {
+      if (!reactiveBg) return;
+      const key = NATURE_BACKGROUNDS[scene] ? scene : 'default';
+      lastNatureScene = key;
+      const url = NATURE_BACKGROUNDS[key];
+      const overlay = 'linear-gradient(180deg, rgba(6,12,28,0.42) 0%, rgba(6,12,28,0.58) 100%)';
+      reactiveBg.classList.add('nature-photo');
+      reactiveBg.style.background = `${overlay}, url(${url})`;
+      reactiveBg.style.backgroundSize = 'cover, cover';
+      reactiveBg.style.backgroundPosition = 'center, center';
+      reactiveBg.style.backgroundRepeat = 'no-repeat, no-repeat';
+      reactiveBg.style.boxShadow = 'inset 0 0 140px rgba(0,0,0,0.38)';
+      reactiveBg.style.filter = isNightMode
+        ? 'brightness(0.5) saturate(0.88)'
+        : 'brightness(0.9) saturate(1.06)';
+    }
+
+    function syncBackdropToStream() {
+      if (isNatureStreamActive()) {
+        if (reactiveBgAnimationId) {
+          cancelAnimationFrame(reactiveBgAnimationId);
+          reactiveBgAnimationId = null;
+        }
+        const el = document.getElementById('current-track-text');
+        const tx = (el && el.textContent) ? el.textContent : '';
+        const scene = detectNatureScene(tx);
+        applyNatureSceneBackground(scene);
+      } else {
+        reactiveBg.classList.remove('nature-photo');
+        reactiveBg.style.backgroundSize = '';
+        reactiveBg.style.backgroundPosition = '';
+        reactiveBg.style.backgroundRepeat = '';
+        reactiveBg.style.boxShadow = '';
+        reactiveBg.style.filter = '';
+        updateAtmosphereByTime();
+      }
+    }
 
     // === СЛОВАРЬ ===
     const translations = {
@@ -1681,8 +1856,9 @@
         showStatusMessage(currentLang === 'ru'
           ? `Поток переключен: ${getStreamLabel(next)}`
           : `Stream switched: ${getStreamLabel(next)}`);
-        updateTrackInfo();
+        await updateTrackInfo();
         updateRadioListeners();
+        syncBackdropToStream();
       } catch (e) {
         setTrackLoadingState(false);
         showStatusMessage(currentLang === 'ru'
@@ -1731,6 +1907,8 @@
       document.body.classList.toggle('night-mode', isNightMode);
       const nightBtn = document.getElementById('night-mode-btn');
       if (nightBtn) nightBtn.textContent = isNightMode ? '☀️' : '🌙';
+      if (isNatureStreamActive()) applyNatureSceneBackground(lastNatureScene);
+      else if (reactiveBgAnimationId) renderReactiveBackground();
     }
 
     function showStatusMessage(message) {
@@ -1784,6 +1962,13 @@
     }
 
     function applyAtmosphereTheme(variant) {
+      if (!reactiveBg) return;
+      reactiveBg.classList.remove('nature-photo');
+      reactiveBg.style.backgroundSize = '';
+      reactiveBg.style.backgroundPosition = '';
+      reactiveBg.style.backgroundRepeat = '';
+      reactiveBg.style.boxShadow = '';
+      reactiveBg.style.filter = '';
       const themes = {
         dawn: {
           bg: 'radial-gradient(circle at 20% 18%, rgba(255,170,126,0.22), transparent 45%), radial-gradient(circle at 80% 76%, rgba(101, 138, 255, 0.2), transparent 50%), linear-gradient(120deg, #2c1830, #1f2b58, #1b3f5a)'
@@ -1808,47 +1993,16 @@
       reactiveBg.style.background = chosen.bg;
     }
 
-    async function updateAtmosphereByTimeWeather() {
+    function updateAtmosphereByTime() {
+      if (isNatureStreamActive()) return;
       const hour = new Date().getHours();
-      let fallback = 'day';
-      if (hour < 5) fallback = 'night';
-      else if (hour < 10) fallback = 'dawn';
-      else if (hour < 18) fallback = 'day';
-      else if (hour < 22) fallback = 'evening';
-      else fallback = 'night';
-
-      try {
-        const cache = JSON.parse(localStorage.getItem(WEATHER_CACHE_KEY) || '{}');
-        if (cache.variant && cache.ts && Date.now() - cache.ts < 30 * 60 * 1000) {
-          applyAtmosphereTheme(cache.variant);
-          return;
-        }
-      } catch (_) {}
-
-      try {
-        if (!navigator.geolocation) {
-          applyAtmosphereTheme(fallback);
-          return;
-        }
-        navigator.geolocation.getCurrentPosition(async (pos) => {
-          try {
-            const { latitude, longitude } = pos.coords;
-            const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=weather_code&timezone=auto`;
-            const res = await fetch(url);
-            const data = await res.json();
-            const code = data?.current?.weather_code;
-            let variant = fallback;
-            if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) variant = 'rain';
-            else if ([1, 2, 3, 45, 48].includes(code)) variant = 'clouds';
-            applyAtmosphereTheme(variant);
-            localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({ variant, ts: Date.now() }));
-          } catch (e) {
-            applyAtmosphereTheme(fallback);
-          }
-        }, () => applyAtmosphereTheme(fallback), { timeout: 5000 });
-      } catch (e) {
-        applyAtmosphereTheme(fallback);
-      }
+      let variant = 'day';
+      if (hour < 5) variant = 'night';
+      else if (hour < 10) variant = 'dawn';
+      else if (hour < 18) variant = 'day';
+      else if (hour < 22) variant = 'evening';
+      else variant = 'night';
+      applyAtmosphereTheme(variant);
     }
 
     function setVizMode(mode, btn) {
@@ -2030,7 +2184,7 @@
     }
 
     function renderReactiveBackground() {
-      if (!reactiveBg) return;
+      if (!reactiveBg || isNatureStreamActive()) return;
       const coreOpacity = 0.12 + bgState.bass * 0.45;
       const sideOpacity = 0.1 + bgState.mid * 0.35;
       const lowOpacity = 0.08 + bgState.treble * 0.32;
@@ -2051,7 +2205,7 @@
     }
 
     function startReactiveBackground() {
-      if (reactiveBgAnimationId) return;
+      if (reactiveBgAnimationId || isNatureStreamActive()) return;
       const animateBg = () => {
         if (audioContextInitialized && analyser && isPlaying) {
           analyser.getByteFrequencyData(dataArray);
@@ -2078,12 +2232,11 @@
       bgState.bass = 0.08;
       bgState.mid = 0.08;
       bgState.treble = 0.08;
-      try {
-        const cache = JSON.parse(localStorage.getItem(WEATHER_CACHE_KEY) || '{}');
-        if (cache.variant) applyAtmosphereTheme(cache.variant);
-        else updateAtmosphereByTimeWeather();
-      } catch (_) {
-        updateAtmosphereByTimeWeather();
+      if (isNatureStreamActive()) {
+        const el = document.getElementById('current-track-text');
+        applyNatureSceneBackground(detectNatureScene(el && el.textContent ? el.textContent : ''));
+      } else {
+        updateAtmosphereByTime();
       }
     }
 
@@ -2371,7 +2524,6 @@
       }
     }
     setInterval(updateRadioListeners, 30000);
-    updateRadioListeners();
 
     // === ТРЕКИ ===
     async function updateTrackInfo() {
@@ -2399,12 +2551,14 @@
             setTrackLoadingState(false);
             pushTrackHistory(fullName);
             showTrackToast((currentLang === 'ru' ? 'Сейчас играет: ' : 'Now playing: ') + fullName);
+            if (getActiveStream().natureScenes) {
+              applyNatureSceneBackground(detectNatureScene(fullName));
+            }
           }
         }
       } catch (e) {}
     }
     setInterval(updateTrackInfo, 10000);
-    updateTrackInfo();
 
     // === МОДАЛКИ ===
     function closeModal(id) {
@@ -2610,8 +2764,12 @@
       if (Array.isArray(persistedTracks)) trackHistory.push(...persistedTracks.slice(0, 5));
     } catch (_) {}
     renderTrackHistory();
-    updateAtmosphereByTimeWeather();
-    setInterval(updateAtmosphereByTimeWeather, 20 * 60 * 1000);
+    syncBackdropToStream();
+    updateRadioListeners();
+    updateTrackInfo().then(() => syncBackdropToStream());
+    setInterval(() => {
+      if (!isNatureStreamActive()) updateAtmosphereByTime();
+    }, 20 * 60 * 1000);
     startHourlyTimeAnnouncements();
     updateTexts();
     updateVizChrome();
