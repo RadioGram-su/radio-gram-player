@@ -257,6 +257,81 @@
       gap: 6px;
     }
 
+    /* Верхняя панель: поток + трек дня */
+    .hero-toolbar {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .hero-toolbar-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      justify-content: center;
+      gap: 10px;
+      max-width: 100%;
+    }
+    .hero-stream-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      color: #f5fbff;
+      font-family: inherit;
+      background: linear-gradient(135deg, rgba(22, 118, 214, 0.88), rgba(100, 79, 230, 0.88));
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(8px);
+      transition: filter 0.2s ease, transform 0.15s ease;
+      max-width: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hero-stream-btn:hover {
+      filter: brightness(1.07);
+    }
+    .hero-stream-btn:active {
+      transform: scale(0.98);
+    }
+    .hero-track-day {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+      max-width: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hero-track-day:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.24);
+      color: #fff;
+    }
+    .hero-track-day:active {
+      transform: scale(0.98);
+    }
+    .hero-track-day .hero-track-day-icon {
+      font-size: 13px;
+      opacity: 0.8;
+      line-height: 1;
+    }
+
     /* === КНОПКА PLAY С ЛОГОТИПОМ === */
     .play-wrapper {
       position: relative;
@@ -702,26 +777,12 @@
       display: none;
     }
 
-    .stream-modal-btn {
-      display: inline-flex;
-      align-self: flex-end;
-      border: 1px solid rgba(255,255,255,0.22);
-      border-radius: 14px;
-      padding: 11px 14px;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      color: #f5fbff;
-      background: linear-gradient(135deg, rgba(22, 118, 214, 0.86), rgba(100, 79, 230, 0.86));
-      box-shadow: 0 10px 28px rgba(0,0,0,0.35);
-      backdrop-filter: blur(8px);
-      white-space: nowrap;
-    }
-    .stream-modal-btn:hover { filter: brightness(1.06); }
     .stream-hint-pop {
       position: fixed;
-      right: 20px;
-      bottom: 78px;
+      left: 50%;
+      right: auto;
+      bottom: auto;
+      top: 108px;
       z-index: 170;
       width: min(280px, calc(100vw - 28px));
       border-radius: 12px;
@@ -735,25 +796,27 @@
       backdrop-filter: blur(10px);
       opacity: 0;
       pointer-events: none;
-      transform: translateY(6px);
+      transform: translateX(-50%) translateY(6px);
       transition: opacity 0.24s ease, transform 0.24s ease;
+      text-align: center;
     }
     .stream-hint-pop.show {
       opacity: 1;
       pointer-events: auto;
-      transform: translateY(0);
+      transform: translateX(-50%) translateY(0);
     }
     .stream-hint-pop::after {
       content: '';
       position: absolute;
-      right: 24px;
-      bottom: -8px;
+      left: 50%;
+      top: -7px;
+      margin-left: -7px;
       width: 14px;
       height: 14px;
       transform: rotate(45deg);
       background: rgba(10, 18, 32, 0.92);
-      border-right: 1px solid rgba(136, 209, 255, 0.5);
-      border-bottom: 1px solid rgba(136, 209, 255, 0.5);
+      border-left: 1px solid rgba(136, 209, 255, 0.5);
+      border-top: 1px solid rgba(136, 209, 255, 0.5);
     }
     .stream-switcher-row {
       display: grid;
@@ -1068,8 +1131,19 @@
       #track-toast { bottom: 110px; font-size: 11px; }
       .stream-switcher-row { grid-template-columns: 1fr; }
       .stream-hint-pop {
-        right: 12px;
-        bottom: 70px;
+        top: 96px;
+        width: min(calc(100vw - 20px), 300px);
+      }
+      .hero-toolbar-inner {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+      .hero-stream-btn,
+      .hero-track-day {
+        width: 100%;
+        max-width: min(340px, 100%);
+        box-sizing: border-box;
       }
     }
     @media (max-width: 768px) {
@@ -1142,6 +1216,17 @@
         </div>
       </div>
     </div>
+
+    <div class="hero-toolbar">
+      <div class="hero-toolbar-inner">
+        <button type="button" class="hero-stream-btn" id="streams-open-btn-top" onclick="openModal('streams-modal')" aria-haspopup="dialog" aria-controls="streams-modal">Стиль музыки · CHILL</button>
+        <a class="hero-track-day" id="track-day-link" href="https://t.me/gramradiochill/420" target="_blank" rel="noopener noreferrer" aria-label="Трек дня в Telegram">
+          <span class="hero-track-day-icon" aria-hidden="true">♪</span>
+          <span data-i18n="track_of_day">Трек дня</span>
+        </a>
+      </div>
+    </div>
+    <div class="stream-hint-pop" id="stream-hint-pop">Выбери музыку по вкусу</div>
 
     <!-- СЧЁТЧИК СЛУШАТЕЛЕЙ РАДИО -->
     <div class="listeners-badge">
@@ -1296,9 +1381,6 @@
 
   <!-- НИЖНИЕ КОНТРОЛЫ -->
   <div class="bottom-controls">
-    <button class="stream-modal-btn" id="streams-open-btn" onclick="openModal('streams-modal')">Стиль музыки · CHILL</button>
-    <div class="stream-hint-pop" id="stream-hint-pop">Выбери музыку по вкусу</div>
-
     <!-- Переключатель режима визуализатора -->
     <div class="viz-mode-selector" id="viz-selector">
       <button class="viz-mode-btn active" onclick="setVizMode('bars', this)">Bars</button>
@@ -1429,6 +1511,9 @@
         descEn: 'Sea, forest, mountains, waterfalls — backdrop from track title'
       }
     };
+
+    /** Пост «Трек дня» в Telegram — обновляйте URL при смене поста. */
+    const TRACK_OF_THE_DAY_URL = 'https://t.me/gramradiochill/420';
 
     const NATURE_BACKGROUNDS = {
       sea: 'https://images.unsplash.com/photo-1505118388667-8c9e91487692?auto=format&fit=crop&w=1920&q=80',
@@ -1610,6 +1695,7 @@
         streams_title: "Потоки музыки",
         streams_button: "Стиль музыки",
         streams_hint: "Выбери музыку по вкусу",
+        track_of_day: "Трек дня",
         volume_label: "Громкость",
         listeners: "слушают",
         night_mode: "Ночь"
@@ -1632,6 +1718,7 @@
         streams_title: "Music streams",
         streams_button: "Music style",
         streams_hint: "Pick music to match your mood",
+        track_of_day: "Track of the day",
         volume_label: "Volume",
         listeners: "listening",
         night_mode: "Night"
@@ -1673,6 +1760,12 @@
       if (volumeSlider) {
         volumeSlider.setAttribute('aria-label', currentLang === 'ru' ? 'Громкость' : 'Volume');
       }
+      const trackDayLink = document.getElementById('track-day-link');
+      if (trackDayLink) {
+        trackDayLink.href = TRACK_OF_THE_DAY_URL;
+        const todLabel = translations[currentLang]?.track_of_day || 'Track of the day';
+        trackDayLink.setAttribute('aria-label', `${todLabel} — Telegram`);
+      }
       renderStreamButtons();
       syncStreamButtons();
       updateStreamOpenButton();
@@ -1690,11 +1783,11 @@
     }
 
     function updateStreamOpenButton() {
-      const btn = document.getElementById('streams-open-btn');
-      if (!btn) return;
       const active = getActiveStream();
       const base = currentLang === 'ru' ? 'Стиль музыки' : 'Music style';
-      btn.textContent = `${base} · ${active.tag || 'STREAM'}`;
+      const text = `${base} · ${active.tag || 'STREAM'}`;
+      const streamTop = document.getElementById('streams-open-btn-top');
+      if (streamTop) streamTop.textContent = text;
     }
 
     function hideStreamHint(markSeen = false) {
@@ -1712,15 +1805,15 @@
 
     function maybeShowStreamHint() {
       const hint = document.getElementById('stream-hint-pop');
-      const btn = document.getElementById('streams-open-btn');
-      if (!hint || !btn) return;
+      const btnTop = document.getElementById('streams-open-btn-top');
+      if (!hint || !btnTop) return;
       if (window.innerWidth < 360) return;
       if (localStorage.getItem(STREAM_HINT_SEEN_KEY) === '1') return;
       hint.textContent = translations[currentLang]?.streams_hint || 'Choose your stream';
       hint.classList.add('show');
       streamHintTimer = setTimeout(() => hideStreamHint(true), 5200);
       hint.addEventListener('click', () => hideStreamHint(true), { once: true });
-      btn.addEventListener('click', () => hideStreamHint(true), { once: true });
+      btnTop.addEventListener('click', () => hideStreamHint(true), { once: true });
     }
 
     function updateQualityBadge() {
