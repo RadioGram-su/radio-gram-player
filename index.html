@@ -190,6 +190,97 @@
       transform: translateY(0);
     }
 
+    .relax-fs-exit-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 125;
+      background: rgba(12, 12, 20, 0.4);
+      color: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      font-family: inherit;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease, background 0.25s ease;
+      transform: translateY(-4px);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .relax-fs-exit-btn:hover {
+      background: rgba(20, 20, 34, 0.58);
+      transform: translateY(0);
+    }
+    body.relax-fullscreen .relax-fs-exit-btn {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    body.relax-fullscreen {
+      overflow: auto;
+    }
+    body.relax-fullscreen .top-bar,
+    body.relax-fullscreen .hero-toolbar,
+    body.relax-fullscreen .listeners-badge,
+    body.relax-fullscreen .buttons-grid,
+    body.relax-fullscreen .bottom-controls,
+    body.relax-fullscreen .stream-hint-pop {
+      display: none !important;
+    }
+    body.relax-fullscreen .track-history {
+      display: none !important;
+    }
+    body.relax-fullscreen:not(.visual-only) #visualizer-canvas {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    body.relax-fullscreen .app-container {
+      max-width: min(560px, 96vw);
+      padding: 24px 16px 32px;
+    }
+    body.relax-fullscreen .play-wrapper {
+      margin-bottom: 20px;
+    }
+    body.relax-fullscreen .title-section {
+      margin-bottom: 20px;
+    }
+    body.relax-fullscreen .track-grid {
+      margin-bottom: 0;
+    }
+
+    .hero-relax-fs-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+      max-width: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hero-relax-fs-btn:hover {
+      background: rgba(255, 255, 255, 0.11);
+      border-color: rgba(255, 255, 255, 0.24);
+    }
+    .hero-relax-fs-btn:active {
+      transform: scale(0.98);
+    }
     /* === ГЛАВНЫЙ КОНТЕЙНЕР === */
     .app-container {
       width: 100%;
@@ -1140,7 +1231,8 @@
         width: 100%;
       }
       .hero-stream-btn,
-      .hero-track-day {
+      .hero-track-day,
+      .hero-relax-fs-btn {
         width: 100%;
         max-width: min(340px, 100%);
         box-sizing: border-box;
@@ -1204,6 +1296,7 @@
   <div id="reactive-bg"></div>
   <canvas id="visualizer-canvas"></canvas>
   <button id="visual-exit-btn" onclick="exitVizFullscreen()" aria-label="Exit visual mode">Выйти</button>
+  <button type="button" id="relax-fs-exit-btn" class="relax-fs-exit-btn" onclick="exitRelaxFullscreen()"><span data-i18n="relax_fullscreen_exit">Свернуть</span></button>
 
   <!-- ОСНОВНОЙ КОНТЕНТ -->
   <div class="app-container" id="main-ui">
@@ -1224,6 +1317,10 @@
           <span class="hero-track-day-icon" aria-hidden="true">♪</span>
           <span data-i18n="track_of_day">Трек дня</span>
         </a>
+        <button type="button" class="hero-relax-fs-btn" id="relax-fullscreen-btn" onclick="toggleRelaxFullscreen()" aria-expanded="false" aria-controls="main-ui">
+          <span aria-hidden="true">⛶</span>
+          <span data-i18n="relax_fullscreen">Полный экран</span>
+        </button>
       </div>
     </div>
     <div class="stream-hint-pop" id="stream-hint-pop">Выбери музыку по вкусу</div>
@@ -1515,12 +1612,13 @@
     /** Пост «Трек дня» в Telegram — обновляйте URL при смене поста. */
     const TRACK_OF_THE_DAY_URL = 'https://t.me/gramradiochill/420';
 
+    /* Фоны природы: Pexels CDN (стабильнее Unsplash в РФ). При желании замените на файлы с вашего домена. */
     const NATURE_BACKGROUNDS = {
-      sea: 'https://images.unsplash.com/photo-1505118388667-8c9e91487692?auto=format&fit=crop&w=1920&q=80',
-      mountains: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80',
-      forest: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1920&q=80',
-      waterfall: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=1920&q=80',
-      default: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=1920&q=80'
+      sea: 'https://images.pexels.com/photos/1007657/pexels-photo-1007657.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      mountains: 'https://images.pexels.com/photos/355465/pexels-photo-355465.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      forest: 'https://images.pexels.com/photos/1525041/pexels-photo-1525041.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      waterfall: 'https://images.pexels.com/photos/358482/pexels-photo-358482.jpeg?auto=compress&cs=tinysrgb&w=1920',
+      default: 'https://images.pexels.com/photos/414171/pexels-photo-414171.jpeg?auto=compress&cs=tinysrgb&w=1920'
     };
 
     let lastNatureScene = 'default';
@@ -1565,7 +1663,7 @@
             'abyss', 'марин', 'marine', 'nautical', 'яхт', 'sailing', 'surf', 'серф', 'прилив', 'tide', 'отлив',
             'волна', 'волны', 'волн', 'wave', 'waves', 'шторм на море', 'штормовое море', 'штормовой океан',
             'whale', 'кит', 'киты', 'dolphin', 'дельфин', 'дельфины', 'касатк', 'orca',
-            'seagull', 'чайк', 'albatross', 'альбатрос', 'морской пейзаж', 'sea breeze', 'salt water', 'солёная вода',
+            'seagull', 'чайк', 'чайки', 'шум моря', 'шум прибоя', 'albatross', 'альбатрос', 'морской пейзаж', 'sea breeze', 'salt water', 'солёная вода',
             'тропическ', 'tropical sea', 'кариб', 'caribbean', 'мальдив', 'maldives', 'baltic', 'балтий',
             'чёрное море', 'black sea', 'средизем', 'mediterranean', 'tyrrhenian', 'эгейск', 'aegean', 'индийск', 'indian ocean',
             'тихий океан', 'pacific', 'atlantic', 'атлант', 'арктическ', 'arctic ocean', 'антаркт', 'antarctic',
@@ -1662,8 +1760,6 @@
         reactiveBg.style.filter = isNightMode
           ? 'brightness(0.5) saturate(0.88)'
           : 'brightness(0.9) saturate(1.06)';
-      } else {
-        renderReactiveBackground();
       }
     }
 
@@ -1705,6 +1801,8 @@
         streams_button: "Стиль музыки",
         streams_hint: "Выбери музыку по вкусу",
         track_of_day: "Трек дня",
+        relax_fullscreen: "Полный экран",
+        relax_fullscreen_exit: "Свернуть",
         volume_label: "Громкость",
         listeners: "слушают",
         night_mode: "Ночь"
@@ -1728,6 +1826,8 @@
         streams_button: "Music style",
         streams_hint: "Pick music to match your mood",
         track_of_day: "Track of the day",
+        relax_fullscreen: "Fullscreen",
+        relax_fullscreen_exit: "Exit fullscreen",
         volume_label: "Volume",
         listeners: "listening",
         night_mode: "Night"
@@ -1768,6 +1868,14 @@
       }
       if (volumeSlider) {
         volumeSlider.setAttribute('aria-label', currentLang === 'ru' ? 'Громкость' : 'Volume');
+      }
+      const relaxEnter = document.getElementById('relax-fullscreen-btn');
+      if (relaxEnter) {
+        relaxEnter.setAttribute('aria-label', translations[currentLang]?.relax_fullscreen || 'Fullscreen');
+      }
+      const relaxExit = document.getElementById('relax-fs-exit-btn');
+      if (relaxExit) {
+        relaxExit.setAttribute('aria-label', translations[currentLang]?.relax_fullscreen_exit || 'Exit fullscreen');
       }
       const trackDayLink = document.getElementById('track-day-link');
       if (trackDayLink) {
@@ -2003,6 +2111,48 @@
       isImmersive = false;
       document.body.classList.remove('visual-only');
       syncVisualModeState();
+    }
+
+    function getFullscreenElement() {
+      return document.fullscreenElement || document.webkitFullscreenElement || null;
+    }
+
+    function syncRelaxFullscreenClassFromBrowser() {
+      if (!getFullscreenElement()) document.body.classList.remove('relax-fullscreen');
+      const enterBtn = document.getElementById('relax-fullscreen-btn');
+      if (enterBtn) {
+        enterBtn.setAttribute('aria-expanded', document.body.classList.contains('relax-fullscreen') ? 'true' : 'false');
+      }
+    }
+
+    async function enterRelaxFullscreen() {
+      if (isImmersive) exitVizFullscreen();
+      document.body.classList.add('relax-fullscreen');
+      const enterBtn = document.getElementById('relax-fullscreen-btn');
+      if (enterBtn) enterBtn.setAttribute('aria-expanded', 'true');
+      const root = document.documentElement;
+      try {
+        if (root.requestFullscreen) await root.requestFullscreen();
+        else if (root.webkitRequestFullscreen) root.webkitRequestFullscreen();
+        else if (root.msRequestFullscreen) root.msRequestFullscreen();
+      } catch (_) {}
+    }
+
+    async function exitRelaxFullscreen() {
+      document.body.classList.remove('relax-fullscreen');
+      const enterBtn = document.getElementById('relax-fullscreen-btn');
+      if (enterBtn) enterBtn.setAttribute('aria-expanded', 'false');
+      try {
+        if (getFullscreenElement()) {
+          if (document.exitFullscreen) await document.exitFullscreen();
+          else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        }
+      } catch (_) {}
+    }
+
+    function toggleRelaxFullscreen() {
+      if (document.body.classList.contains('relax-fullscreen')) exitRelaxFullscreen();
+      else enterRelaxFullscreen();
     }
 
     function toggleNightMode() {
@@ -2294,6 +2444,12 @@
       const y2 = Math.round(72 - bgState.bass * 16);
       const h = Math.round(205 + bgState.mid * 120 + bgState.treble * 80);
 
+      if (isNatureStreamActive() && !lastNaturePhotoUrl) {
+        const k = (lastNatureScene && NATURE_BACKGROUNDS[lastNatureScene]) ? lastNatureScene : 'default';
+        lastNatureScene = k;
+        lastNaturePhotoUrl = NATURE_BACKGROUNDS[k];
+        reactiveBg.classList.add('nature-photo');
+      }
       if (isNatureStreamActive() && lastNaturePhotoUrl) {
         const mix = 0.32;
         const coreOpacity = (0.12 + bgState.bass * 0.45) * mix;
@@ -2860,11 +3016,19 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && activeModalId) {
         closeModal(activeModalId);
+        return;
       }
       if (e.key === 'Escape' && isImmersive && !activeModalId) {
         exitVizFullscreen();
+        return;
+      }
+      if (e.key === 'Escape' && document.body.classList.contains('relax-fullscreen') && !activeModalId) {
+        exitRelaxFullscreen();
       }
     });
+
+    document.addEventListener('fullscreenchange', syncRelaxFullscreenClassFromBrowser);
+    document.addEventListener('webkitfullscreenchange', syncRelaxFullscreenClassFromBrowser);
 
     window.addEventListener('beforeinstallprompt', (event) => {
       event.preventDefault();
