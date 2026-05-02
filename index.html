@@ -98,6 +98,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- Yandex.RTB — загрузчик рекламы (РСЯ) -->
+  <script>window.yaContextCb = window.yaContextCb || [];</script>
+  <script src="https://yandex.ru/ads/system/context.js" async></script>
+
   <style>
     :root {
       --glass-bg: rgba(255, 255, 255, 0.08);
@@ -400,18 +404,32 @@
       font-size: 12px;
       font-weight: 600;
       text-decoration: none;
-      color: rgba(255, 255, 255, 0.9);
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      color: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       backdrop-filter: blur(10px);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
-      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+      transition: border-color 0.25s ease, color 0.25s ease, transform 0.15s ease;
       max-width: 100%;
       -webkit-tap-highlight-color: transparent;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(
+        105deg,
+        rgba(255, 255, 255, 0.06) 0%,
+        rgba(255, 255, 255, 0.09) 38%,
+        rgba(130, 210, 255, 0.11) 50%,
+        rgba(255, 255, 255, 0.08) 62%,
+        rgba(255, 255, 255, 0.06) 100%
+      );
+      background-size: 220% 100%;
+      animation: hero-track-day-shimmer 11s ease-in-out infinite;
+    }
+    @keyframes hero-track-day-shimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
     .hero-track-day:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.24);
+      border-color: rgba(255, 255, 255, 0.22);
       color: #fff;
     }
     .hero-track-day:active {
@@ -1263,6 +1281,10 @@
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
       }
+      .hero-track-day {
+        animation: none;
+        background: rgba(255, 255, 255, 0.07);
+      }
     }
     @media (min-width: 900px) {
       .viz-mode-selector {
@@ -1287,6 +1309,66 @@
       .listeners-badge { font-size: 16px; }
       .action-btn { font-size: 18px; padding: 18px; }
       .bottom-controls { transform: scale(1.15); transform-origin: bottom right; }
+    }
+
+    /* === Рекламный слот РСЯ / Яндекс (контейнер + место под код) === */
+    .yandex-rsy-slot {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 85;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 6px 10px calc(6px + env(safe-area-inset-bottom, 0));
+      pointer-events: none;
+      transform: translate3d(0, 110%, 0);
+      transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease;
+      opacity: 0;
+    }
+    .yandex-rsy-slot.is-visible {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .yandex-rsy-inner {
+      width: 100%;
+      max-width: min(100vw - 20px, 728px);
+      min-height: 50px;
+      max-height: 130px;
+      background: rgba(8, 8, 18, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px 14px 0 0;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.35);
+    }
+    /* Не показывать: полноэкран «Релакс», визуал на весь экран, нативный Fullscreen API */
+    body.relax-fullscreen .yandex-rsy-slot,
+    body.visual-only .yandex-rsy-slot {
+      display: none !important;
+    }
+    body:fullscreen .yandex-rsy-slot,
+    html:fullscreen .yandex-rsy-slot {
+      display: none !important;
+    }
+    /* Нижние контролы чуть выше, чтобы не пересекались с баннером */
+    body.ad-slot-visible .bottom-controls {
+      bottom: calc(96px + env(safe-area-inset-bottom, 0));
+      transition: bottom 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .yandex-rsy-slot {
+        transition: none;
+      }
+      body.ad-slot-visible .bottom-controls {
+        transition: none;
+      }
     }
   </style>
 </head>
@@ -1313,9 +1395,9 @@
     <div class="hero-toolbar">
       <div class="hero-toolbar-inner">
         <button type="button" class="hero-stream-btn" id="streams-open-btn-top" onclick="openModal('streams-modal')" aria-haspopup="dialog" aria-controls="streams-modal">Стиль музыки · CHILL</button>
-        <a class="hero-track-day" id="track-day-link" href="https://t.me/gramradiochill/420" target="_blank" rel="noopener noreferrer" aria-label="Трек дня в Telegram">
-          <span class="hero-track-day-icon" aria-hidden="true">♪</span>
-          <span data-i18n="track_of_day">Трек дня</span>
+        <a class="hero-track-day" id="track-day-link" href="https://easysong.ru/webapp?refid=3482" target="_blank" rel="noopener noreferrer" aria-label="EasySong — свой трек за 2 минуты">
+          <span class="hero-track-day-icon" aria-hidden="true">✦</span>
+          <span data-i18n="easy_track_cta">Свой трек за 2 минуты</span>
         </a>
         <button type="button" class="hero-relax-fs-btn" id="relax-fullscreen-btn" onclick="toggleRelaxFullscreen()" aria-expanded="false" aria-controls="main-ui">
           <span aria-hidden="true">⛶</span>
@@ -1513,6 +1595,22 @@
     </div>
   </div>
 
+  <!-- РСЯ / Яндекс — блок R-A-19198992-1 (нижняя панель после скролла; скрывается в полноэкране через .yandex-rsy-slot) -->
+  <aside id="yandex-rsy-slot" class="yandex-rsy-slot" aria-label="Реклама">
+    <div id="yandex-rsy-inner" class="yandex-rsy-inner">
+      <!-- Yandex.RTB R-A-19198992-1 -->
+      <div id="yandex_rtb_R-A-19198992-1"></div>
+      <script>
+        window.yaContextCb.push(function () {
+          Ya.Context.AdvManager.render({
+            blockId: 'R-A-19198992-1',
+            renderTo: 'yandex_rtb_R-A-19198992-1'
+          });
+        });
+      </script>
+    </div>
+  </aside>
+
   <!-- АУДИО -->
   <audio id="audio-player" crossorigin="anonymous">
     <source src="https://radiogram.su/listen/radio_gram/radio.mp3" type="audio/mpeg">
@@ -1609,8 +1707,8 @@
       }
     };
 
-    /** Пост «Трек дня» в Telegram — обновляйте URL при смене поста. */
-    const TRACK_OF_THE_DAY_URL = 'https://t.me/gramradiochill/420';
+    /** EasySong webapp (реферальная ссылка). */
+    const EASYSONG_WEBAPP_URL = 'https://easysong.ru/webapp?refid=3482';
 
     /* Фоны природы: Pexels CDN (стабильнее Unsplash в РФ). При желании замените на файлы с вашего домена. */
     const NATURE_BACKGROUNDS = {
@@ -1800,7 +1898,8 @@
         streams_title: "Потоки музыки",
         streams_button: "Стиль музыки",
         streams_hint: "Выбери музыку по вкусу",
-        track_of_day: "Трек дня",
+        easy_track_cta: "Свой трек за 2 минуты",
+        easy_track_aria: "EasySong — свой трек за 2 минуты",
         relax_fullscreen: "Полный экран",
         relax_fullscreen_exit: "Свернуть",
         volume_label: "Громкость",
@@ -1825,7 +1924,8 @@
         streams_title: "Music streams",
         streams_button: "Music style",
         streams_hint: "Pick music to match your mood",
-        track_of_day: "Track of the day",
+        easy_track_cta: "Your track in 2 minutes",
+        easy_track_aria: "EasySong — make your track in 2 minutes",
         relax_fullscreen: "Fullscreen",
         relax_fullscreen_exit: "Exit fullscreen",
         volume_label: "Volume",
@@ -1879,9 +1979,11 @@
       }
       const trackDayLink = document.getElementById('track-day-link');
       if (trackDayLink) {
-        trackDayLink.href = TRACK_OF_THE_DAY_URL;
-        const todLabel = translations[currentLang]?.track_of_day || 'Track of the day';
-        trackDayLink.setAttribute('aria-label', `${todLabel} — Telegram`);
+        trackDayLink.href = EASYSONG_WEBAPP_URL;
+        trackDayLink.setAttribute(
+          'aria-label',
+          translations[currentLang]?.easy_track_aria || 'EasySong'
+        );
       }
       renderStreamButtons();
       syncStreamButtons();
@@ -2104,6 +2206,7 @@
       isImmersive = !isImmersive;
       document.body.classList.toggle('visual-only', isImmersive);
       syncVisualModeState();
+      updateYandexRsySlot();
     }
 
     function exitVizFullscreen() {
@@ -2111,10 +2214,48 @@
       isImmersive = false;
       document.body.classList.remove('visual-only');
       syncVisualModeState();
+      updateYandexRsySlot();
     }
 
     function getFullscreenElement() {
       return document.fullscreenElement || document.webkitFullscreenElement || null;
+    }
+
+    /** Рекламная полоса РСЯ: после скролла; скрыта в полном экране и режиме визуала */
+    const RSY_SCROLL_MIN = 140;
+    let rsyScrollScheduled = false;
+
+    function shouldHideYandexRsySlot() {
+      return !!(
+        document.body.classList.contains('relax-fullscreen') ||
+        document.body.classList.contains('visual-only') ||
+        getFullscreenElement()
+      );
+    }
+
+    function updateYandexRsySlot() {
+      const slot = document.getElementById('yandex-rsy-slot');
+      if (!slot) return;
+      if (shouldHideYandexRsySlot()) {
+        slot.classList.remove('is-visible');
+        document.body.classList.remove('ad-slot-visible');
+        slot.setAttribute('aria-hidden', 'true');
+        return;
+      }
+      const y = window.scrollY || window.pageYOffset || 0;
+      const show = y >= RSY_SCROLL_MIN;
+      slot.classList.toggle('is-visible', show);
+      document.body.classList.toggle('ad-slot-visible', show);
+      slot.setAttribute('aria-hidden', show ? 'false' : 'true');
+    }
+
+    function scheduleYandexRsySlotUpdate() {
+      if (rsyScrollScheduled) return;
+      rsyScrollScheduled = true;
+      requestAnimationFrame(() => {
+        rsyScrollScheduled = false;
+        updateYandexRsySlot();
+      });
     }
 
     function syncRelaxFullscreenClassFromBrowser() {
@@ -2123,6 +2264,7 @@
       if (enterBtn) {
         enterBtn.setAttribute('aria-expanded', document.body.classList.contains('relax-fullscreen') ? 'true' : 'false');
       }
+      updateYandexRsySlot();
     }
 
     async function enterRelaxFullscreen() {
@@ -2136,6 +2278,7 @@
         else if (root.webkitRequestFullscreen) root.webkitRequestFullscreen();
         else if (root.msRequestFullscreen) root.msRequestFullscreen();
       } catch (_) {}
+      updateYandexRsySlot();
     }
 
     async function exitRelaxFullscreen() {
@@ -2148,6 +2291,7 @@
           else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
         }
       } catch (_) {}
+      updateYandexRsySlot();
     }
 
     function toggleRelaxFullscreen() {
@@ -3029,6 +3173,8 @@
 
     document.addEventListener('fullscreenchange', syncRelaxFullscreenClassFromBrowser);
     document.addEventListener('webkitfullscreenchange', syncRelaxFullscreenClassFromBrowser);
+    window.addEventListener('scroll', scheduleYandexRsySlotUpdate, { passive: true });
+    window.addEventListener('resize', scheduleYandexRsySlotUpdate, { passive: true });
 
     window.addEventListener('beforeinstallprompt', (event) => {
       event.preventDefault();
@@ -3072,6 +3218,7 @@
     syncVisualModeState();
     attemptAutoplayOnLoad();
     setTimeout(maybeShowStreamHint, 1000);
+    updateYandexRsySlot();
   </script>
 </body>
 </html>
