@@ -1357,9 +1357,17 @@
     html:fullscreen .yandex-rsy-slot {
       display: none !important;
     }
-    /* Нижние контролы чуть выше, чтобы не пересекались с баннером */
+    /*
+      Резерв под фиксированный РСЯ-баннер: без этого блок перекрывает кнопки «Наши каналы» и т.д.
+      Высота полосы может меняться — берём с запасом + safe-area.
+    */
+    body.ad-slot-visible .app-container {
+      padding-bottom: calc(178px + env(safe-area-inset-bottom, 0px));
+      transition: padding-bottom 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    /* Нижние контролы (громкость / визуал) — над баннером */
     body.ad-slot-visible .bottom-controls {
-      bottom: calc(96px + env(safe-area-inset-bottom, 0));
+      bottom: calc(178px + env(safe-area-inset-bottom, 0px));
       transition: bottom 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     }
     @media (prefers-reduced-motion: reduce) {
@@ -1367,6 +1375,9 @@
         transition: none;
       }
       body.ad-slot-visible .bottom-controls {
+        transition: none;
+      }
+      body.ad-slot-visible .app-container {
         transition: none;
       }
     }
