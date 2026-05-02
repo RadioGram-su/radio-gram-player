@@ -2234,16 +2234,32 @@
 
     /** Рекламная полоса РСЯ: после скролла; на ПК без вертикального скролла — показываем сразу */
     const RSY_SCROLL_MIN = 140;
+    /** Должен совпадать с базовым резервом в CSS `body.ad-slot-visible .app-container { padding-bottom }` без env() */
+    const RSY_LAYOUT_RESERVE_FALLBACK_PX = 178;
     let rsyScrollScheduled = false;
 
-    function rsyPageCanScrollVertically() {
+    /** Сколько px мы сами добавили снизу под баннер — вычитаем из overflow, иначе слот создаёт «ложный» скролл и сразу скрывается */
+    function rsyAdPaddingReservePx() {
+      if (!document.body.classList.contains('ad-slot-visible')) return 0;
+      const main = document.getElementById('main-ui');
+      if (!main) return RSY_LAYOUT_RESERVE_FALLBACK_PX;
+      const pb = parseFloat(window.getComputedStyle(main).paddingBottom);
+      return Number.isFinite(pb) ? pb : RSY_LAYOUT_RESERVE_FALLBACK_PX;
+    }
+
+    function rsyIntrinsicScrollOverflowPx() {
       const doc = document.documentElement;
       const body = document.body;
-      const scrollable = Math.max(
+      let overflow = Math.max(
         doc.scrollHeight - window.innerHeight,
         body ? body.scrollHeight - window.innerHeight : 0
       );
-      return scrollable > 32;
+      overflow -= rsyAdPaddingReservePx();
+      return Math.max(0, overflow);
+    }
+
+    function rsyPageCanScrollVertically() {
+      return rsyIntrinsicScrollOverflowPx() > 32;
     }
 
     function shouldHideYandexRsySlot() {
@@ -2287,6 +2303,9 @@
         enterBtn.setAttribute('aria-expanded', document.body.classList.contains('relax-fullscreen') ? 'true' : 'false');
       }
       updateYandexRsySlot();
+      setTimeout(scheduleYandexRsySlotUpdate, 0);
+      setTimeout(scheduleYandexRsySlotUpdate, 120);
+      setTimeout(scheduleYandexRsySlotUpdate, 400);
     }
 
     async function enterRelaxFullscreen() {
@@ -3202,6 +3221,9 @@
     window.addEventListener('load', scheduleYandexRsySlotUpdate);
     setTimeout(scheduleYandexRsySlotUpdate, 600);
     setTimeout(scheduleYandexRsySlotUpdate, 2000);
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => scheduleYandexRsySlotUpdate());
+    }
 
     window.addEventListener('beforeinstallprompt', (event) => {
       event.preventDefault();
