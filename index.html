@@ -2221,9 +2221,19 @@
       return document.fullscreenElement || document.webkitFullscreenElement || null;
     }
 
-    /** Рекламная полоса РСЯ: после скролла; скрыта в полном экране и режиме визуала */
+    /** Рекламная полоса РСЯ: после скролла; на ПК без вертикального скролла — показываем сразу */
     const RSY_SCROLL_MIN = 140;
     let rsyScrollScheduled = false;
+
+    function rsyPageCanScrollVertically() {
+      const doc = document.documentElement;
+      const body = document.body;
+      const scrollable = Math.max(
+        doc.scrollHeight - window.innerHeight,
+        body ? body.scrollHeight - window.innerHeight : 0
+      );
+      return scrollable > 32;
+    }
 
     function shouldHideYandexRsySlot() {
       return !!(
@@ -2243,7 +2253,8 @@
         return;
       }
       const y = window.scrollY || window.pageYOffset || 0;
-      const show = y >= RSY_SCROLL_MIN;
+      const canScroll = rsyPageCanScrollVertically();
+      const show = canScroll ? y >= RSY_SCROLL_MIN : true;
       slot.classList.toggle('is-visible', show);
       document.body.classList.toggle('ad-slot-visible', show);
       slot.setAttribute('aria-hidden', show ? 'false' : 'true');
@@ -3175,6 +3186,9 @@
     document.addEventListener('webkitfullscreenchange', syncRelaxFullscreenClassFromBrowser);
     window.addEventListener('scroll', scheduleYandexRsySlotUpdate, { passive: true });
     window.addEventListener('resize', scheduleYandexRsySlotUpdate, { passive: true });
+    window.addEventListener('load', scheduleYandexRsySlotUpdate);
+    setTimeout(scheduleYandexRsySlotUpdate, 600);
+    setTimeout(scheduleYandexRsySlotUpdate, 2000);
 
     window.addEventListener('beforeinstallprompt', (event) => {
       event.preventDefault();
