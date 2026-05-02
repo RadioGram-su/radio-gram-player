@@ -2439,7 +2439,8 @@
       canvas.classList.toggle('active', wantCanvas);
       if (wantCanvas && isPlaying && audioContextInitialized) startVisualization();
       else stopVisualization();
-      if (vizUserEnabled && isPlaying) {
+      /* Живой фон (#reactive-bg) — при воспроизведении, без привязки к «Визуал»; canvas только с визуалом */
+      if (isPlaying) {
         if (!reactiveBgAnimationId) startReactiveBackground();
       } else {
         stopReactiveBackground();
@@ -2941,18 +2942,19 @@
           ring.classList.add('active');
           document.getElementById('live-badge').style.display = 'inline-flex';
           try { localStorage.setItem(AUTOPLAY_CONSENT_KEY, '1'); } catch (_) {}
-          if (vizUserEnabled) startReactiveBackground();
           if (masterGain && audioContext) {
             const now = audioContext.currentTime;
             masterGain.gain.linearRampToValueAtTime(userVolume, now + FADE_IN_MS / 1000);
           }
           scheduleInstallPromptCheck(true);
+          isPlaying = true;
           syncVisualModeState();
         } catch (e) {
           showStatusMessage(currentLang === 'ru' ? 'Не удалось запустить поток. Повторите попытку.' : 'Unable to start stream. Please try again.');
           console.error('Playback error:', e);
           return;
         }
+        return;
       }
       isPlaying = !isPlaying;
     }
