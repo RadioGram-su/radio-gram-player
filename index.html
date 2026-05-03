@@ -237,7 +237,8 @@
     body.relax-fullscreen .stream-hint-pop {
       display: none !important;
     }
-    body.relax-fullscreen .track-history {
+    body.relax-fullscreen .track-history,
+    body.relax-fullscreen .track-donate-strip {
       display: none !important;
     }
     body.relax-fullscreen:not(.visual-only) #visualizer-canvas {
@@ -773,6 +774,45 @@
     }
     .track-history-more-btn:active {
       transform: scale(0.98);
+    }
+
+    .track-donate-strip {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .track-donate-text {
+      margin: 0;
+      font-size: 11px;
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.78);
+      font-weight: 500;
+    }
+    .track-donate-btn {
+      align-self: stretch;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid rgba(255, 196, 120, 0.45);
+      background: linear-gradient(135deg, rgba(255, 196, 120, 0.3), rgba(255, 120, 160, 0.24));
+      color: #fff7ec;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .track-donate-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 214, 160, 0.65);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.32);
+    }
+    .track-donate-btn:active {
+      transform: scale(0.99);
     }
 
     /* === СЕТКА КНОПОК === */
@@ -1487,6 +1527,12 @@
           <div class="track-text" id="current-track-text" data-i18n="loading">Loading...</div>
         </div>
         <div class="track-history" id="track-history-list"></div>
+        <div class="track-donate-strip" onclick="event.stopPropagation()">
+          <p class="track-donate-text" data-i18n="track_donate_line">
+            Поддержи развитие Radio Gram на Planeta.ru — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по вашему запросу.
+          </p>
+          <a class="track-donate-btn" href="https://planeta.ru/campaigns/radiohram/donate" target="_blank" rel="noopener noreferrer" data-i18n="track_donate_cta">Поддержать — трек по запросу 🎁</a>
+        </div>
       </div>
     </div>
 
@@ -1915,7 +1961,9 @@
         relax_fullscreen_exit: "Свернуть",
         volume_label: "Громкость",
         listeners: "слушают",
-        night_mode: "Ночь"
+        night_mode: "Ночь",
+        track_donate_line: "Поддержи развитие Radio Gram на Planeta.ru — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по вашему запросу.",
+        track_donate_cta: "Поддержать — трек по запросу 🎁"
       },
       en: {
         live: "LIVE",
@@ -1941,7 +1989,9 @@
         relax_fullscreen_exit: "Exit fullscreen",
         volume_label: "Volume",
         listeners: "listening",
-        night_mode: "Night"
+        night_mode: "Night",
+        track_donate_line: "Help Radio Gram grow on Planeta.ru — every contribution matters. As a thank-you, we’ll make you a track to your taste, on your request.",
+        track_donate_cta: "Support — track on request 🎁"
       }
     };
 
