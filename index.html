@@ -1583,7 +1583,7 @@
     <div class="hero-toolbar">
       <div class="hero-toolbar-inner">
         <button type="button" class="hero-stream-btn" id="streams-open-btn-top" onclick="openModal('streams-modal')" aria-haspopup="dialog" aria-controls="streams-modal">Стиль музыки · CHILL</button>
-        <button type="button" class="hero-share-btn" id="hero-share-btn" onclick="shareRadioStation()" aria-label="Поделиться">
+        <button type="button" class="hero-share-btn" id="hero-share-btn" onclick="openShareModal()" aria-label="Поделиться">
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
         </button>
         <a class="hero-track-day" id="track-day-link" href="https://easysong.ru/webapp?refid=3482" target="_blank" rel="noopener noreferrer" aria-label="EasySong — свой трек за 2 минуты">
@@ -1715,6 +1715,21 @@
         </div>
         <button class="modal-btn" style="width:100%;" onclick="triggerInstallPrompt()">📲 Установить</button>
         <button class="close-modal" onclick="closeModal('install-modal')">Позже</button>
+      </div>
+    </div>
+
+    <div id="share-modal" class="modal-overlay" onclick="closePopups(event)" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
+      <div class="modal-content" tabindex="-1">
+        <button type="button" class="close-modal" onclick="closeModal('share-modal')" aria-label="Close">✕</button>
+        <div class="modal-title" id="share-modal-title" data-i18n="share_title">Поделиться</div>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">
+          <a id="share-link-tg" class="modal-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="closeModal('share-modal')"><span data-i18n="share_in_telegram">В Telegram</span></a>
+          <a id="share-link-vk" class="modal-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="closeModal('share-modal')"><span data-i18n="share_in_vk">Во ВКонтакте</span></a>
+          <a id="share-link-max" class="modal-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="closeModal('share-modal')"><span data-i18n="share_in_max">В MAX</span></a>
+          <button type="button" class="modal-btn" onclick="copyShareUrlFromModal()"><span data-i18n="share_copy_link">Скопировать ссылку</span></button>
+          <button type="button" class="modal-btn" id="share-system-btn" onclick="tryNativeShareFromModal()" style="display:none;"><span data-i18n="share_system_sheet">Системное меню…</span></button>
+        </div>
+        <button type="button" class="close-modal" style="width:100%; margin-top:14px;" onclick="closeModal('share-modal')" data-i18n="close">Закрыть</button>
       </div>
     </div>
 
@@ -2070,6 +2085,12 @@
         partners_title: "Партнёры",
         close: "Закрыть",
         share_aria: "Поделиться станцией",
+        share_title: "Поделиться",
+        share_in_telegram: "В Telegram",
+        share_in_vk: "Во ВКонтакте",
+        share_in_max: "В MAX",
+        share_copy_link: "Скопировать ссылку",
+        share_system_sheet: "Системное меню…",
         share_copied: "Ссылка скопирована",
         share_fail: "Не удалось скопировать ссылку",
         theme_night: "Тёмная тема",
@@ -2101,6 +2122,12 @@
         partners_title: "Partners",
         close: "Close",
         share_aria: "Share station",
+        share_title: "Share",
+        share_in_telegram: "Telegram",
+        share_in_vk: "VK",
+        share_in_max: "MAX",
+        share_copy_link: "Copy link",
+        share_system_sheet: "System share…",
         share_copied: "Link copied",
         share_fail: "Could not copy the link",
         theme_night: "Dark appearance",
@@ -2222,28 +2249,59 @@
       }
     }
 
-    async function shareRadioStation() {
+    function getSharePayload() {
       const url = getShareUrlForCurrentStream();
       const title = `${DOC_TITLE_BASE} — ${getStreamLabel(getActiveStream())}`;
-      const textBlurb = currentLang === 'ru'
+      const text = currentLang === 'ru'
         ? 'Мультипотоковое радио: chill, techno, природа.'
         : 'Multi-stream radio: chill, techno, nature sounds.';
-      try {
-        if (navigator.share) {
-          await navigator.share({ title, text: textBlurb, url });
-          return;
-        }
-      } catch (e) {
-        if (e && e.name === 'AbortError') return;
-      }
+      return { url, title, text };
+    }
+
+    function populateShareModalLinks() {
+      const { url, title, text } = getSharePayload();
+      const tg = document.getElementById('share-link-tg');
+      const vk = document.getElementById('share-link-vk');
+      const max = document.getElementById('share-link-max');
+      if (tg) tg.href = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+      if (vk) vk.href = `https://vk.com/share.php?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`;
+      if (max) max.href = `https://max.ru/:share?text=${encodeURIComponent(`${text}\n${url}`)}`;
+    }
+
+    function openShareModal() {
+      populateShareModalLinks();
+      const sysBtn = document.getElementById('share-system-btn');
+      if (sysBtn) sysBtn.style.display = typeof navigator !== 'undefined' && navigator.share ? 'block' : 'none';
+      openModal('share-modal');
+    }
+
+    async function copyShareUrlFromModal() {
+      const url = getShareUrlForCurrentStream();
       try {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(url);
           showTrackToast(translations[currentLang]?.share_copied || 'Link copied');
+          closeModal('share-modal');
           return;
         }
       } catch (_) {}
       showStatusMessage((translations[currentLang]?.share_fail || 'Link: ') + ' ' + url);
+    }
+
+    async function tryNativeShareFromModal() {
+      const { url, title, text } = getSharePayload();
+      if (!navigator.share) return;
+      try {
+        await navigator.share({ title, text, url });
+        closeModal('share-modal');
+      } catch (e) {
+        if (e && e.name === 'AbortError') return;
+      }
+    }
+
+    /** Совместимость: раньше вызывался shareRadioStation */
+    function shareRadioStation() {
+      openShareModal();
     }
 
     function syncStreamToLocationBar() {
