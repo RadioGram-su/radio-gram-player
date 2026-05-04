@@ -395,6 +395,31 @@
     .hero-stream-btn:active {
       transform: scale(0.98);
     }
+    .hero-share-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.92);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+      transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hero-share-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.32);
+    }
+    .hero-share-btn:active {
+      transform: scale(0.96);
+    }
     .hero-track-day {
       display: inline-flex;
       align-items: center;
@@ -894,7 +919,7 @@
     /* === СЕТКА КНОПОК === */
     .buttons-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
       width: 100%;
       margin-bottom: 20px;
@@ -922,11 +947,6 @@
       box-shadow: 0 10px 22px rgba(0,0,0,0.28);
     }
     
-    .btn-support {
-      background: linear-gradient(135deg, rgba(255,146,115,0.72), rgba(255,96,116,0.66));
-      border-color: rgba(255,158,164,0.55);
-    }
-
     .viz-mode-modal-btn {
       display: inline-flex;
       align-self: flex-end;
@@ -1162,7 +1182,7 @@
     .viz-fullscreen-btn.visible { display: flex; }
 
     .desktop-volume {
-      display: none;
+      display: flex;
       align-items: center;
       gap: 10px;
       padding: 5px 12px 5px 10px;
@@ -1170,6 +1190,12 @@
       background: rgba(0,0,0,0.38);
       border: 1px solid rgba(255,255,255,0.14);
       backdrop-filter: blur(10px);
+    }
+    .desktop-viz-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 15px;
     }
     .desktop-volume label {
       font-size: 11px;
@@ -1334,7 +1360,6 @@
       .listeners-badge { font-size: 12px; padding: 6px 12px; }
       .action-btn { padding: 12px; font-size: 13px; }
       .buttons-grid { gap: 10px; }
-      .buttons-grid { grid-template-columns: 1fr; }
       .bottom-controls {
         bottom: 10px;
         left: 10px;
@@ -1428,7 +1453,14 @@
         max-width: 420px;
       }
       .viz-mode-modal-btn { display: none; }
-      .desktop-volume { display: flex; }
+      .desktop-volume input[type="range"] {
+        width: 140px;
+      }
+    }
+    @media (max-width: 767px) {
+      .desktop-viz-controls {
+        display: none !important;
+      }
     }
     @media (min-width: 1280px) {
       .app-container { max-width: 560px; }
@@ -1539,6 +1571,9 @@
     <div class="hero-toolbar">
       <div class="hero-toolbar-inner">
         <button type="button" class="hero-stream-btn" id="streams-open-btn-top" onclick="openModal('streams-modal')" aria-haspopup="dialog" aria-controls="streams-modal">Стиль музыки · CHILL</button>
+        <button type="button" class="hero-share-btn" id="hero-share-btn" onclick="shareRadioStation()" aria-label="Поделиться">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+        </button>
         <a class="hero-track-day" id="track-day-link" href="https://easysong.ru/webapp?refid=3482" target="_blank" rel="noopener noreferrer" aria-label="EasySong — свой трек за 2 минуты">
           <span class="hero-track-day-icon" aria-hidden="true">✦</span>
           <span class="easy-track-cta-text" data-i18n="easy_track_cta">Свой трек за 2 минуты</span>
@@ -1622,9 +1657,9 @@
         <div class="track-history" id="track-history-list"></div>
         <div class="track-donate-strip" onclick="event.stopPropagation()">
           <p class="track-donate-text" data-i18n="track_donate_line">
-            Поддержи развитие Radio Gram через Cloudtips — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по вашему запросу.
+            Поддержите развитие станции через Cloudtips — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по запросу.
           </p>
-          <a class="track-donate-btn" href="https://pay.cloudtips.ru/p/b5dba7c2" target="_blank" rel="noopener noreferrer" data-i18n="track_donate_cta">Поддержать — трек по запросу 🎁</a>
+          <a class="track-donate-btn" href="https://pay.cloudtips.ru/p/b5dba7c2" target="_blank" rel="noopener noreferrer" data-i18n="track_donate_cta">Поддержать нас</a>
         </div>
       </div>
     </div>
@@ -1633,9 +1668,6 @@
     <div class="buttons-grid">
       <button class="action-btn" onclick="togglePopup('channels-popup')">
         <span data-i18n="channels">Our Channels</span> 📢
-      </button>
-      <button class="action-btn btn-support" onclick="openModal('donate-modal')">
-        <span data-i18n="support">Support</span> ❤️
       </button>
       <button class="action-btn btn-partners" onclick="togglePopup('partners-popup')">
         <span data-i18n="partners">Partners</span> 🤝
@@ -1660,17 +1692,6 @@
         <a href="https://onlineradiohub.ru/" target="_blank" rel="noopener noreferrer" class="modal-btn">🌐 OnlineRadioHub</a>
         <a href="http://www.internet-radio.com" target="_blank" rel="noopener noreferrer" class="modal-btn">📻 Internet-Radio.com</a>
         <a href="https://t.me/Gram_zonebot?start=679bcd47c630af4776e08ffb" target="_blank" rel="noopener noreferrer" class="modal-btn">🎮 Gram Zone</a>
-      </div>
-    </div>
-
-    <!-- МОДАЛКА ДОНАТА -->
-    <div id="donate-modal" class="modal-overlay" onclick="closePopups(event)" role="dialog" aria-modal="true" aria-labelledby="donate-title">
-      <div class="modal-content" tabindex="-1">
-        <div class="modal-title" id="donate-title" data-i18n="donate_title">Support Developer</div>
-        <a href="https://pay.cloudtips.ru/p/b5dba7c2" target="_blank" rel="noopener noreferrer" class="modal-btn">💳 CloudTips (SBP)</a>
-        <div class="modal-btn" onclick="copyWallet()">💎 Copy TON Wallet</div>
-        <div id="wallet-text" style="display:none; font-size:11px; margin:5px 0; color:#aaa; word-break:break-all;">UQDNJZb6MPyqP1P1JONmZ5Que0_UMA1n4k3ugAYcVEv7XH3Q</div>
-        <button class="close-modal" onclick="closeModal('donate-modal')" data-i18n="close">Close</button>
       </div>
     </div>
 
@@ -1710,7 +1731,8 @@
 
   <!-- НИЖНИЕ КОНТРОЛЫ -->
   <div class="bottom-controls">
-    <!-- Переключатель режима визуализатора -->
+    <!-- Переключатель режима визуализатора (только десктоп) -->
+    <div class="desktop-viz-controls">
     <div class="viz-mode-selector" id="viz-selector">
       <button class="viz-mode-btn active" onclick="setVizMode('bars', this)">Bars</button>
       <button class="viz-mode-btn" onclick="setVizMode('particles', this)">Particles</button>
@@ -1718,12 +1740,7 @@
       <button class="viz-mode-btn" onclick="setVizMode('prism', this)">Prism</button>
     </div>
 
-      <button class="viz-mode-modal-btn" onclick="openModal('viz-modes-modal')">Режимы</button>
-
-    <div class="desktop-volume" id="desktop-volume-wrap">
-      <label for="volume-slider" data-i18n="volume_label">Громкость</label>
-      <input type="range" id="volume-slider" min="0" max="100" value="100" aria-label="Volume">
-    </div>
+      <button type="button" class="viz-mode-modal-btn" onclick="openModal('viz-modes-modal')">Режимы</button>
 
     <div class="settings-row" style="align-items:center; gap:8px;">
       <button type="button" class="viz-fullscreen-btn" id="viz-fullscreen-btn" onclick="toggleVizFullscreen()" disabled title="На весь экран" aria-label="Fullscreen visual">⛶</button>
@@ -1734,6 +1751,12 @@
         <div class="switch-thumb"></div>
       </div>
     </div>
+    </div>
+    </div>
+
+    <div class="desktop-volume" id="desktop-volume-wrap">
+      <label for="volume-slider" data-i18n="volume_label">Громкость</label>
+      <input type="range" id="volume-slider" min="0" max="100" value="100" aria-label="Volume">
     </div>
     
     <div class="settings-row">
@@ -2030,12 +2053,15 @@
         open_channel: "↗ Telegram",
         loading: "Загрузка...",
         channels: "Наши каналы",
-        support: "Помочь проекту",
         partners: "Партнёры",
         channels_title: "Наши каналы",
         partners_title: "Партнёры",
-        donate_title: "Поддержать проект",
         close: "Закрыть",
+        share_aria: "Поделиться станцией",
+        share_copied: "Ссылка скопирована",
+        share_fail: "Не удалось скопировать ссылку",
+        theme_night: "Тёмная тема",
+        theme_day: "Светлая тема",
         immersive: "Визуал",
         streams_title: "Потоки музыки",
         streams_button: "Стиль музыки",
@@ -2047,8 +2073,8 @@
         volume_label: "Громкость",
         listeners: "слушают",
         night_mode: "Ночь",
-        track_donate_line: "Поддержи развитие Radio Gram через Cloudtips — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по вашему запросу.",
-        track_donate_cta: "Поддержать — трек по запросу 🎁"
+        track_donate_line: "Поддержите станцию через Cloudtips — это помогает развитию эфира. В благодарность подарим трек на ваш вкус по запросу.",
+        track_donate_cta: "Поддержать нас"
       },
       en: {
         live: "LIVE",
@@ -2058,12 +2084,15 @@
         open_channel: "↗ Telegram",
         loading: "Loading...",
         channels: "Our Channels",
-        support: "Support Project",
         partners: "Partners",
         channels_title: "Our Channels",
         partners_title: "Partners",
-        donate_title: "Support Developer",
         close: "Close",
+        share_aria: "Share station",
+        share_copied: "Link copied",
+        share_fail: "Could not copy the link",
+        theme_night: "Dark appearance",
+        theme_day: "Light appearance",
         immersive: "Visual",
         streams_title: "Music streams",
         streams_button: "Music style",
@@ -2075,8 +2104,8 @@
         volume_label: "Volume",
         listeners: "listening",
         night_mode: "Night",
-        track_donate_line: "Help Radio Gram grow via Cloudtips — every contribution matters. As a thank-you, we'll make you a track to your taste, on your request.",
-        track_donate_cta: "Support — track on request 🎁"
+        track_donate_line: "Support the station on Cloudtips — it keeps the broadcast growing. As a thank-you, we'll make you a track to your taste, on request.",
+        track_donate_cta: "Support us"
       }
     };
 
@@ -2119,10 +2148,10 @@
       if (listenersBadge) {
         listenersBadge.textContent = translations[currentLang].listeners;
       }
-      const nightBtn = document.getElementById('night-mode-btn');
-      if (nightBtn) {
-        nightBtn.title = currentLang === 'ru' ? 'Ночной режим' : 'Night Mode';
-        nightBtn.setAttribute('aria-label', currentLang === 'ru' ? 'Переключить ночной режим' : 'Toggle night mode');
+      syncNightModeButtonLabel();
+      const shareBtn = document.getElementById('hero-share-btn');
+      if (shareBtn) {
+        shareBtn.setAttribute('aria-label', translations[currentLang]?.share_aria || 'Share');
       }
       if (vizFullscreenBtn) {
         vizFullscreenBtn.title = currentLang === 'ru' ? 'Визуал на весь экран' : 'Fullscreen visual';
@@ -2153,6 +2182,7 @@
       const hint = document.getElementById('stream-hint-pop');
       if (hint) hint.textContent = translations[currentLang]?.streams_hint || hint.textContent;
       splitEasyTrackCtaLetters();
+      refreshPlayerTitleAndSession();
     }
 
     function toggleLang() {
@@ -2162,6 +2192,112 @@
 
     function getActiveStream() {
       return STREAMS[currentStreamKey] || STREAMS.chill;
+    }
+
+    const DOC_TITLE_BASE = 'Radio Gram';
+
+    function prefersMobileReducedVisuals() {
+      return window.matchMedia('(max-width: 767px)').matches;
+    }
+
+    function getShareUrlForCurrentStream() {
+      try {
+        const u = new URL('https://player.radiogram.su/');
+        u.searchParams.set('stream', currentStreamKey);
+        return u.href;
+      } catch (_) {
+        return `https://player.radiogram.su/?stream=${encodeURIComponent(currentStreamKey)}`;
+      }
+    }
+
+    async function shareRadioStation() {
+      const url = getShareUrlForCurrentStream();
+      const title = `${DOC_TITLE_BASE} — ${getStreamLabel(getActiveStream())}`;
+      const textBlurb = currentLang === 'ru'
+        ? 'Мультипотоковое радио: chill, techno, природа.'
+        : 'Multi-stream radio: chill, techno, nature sounds.';
+      try {
+        if (navigator.share) {
+          await navigator.share({ title, text: textBlurb, url });
+          return;
+        }
+      } catch (e) {
+        if (e && e.name === 'AbortError') return;
+      }
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(url);
+          showTrackToast(translations[currentLang]?.share_copied || 'Link copied');
+          return;
+        }
+      } catch (_) {}
+      showStatusMessage((translations[currentLang]?.share_fail || 'Link: ') + ' ' + url);
+    }
+
+    function syncStreamToLocationBar() {
+      try {
+        const u = new URL(window.location.href);
+        u.searchParams.set('stream', currentStreamKey);
+        history.replaceState({}, '', u);
+      } catch (_) {}
+    }
+
+    function applyStreamFromUrlParams() {
+      try {
+        const q = new URLSearchParams(window.location.search).get('stream');
+        if (q && STREAMS[q]) {
+          currentStreamKey = q;
+          try { localStorage.setItem(STREAM_STORAGE_KEY, currentStreamKey); } catch (_) {}
+        }
+      } catch (_) {}
+    }
+
+    function enforceMobileVisualPolicy() {
+      if (!prefersMobileReducedVisuals()) return;
+      vizUserEnabled = false;
+      if (isImmersive) {
+        isImmersive = false;
+        document.body.classList.remove('visual-only');
+      }
+      updateVizChrome();
+      syncVisualModeState();
+    }
+
+    let mediaSessionHandlersInstalled = false;
+    function ensureMediaSessionHandlers() {
+      if (mediaSessionHandlersInstalled || !('mediaSession' in navigator)) return;
+      mediaSessionHandlersInstalled = true;
+      try {
+        navigator.mediaSession.setActionHandler('play', () => { if (!isPlaying) void togglePlay(); });
+        navigator.mediaSession.setActionHandler('pause', () => { if (isPlaying) void togglePlay(); });
+      } catch (_) {}
+    }
+
+    function refreshPlayerTitleAndSession() {
+      ensureMediaSessionHandlers();
+      const txEl = document.getElementById('current-track-text');
+      let tx = txEl ? (txEl.textContent || '').trim() : '';
+      const loadW = translations[currentLang]?.loading || 'Loading';
+      if (!tx || tx === loadW || tx.startsWith('Выбран поток') || tx.startsWith('Selected stream')) {
+        tx = `${getStreamLabel(getActiveStream())} · ${currentLang === 'ru' ? 'эфир' : 'live'}`;
+      }
+      if ('mediaSession' in navigator) {
+        try {
+          const art = document.getElementById('current-art');
+          const artwork = art && art.src ? [{ src: art.src, sizes: '512x512', type: 'image/jpeg' }] : [];
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: tx,
+            artist: getStreamLabel(getActiveStream()),
+            album: currentLang === 'ru' ? 'Прямой эфир' : 'Live stream',
+            artwork
+          });
+        } catch (_) {}
+        try {
+          navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+        } catch (_) {}
+      }
+      const short = tx.length > 70 ? tx.slice(0, 67) + '…' : tx;
+      document.title = `${short} — ${DOC_TITLE_BASE}`;
     }
 
     function updateStreamOpenButton() {
@@ -2335,6 +2471,8 @@
         updateRadioListeners();
         syncBackdropToStream();
         syncVisualModeState();
+        syncStreamToLocationBar();
+        refreshPlayerTitleAndSession();
       } catch (e) {
         setTrackLoadingState(false);
         showStatusMessage(currentLang === 'ru'
@@ -2355,6 +2493,7 @@
     }
 
     function toggleVizEnabled() {
+      if (prefersMobileReducedVisuals()) return;
       vizUserEnabled = !vizUserEnabled;
       if (!vizUserEnabled) {
         isImmersive = false;
@@ -2366,6 +2505,7 @@
     }
 
     function toggleVizFullscreen() {
+      if (prefersMobileReducedVisuals()) return;
       if (!vizUserEnabled) return;
       isImmersive = !isImmersive;
       document.body.classList.toggle('visual-only', isImmersive);
@@ -2394,7 +2534,10 @@
     let rsyLastScrollY = null;
     let rsyMobileAdVisible = false;
     const RSY_MOBILE_SHOW_DOWN_DELTA = 2;
-    const RSY_MOBILE_HIDE_UP_DELTA = -7;
+    /** Сильнее порог «вверх», иначе срабатывает шум от layout / iOS */
+    const RSY_MOBILE_HIDE_UP_DELTA = -22;
+    /** После появления слота не гасим его по «скролл вверх» (мс) — стабилизация при padding/РСЯ */
+    let rsyMobileSuppressHideUntil = 0;
 
     function rsyIsDesktopLayout() {
       return window.matchMedia('(min-width: 768px)').matches;
@@ -2509,7 +2652,9 @@
     function updateYandexRsySlot() {
       const slot = document.getElementById('yandex-rsy-slot');
       if (!slot) return;
+      const slotHadVisible = slot.classList.contains('is-visible');
       if (shouldHideYandexRsySlot()) {
+        rsyMobileSuppressHideUntil = 0;
         slot.classList.remove('is-visible');
         document.body.classList.remove('ad-slot-visible');
         slot.setAttribute('aria-hidden', 'true');
@@ -2521,6 +2666,7 @@
         show = true;
         rsyLastScrollY = null;
         rsyMobileAdVisible = false;
+        rsyMobileSuppressHideUntil = 0;
       } else {
         /* Если по высоте страницы почти нет вертикального скролла, жест «вниз» недостижим — слот бы никогда не открылся */
         if (!rsyPageCanScrollVertically()) {
@@ -2532,7 +2678,7 @@
           const prev = rsyLastScrollY;
           const dy = y - prev;
           rsyLastScrollY = y;
-          if (dy <= RSY_MOBILE_HIDE_UP_DELTA) rsyMobileAdVisible = false;
+          if (dy <= RSY_MOBILE_HIDE_UP_DELTA && performance.now() >= rsyMobileSuppressHideUntil) rsyMobileAdVisible = false;
           else {
             if (y >= RSY_SCROLL_MIN && dy >= RSY_MOBILE_SHOW_DOWN_DELTA) rsyMobileAdVisible = true;
             if (y >= RSY_SCROLL_MIN && prev < RSY_SCROLL_MIN && dy > 0) rsyMobileAdVisible = true;
@@ -2544,6 +2690,10 @@
       slot.classList.toggle('is-visible', show);
       document.body.classList.toggle('ad-slot-visible', show);
       slot.setAttribute('aria-hidden', show ? 'false' : 'true');
+      if (show && !slotHadVisible) {
+        rsyMobileSuppressHideUntil = performance.now() + 1800;
+      }
+      if (!show) rsyMobileSuppressHideUntil = 0;
       if (show && !rsyReloadScheduledForVisibleSession) {
         rsyReloadScheduledForVisibleSession = true;
         requestAnimationFrame(() => {
@@ -2605,11 +2755,22 @@
       else enterRelaxFullscreen();
     }
 
+    function syncNightModeButtonLabel() {
+      const nightBtn = document.getElementById('night-mode-btn');
+      if (!nightBtn) return;
+      nightBtn.textContent = isNightMode ? '☀️' : '🌙';
+      nightBtn.title = isNightMode
+        ? (translations[currentLang]?.theme_day || 'Light')
+        : (translations[currentLang]?.theme_night || 'Dark');
+      nightBtn.setAttribute('aria-label', currentLang === 'ru'
+        ? (isNightMode ? 'Включить светлую тему' : 'Включить тёмную тему')
+        : (isNightMode ? 'Switch to light appearance' : 'Switch to dark appearance'));
+    }
+
     function toggleNightMode() {
       isNightMode = !isNightMode;
       document.body.classList.toggle('night-mode', isNightMode);
-      const nightBtn = document.getElementById('night-mode-btn');
-      if (nightBtn) nightBtn.textContent = isNightMode ? '☀️' : '🌙';
+      syncNightModeButtonLabel();
       if (isNatureStreamActive()) {
         if (reactiveBgAnimationId) renderReactiveBackground();
         else applyNatureSceneBackground(lastNatureScene);
@@ -2719,7 +2880,8 @@
     }
 
     function syncVisualModeState() {
-      const wantCanvas = vizUserEnabled && (isPlaying || isImmersive);
+      const mobileNoViz = prefersMobileReducedVisuals();
+      const wantCanvas = !mobileNoViz && vizUserEnabled && (isPlaying || isImmersive);
       canvas.classList.toggle('active', wantCanvas);
       if (wantCanvas && isPlaying && audioContextInitialized) startVisualization();
       else stopVisualization();
@@ -3233,6 +3395,7 @@
           scheduleInstallPromptCheck(true);
           isPlaying = true;
           syncVisualModeState();
+          refreshPlayerTitleAndSession();
         } catch (e) {
           showStatusMessage(currentLang === 'ru' ? 'Не удалось запустить поток. Повторите попытку.' : 'Unable to start stream. Please try again.');
           console.error('Playback error:', e);
@@ -3241,6 +3404,7 @@
         return;
       }
       isPlaying = !isPlaying;
+      refreshPlayerTitleAndSession();
     }
 
     // === СЧЁТЧИК СЛУШАТЕЛЕЙ РАДИО (реальные + 6-9 фейковых) ===
@@ -3294,6 +3458,7 @@
               const forScene = natureDetectionTextFromSong(song) || fullName;
               applyNatureSceneBackground(detectNatureScene(forScene));
             }
+            refreshPlayerTitleAndSession();
           }
         }
       } catch (e) {}
@@ -3321,6 +3486,7 @@
     }
 
     function openModal(id) {
+      if (id === 'viz-modes-modal' && prefersMobileReducedVisuals()) return;
       const modal = document.getElementById(id);
       if (!modal) return;
       modal.classList.add('show');
@@ -3333,13 +3499,6 @@
         e.target.classList.remove('show');
         if (activeModalId === e.target.id) activeModalId = null;
       }
-    }
-
-    function copyWallet() {
-      navigator.clipboard.writeText('UQDNJZb6MPyqP1P1JONmZ5Que0_UMA1n4k3ugAYcVEv7XH3Q');
-      const text = document.getElementById('wallet-text');
-      text.style.display = 'block';
-      setTimeout(() => text.style.display = 'none', 2000);
     }
 
     function scheduleInstallPromptCheck(isNowPlaying) {
@@ -3391,10 +3550,11 @@
         playBtn.classList.add('playing');
         document.getElementById('play-ring').classList.add('active');
         document.getElementById('live-badge').style.display = 'inline-flex';
-        if (vizUserEnabled) startReactiveBackground();
         isPlaying = true;
+        startReactiveBackground();
         scheduleInstallPromptCheck(true);
         syncVisualModeState();
+        refreshPlayerTitleAndSession();
         setTimeout(() => { audio.muted = false; }, 900);
       } catch (e) {
         audio.muted = false;
@@ -3484,12 +3644,15 @@
     window.addEventListener('scroll', scheduleYandexRsySlotUpdate, { passive: true });
     window.addEventListener('resize', () => {
       rsyLastScrollY = null;
-      rsyMobileAdVisible = false;
+      /* Не сбрасывать баннер на каждом resize: на мобиле innerHeight дергается (адресная строка, safe-area) — было мигание */
+      if (rsyIsDesktopLayout()) rsyMobileAdVisible = false;
+      enforceMobileVisualPolicy();
       scheduleYandexRsySlotUpdate();
     }, { passive: true });
     window.addEventListener('orientationchange', () => {
       rsyLastScrollY = null;
       rsyMobileAdVisible = false;
+      enforceMobileVisualPolicy();
       setTimeout(scheduleYandexRsySlotUpdate, 0);
       setTimeout(scheduleYandexRsySlotUpdate, 200);
     });
@@ -3520,6 +3683,8 @@
 
     loadVolumeFromStorage();
     loadStreamFromStorage();
+    applyStreamFromUrlParams();
+    enforceMobileVisualPolicy();
     renderStreamButtons();
     syncStreamButtons();
     audio.src = getActiveStream().url;
