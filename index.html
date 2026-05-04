@@ -1622,9 +1622,9 @@
         <div class="track-history" id="track-history-list"></div>
         <div class="track-donate-strip" onclick="event.stopPropagation()">
           <p class="track-donate-text" data-i18n="track_donate_line">
-            Поддержи развитие Radio Gram на Planeta.ru — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по вашему запросу.
+            Поддержи развитие Radio Gram через Cloudtips — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по вашему запросу.
           </p>
-          <a class="track-donate-btn" href="https://planeta.ru/campaigns/radiohram/donate" target="_blank" rel="noopener noreferrer" data-i18n="track_donate_cta">Поддержать — трек по запросу 🎁</a>
+          <a class="track-donate-btn" href="https://pay.cloudtips.ru/p/b5dba7c2" target="_blank" rel="noopener noreferrer" data-i18n="track_donate_cta">Поддержать — трек по запросу 🎁</a>
         </div>
       </div>
     </div>
@@ -1748,7 +1748,7 @@
   <!-- РСЯ / Яндекс — блок R-A-19198992-1 (нижняя панель после скролла; скрывается в полноэкране через .yandex-rsy-slot) -->
   <aside id="yandex-rsy-slot" class="yandex-rsy-slot" aria-label="Реклама">
     <div id="yandex-rsy-inner" class="yandex-rsy-inner">
-      <!-- Yandex.RTB R-A-19198992-1 — render вызывается из JS, когда слот реально показан (иначе креатив часто пустой) -->
+      <!-- Yandex.RTB R-A-19198992-1: render только из JS после .is-visible (инлайн до показа слота давал пустой баннер) -->
       <div id="yandex_rtb_R-A-19198992-1"></div>
     </div>
   </aside>
@@ -2047,7 +2047,7 @@
         volume_label: "Громкость",
         listeners: "слушают",
         night_mode: "Ночь",
-        track_donate_line: "Поддержи развитие Radio Gram на Planeta.ru — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по вашему запросу.",
+        track_donate_line: "Поддержи развитие Radio Gram через Cloudtips — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по вашему запросу.",
         track_donate_cta: "Поддержать — трек по запросу 🎁"
       },
       en: {
@@ -2075,7 +2075,7 @@
         volume_label: "Volume",
         listeners: "listening",
         night_mode: "Night",
-        track_donate_line: "Help Radio Gram grow on Planeta.ru — every contribution matters. As a thank-you, we’ll make you a track to your taste, on your request.",
+        track_donate_line: "Help Radio Gram grow via Cloudtips — every contribution matters. As a thank-you, we'll make you a track to your taste, on your request.",
         track_donate_cta: "Support — track on request 🎁"
       }
     };
@@ -2431,23 +2431,60 @@
       );
     }
 
-    /** Рендер РСЯ один раз, когда слот виден (render в скрытый контейнер часто остаётся пустым) */
-    function requestYandexRsyRenderOnce() {
-      if (window._rsyRtbRenderPushDone) return;
-      const target = document.getElementById('yandex_rtb_R-A-19198992-1');
-      if (!target) return;
-      window._rsyRtbRenderPushDone = true;
+    const RSY_BLOCK_ID = 'R-A-19198992-1';
+    const RSY_RENDER_TO_ID = 'yandex_rtb_R-A-19198992-1';
+    let rsyVisibleReloadTimer = null;
+    let rsyReloadScheduledForVisibleSession = false;
+    let rsyEmptyBoostDone = false;
+
+    function rsyAdHostLooksFilled() {
+      const host = document.getElementById(RSY_RENDER_TO_ID);
+      if (!host) return false;
+      return !!(host.querySelector('iframe, ins, [id^="yandex_rtb"], [class*="yandex"]'));
+    }
+
+    /** Если слот виден, а контейнер пуст — один раз подстраховываем поздним render (медленный context.js / no-fill) */
+    function scheduleYandexRsyBoostIfEmpty() {
+      if (rsyEmptyBoostDone) return;
+      const slot = document.getElementById('yandex-rsy-slot');
+      if (!slot || !slot.classList.contains('is-visible')) return;
+      if (rsyAdHostLooksFilled()) {
+        rsyEmptyBoostDone = true;
+        return;
+      }
+      rsyEmptyBoostDone = true;
+      queueYandexRsyReload('boost-if-empty');
+    }
+
+    /** Повторный запрос к РСЯ после того, как полоса реально показана (часто иначе остаётся пустой iframe) */
+    function queueYandexRsyReload(reason) {
       window.yaContextCb = window.yaContextCb || [];
       window.yaContextCb.push(function () {
         try {
-          Ya.Context.AdvManager.render({
-            blockId: 'R-A-19198992-1',
-            renderTo: target
-          });
+          if (!window.Ya || !Ya.Context || !Ya.Context.AdvManager) return;
+          const am = Ya.Context.AdvManager;
+          try {
+            if (typeof am.destroy === 'function') {
+              am.destroy({ blockId: RSY_BLOCK_ID, renderTo: RSY_RENDER_TO_ID });
+            }
+          } catch (_) {}
+          am.render({ blockId: RSY_BLOCK_ID, renderTo: RSY_RENDER_TO_ID });
         } catch (e) {
-          console.warn('Yandex RSY render:', e);
+          console.warn('Yandex RSY reload:', reason, e);
         }
       });
+    }
+
+    function scheduleYandexRsyReloadWhenVisible(reason) {
+      const slot = document.getElementById('yandex-rsy-slot');
+      if (!slot || !slot.classList.contains('is-visible')) return;
+      if (rsyVisibleReloadTimer) clearTimeout(rsyVisibleReloadTimer);
+      rsyVisibleReloadTimer = setTimeout(() => {
+        rsyVisibleReloadTimer = null;
+        const s = document.getElementById('yandex-rsy-slot');
+        if (!s || !s.classList.contains('is-visible')) return;
+        queueYandexRsyReload(reason || 'visible');
+      }, 520);
     }
 
     function initRsyAdObserver() {
@@ -2459,10 +2496,11 @@
         (entries) => {
           for (const e of entries) {
             if (!e.isIntersecting) continue;
-            requestAnimationFrame(() => requestAnimationFrame(requestYandexRsyRenderOnce));
+            if (!slot.classList.contains('is-visible')) continue;
+            scheduleYandexRsyReloadWhenVisible('intersection');
           }
         },
-        { root: null, rootMargin: '0px 0px 120px 0px', threshold: [0, 0.02, 0.06] }
+        { root: null, rootMargin: '0px 0px 160px 0px', threshold: [0, 0.01, 0.05] }
       );
       io.observe(slot);
     }
@@ -2494,12 +2532,14 @@
         }
         show = rsyMobileAdVisible;
       }
+      if (!show) rsyReloadScheduledForVisibleSession = false;
       slot.classList.toggle('is-visible', show);
       document.body.classList.toggle('ad-slot-visible', show);
       slot.setAttribute('aria-hidden', show ? 'false' : 'true');
-      if (show) {
+      if (show && !rsyReloadScheduledForVisibleSession) {
+        rsyReloadScheduledForVisibleSession = true;
         requestAnimationFrame(() => {
-          requestAnimationFrame(requestYandexRsyRenderOnce);
+          requestAnimationFrame(() => scheduleYandexRsyReloadWhenVisible('slot-show'));
         });
       }
     }
@@ -3442,6 +3482,10 @@
     window.addEventListener('load', () => {
       scheduleYandexRsySlotUpdate();
       initRsyAdObserver();
+      setTimeout(scheduleYandexRsyBoostIfEmpty, 3200);
+    });
+    requestAnimationFrame(() => {
+      scheduleYandexRsySlotUpdate();
     });
     setTimeout(scheduleYandexRsySlotUpdate, 600);
     setTimeout(scheduleYandexRsySlotUpdate, 2000);
