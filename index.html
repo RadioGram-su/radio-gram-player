@@ -2386,13 +2386,14 @@
     }
 
     /** Рекламная полоса РСЯ: на ПК — сразу; на телефоне — после скролла вниз, скрытие при скролле вверх */
-    const RSY_SCROLL_MIN = 140;
+    /** Минимальный скролл по Y, после которого на мобилке показываем слот (ниже — чаще срабатывает при короткой странице) */
+    const RSY_SCROLL_MIN = 56;
     /** Должен совпадать с базовым резервом в CSS `body.ad-slot-visible .app-container { padding-bottom }` без env() */
     const RSY_LAYOUT_RESERVE_FALLBACK_PX = 178;
     let rsyScrollScheduled = false;
     let rsyLastScrollY = null;
     let rsyMobileAdVisible = false;
-    const RSY_MOBILE_SHOW_DOWN_DELTA = 5;
+    const RSY_MOBILE_SHOW_DOWN_DELTA = 2;
     const RSY_MOBILE_HIDE_UP_DELTA = -7;
 
     function rsyIsDesktopLayout() {
@@ -2521,16 +2522,23 @@
         rsyLastScrollY = null;
         rsyMobileAdVisible = false;
       } else {
-        if (rsyLastScrollY === null) rsyLastScrollY = y;
-        const prev = rsyLastScrollY;
-        const dy = y - prev;
-        rsyLastScrollY = y;
-        if (dy <= RSY_MOBILE_HIDE_UP_DELTA) rsyMobileAdVisible = false;
-        else {
-          if (y >= RSY_SCROLL_MIN && dy >= RSY_MOBILE_SHOW_DOWN_DELTA) rsyMobileAdVisible = true;
-          if (y >= RSY_SCROLL_MIN && prev < RSY_SCROLL_MIN && dy > 0) rsyMobileAdVisible = true;
+        /* Если по высоте страницы почти нет вертикального скролла, жест «вниз» недостижим — слот бы никогда не открылся */
+        if (!rsyPageCanScrollVertically()) {
+          show = true;
+          rsyLastScrollY = null;
+          rsyMobileAdVisible = true;
+        } else {
+          if (rsyLastScrollY === null) rsyLastScrollY = y;
+          const prev = rsyLastScrollY;
+          const dy = y - prev;
+          rsyLastScrollY = y;
+          if (dy <= RSY_MOBILE_HIDE_UP_DELTA) rsyMobileAdVisible = false;
+          else {
+            if (y >= RSY_SCROLL_MIN && dy >= RSY_MOBILE_SHOW_DOWN_DELTA) rsyMobileAdVisible = true;
+            if (y >= RSY_SCROLL_MIN && prev < RSY_SCROLL_MIN && dy > 0) rsyMobileAdVisible = true;
+          }
+          show = rsyMobileAdVisible;
         }
-        show = rsyMobileAdVisible;
       }
       if (!show) rsyReloadScheduledForVisibleSession = false;
       slot.classList.toggle('is-visible', show);
@@ -3479,6 +3487,12 @@
       rsyMobileAdVisible = false;
       scheduleYandexRsySlotUpdate();
     }, { passive: true });
+    window.addEventListener('orientationchange', () => {
+      rsyLastScrollY = null;
+      rsyMobileAdVisible = false;
+      setTimeout(scheduleYandexRsySlotUpdate, 0);
+      setTimeout(scheduleYandexRsySlotUpdate, 200);
+    });
     window.addEventListener('load', () => {
       scheduleYandexRsySlotUpdate();
       initRsyAdObserver();
