@@ -413,7 +413,7 @@
       max-width: 100%;
       -webkit-tap-highlight-color: transparent;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       background: linear-gradient(
         105deg,
         rgba(255, 255, 255, 0.06) 0%,
@@ -454,8 +454,8 @@
     }
     @keyframes easy-track-cta-ch-wobble {
       0%, 100% { transform: translateY(0) rotate(0deg); }
-      35% { transform: translateY(-1.2px) rotate(-0.6deg); }
-      70% { transform: translateY(0.9px) rotate(0.55deg); }
+      35% { transform: translateY(-2px) rotate(-1deg); }
+      70% { transform: translateY(1.5px) rotate(0.9deg); }
     }
     .hero-track-day:hover {
       border-color: rgba(255, 255, 255, 0.22);
@@ -1349,13 +1349,21 @@
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
       }
+      /* CTA EasySong: лёгкая «живая» анимация остаётся (глобальный * её глушит) */
+      .hero-track-day,
+      .hero-track-day::before,
+      .hero-track-day::after {
+        animation-duration: 14s, 7s !important;
+        animation-iteration-count: infinite !important;
+        transition-duration: 0.25s !important;
+      }
       .hero-track-day {
-        animation: none;
-        background: rgba(255, 255, 255, 0.07);
+        animation-name: hero-track-day-shimmer, easy-track-day-glow !important;
+        animation-timing-function: ease-in-out, ease-in-out !important;
       }
       .hero-track-day .easy-track-cta-ch {
-        animation: none !important;
-        transform: none !important;
+        animation: easy-track-cta-ch-wobble 4s ease-in-out infinite !important;
+        animation-delay: calc(var(--cta-i, 0) * 0.06s) !important;
       }
     }
     @media (min-width: 900px) {
@@ -1687,16 +1695,8 @@
   <!-- РСЯ / Яндекс — блок R-A-19198992-1 (нижняя панель после скролла; скрывается в полноэкране через .yandex-rsy-slot) -->
   <aside id="yandex-rsy-slot" class="yandex-rsy-slot" aria-label="Реклама">
     <div id="yandex-rsy-inner" class="yandex-rsy-inner">
-      <!-- Yandex.RTB R-A-19198992-1 -->
+      <!-- Yandex.RTB R-A-19198992-1 — render вызывается из JS, когда слот реально показан (иначе креатив часто пустой) -->
       <div id="yandex_rtb_R-A-19198992-1"></div>
-      <script>
-        window.yaContextCb.push(function () {
-          Ya.Context.AdvManager.render({
-            blockId: 'R-A-19198992-1',
-            renderTo: 'yandex_rtb_R-A-19198992-1'
-          });
-        });
-      </script>
     </div>
   </aside>
 
@@ -2309,6 +2309,7 @@
       }
       updateVizChrome();
       syncVisualModeState();
+      scheduleYandexRsySlotUpdate();
     }
 
     function toggleVizFullscreen() {
@@ -2377,6 +2378,25 @@
       );
     }
 
+    /** Рендер РСЯ один раз, когда контейнер уже виден (ранний render в скрытый слот часто даёт пустой блок) */
+    function requestYandexRsyRenderOnce() {
+      if (window._rsyRtbRenderPushDone) return;
+      const target = document.getElementById('yandex_rtb_R-A-19198992-1');
+      if (!target) return;
+      window._rsyRtbRenderPushDone = true;
+      window.yaContextCb = window.yaContextCb || [];
+      window.yaContextCb.push(function () {
+        try {
+          Ya.Context.AdvManager.render({
+            blockId: 'R-A-19198992-1',
+            renderTo: 'yandex_rtb_R-A-19198992-1'
+          });
+        } catch (e) {
+          console.warn('Yandex RSY render:', e);
+        }
+      });
+    }
+
     function updateYandexRsySlot() {
       const slot = document.getElementById('yandex-rsy-slot');
       if (!slot) return;
@@ -2407,6 +2427,11 @@
       slot.classList.toggle('is-visible', show);
       document.body.classList.toggle('ad-slot-visible', show);
       slot.setAttribute('aria-hidden', show ? 'false' : 'true');
+      if (show) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(requestYandexRsyRenderOnce);
+        });
+      }
     }
 
     function scheduleYandexRsySlotUpdate() {
