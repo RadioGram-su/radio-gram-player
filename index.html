@@ -405,39 +405,87 @@
       font-size: 12px;
       font-weight: 600;
       text-decoration: none;
-      color: rgba(255, 255, 255, 0.88);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+      color: rgba(248, 252, 255, 0.94);
+      border: 1px solid rgba(72, 168, 188, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 6px 20px rgba(0, 12, 24, 0.45);
       transition: border-color 0.25s ease, color 0.25s ease, transform 0.15s ease;
       max-width: 100%;
       -webkit-tap-highlight-color: transparent;
       position: relative;
       overflow: visible;
+      isolation: isolate;
+      background: rgba(4, 14, 28, 0.42);
+      animation: easy-track-day-glow 6s ease-in-out infinite;
+    }
+    /* Глубина океана — медленный перелив */
+    .hero-track-day::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      z-index: 0;
+      pointer-events: none;
       background: linear-gradient(
-        105deg,
-        rgba(255, 255, 255, 0.06) 0%,
-        rgba(255, 255, 255, 0.09) 38%,
-        rgba(130, 210, 255, 0.11) 50%,
-        rgba(255, 255, 255, 0.08) 62%,
-        rgba(255, 255, 255, 0.06) 100%
+        118deg,
+        rgba(3, 22, 48, 0.97) 0%,
+        rgba(6, 58, 72, 0.94) 22%,
+        rgba(4, 32, 56, 0.96) 42%,
+        rgba(10, 92, 108, 0.9) 64%,
+        rgba(5, 42, 68, 0.95) 82%,
+        rgba(8, 74, 96, 0.92) 100%
       );
-      background-size: 220% 100%;
-      animation: hero-track-day-shimmer 11s ease-in-out infinite, easy-track-day-glow 5.5s ease-in-out infinite;
+      background-size: 320% 320%;
+      animation: easy-track-ocean-flow 16s ease-in-out infinite;
+    }
+    /* Лёгкая «солнечная волна» по поверхности */
+    .hero-track-day::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      z-index: 0;
+      pointer-events: none;
+      background: linear-gradient(
+        100deg,
+        transparent 32%,
+        rgba(170, 238, 255, 0.2) 50%,
+        transparent 68%
+      );
+      background-size: 240% 100%;
+      animation: hero-track-day-shimmer 11s ease-in-out infinite;
+      mix-blend-mode: soft-light;
+      opacity: 0.75;
     }
     @keyframes hero-track-day-shimmer {
       0%, 100% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
     }
-    @keyframes easy-track-day-glow {
+    @keyframes easy-track-ocean-flow {
       0%, 100% {
-        border-color: rgba(255, 255, 255, 0.14);
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14), 0 0 0 rgba(125, 214, 255, 0);
+        background-position: 0% 42%;
+        filter: brightness(0.96) saturate(1.05);
       }
       50% {
-        border-color: rgba(160, 220, 255, 0.38);
-        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18), 0 0 22px rgba(90, 200, 255, 0.22);
+        background-position: 100% 58%;
+        filter: brightness(1.1) saturate(1.18);
       }
+    }
+    @keyframes easy-track-day-glow {
+      0%, 100% {
+        border-color: rgba(64, 150, 175, 0.32);
+        box-shadow: 0 6px 20px rgba(0, 10, 22, 0.5), 0 0 0 rgba(40, 160, 190, 0);
+      }
+      50% {
+        border-color: rgba(120, 220, 240, 0.55);
+        box-shadow: 0 8px 26px rgba(0, 14, 28, 0.55), 0 0 32px rgba(50, 190, 220, 0.38);
+      }
+    }
+    .hero-track-day .hero-track-day-icon,
+    .hero-track-day .easy-track-cta-text {
+      position: relative;
+      z-index: 1;
     }
     .hero-track-day .easy-track-cta-text {
       display: inline-flex;
@@ -1350,16 +1398,21 @@
         scroll-behavior: auto !important;
       }
       /* CTA EasySong: лёгкая «живая» анимация остаётся (глобальный * её глушит) */
-      .hero-track-day,
-      .hero-track-day::before,
-      .hero-track-day::after {
-        animation-duration: 14s, 7s !important;
+      .hero-track-day {
+        animation: easy-track-day-glow 6.5s ease-in-out infinite !important;
+        animation-duration: 6.5s !important;
         animation-iteration-count: infinite !important;
         transition-duration: 0.25s !important;
       }
-      .hero-track-day {
-        animation-name: hero-track-day-shimmer, easy-track-day-glow !important;
-        animation-timing-function: ease-in-out, ease-in-out !important;
+      .hero-track-day::before {
+        animation: easy-track-ocean-flow 17s ease-in-out infinite !important;
+        animation-duration: 17s !important;
+        animation-iteration-count: infinite !important;
+      }
+      .hero-track-day::after {
+        animation: hero-track-day-shimmer 12s ease-in-out infinite !important;
+        animation-duration: 12s !important;
+        animation-iteration-count: infinite !important;
       }
       .hero-track-day .easy-track-cta-ch {
         animation: easy-track-cta-ch-wobble 4s ease-in-out infinite !important;
@@ -2343,7 +2396,7 @@
     const RSY_MOBILE_HIDE_UP_DELTA = -7;
 
     function rsyIsDesktopLayout() {
-      return window.matchMedia('(min-width: 900px)').matches;
+      return window.matchMedia('(min-width: 768px)').matches;
     }
 
     /** Сколько px мы сами добавили снизу под баннер — вычитаем из overflow, иначе слот создаёт «ложный» скролл и сразу скрывается */
@@ -2378,7 +2431,7 @@
       );
     }
 
-    /** Рендер РСЯ один раз, когда контейнер уже виден (ранний render в скрытый слот часто даёт пустой блок) */
+    /** Рендер РСЯ один раз, когда слот виден (render в скрытый контейнер часто остаётся пустым) */
     function requestYandexRsyRenderOnce() {
       if (window._rsyRtbRenderPushDone) return;
       const target = document.getElementById('yandex_rtb_R-A-19198992-1');
@@ -2389,12 +2442,29 @@
         try {
           Ya.Context.AdvManager.render({
             blockId: 'R-A-19198992-1',
-            renderTo: 'yandex_rtb_R-A-19198992-1'
+            renderTo: target
           });
         } catch (e) {
           console.warn('Yandex RSY render:', e);
         }
       });
+    }
+
+    function initRsyAdObserver() {
+      if (window._rsyAdIoInit) return;
+      const slot = document.getElementById('yandex-rsy-slot');
+      if (!slot || typeof IntersectionObserver === 'undefined') return;
+      window._rsyAdIoInit = true;
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (!e.isIntersecting) continue;
+            requestAnimationFrame(() => requestAnimationFrame(requestYandexRsyRenderOnce));
+          }
+        },
+        { root: null, rootMargin: '0px 0px 120px 0px', threshold: [0, 0.02, 0.06] }
+      );
+      io.observe(slot);
     }
 
     function updateYandexRsySlot() {
@@ -3369,9 +3439,13 @@
       rsyMobileAdVisible = false;
       scheduleYandexRsySlotUpdate();
     }, { passive: true });
-    window.addEventListener('load', scheduleYandexRsySlotUpdate);
+    window.addEventListener('load', () => {
+      scheduleYandexRsySlotUpdate();
+      initRsyAdObserver();
+    });
     setTimeout(scheduleYandexRsySlotUpdate, 600);
     setTimeout(scheduleYandexRsySlotUpdate, 2000);
+    initRsyAdObserver();
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(() => scheduleYandexRsySlotUpdate());
     }
