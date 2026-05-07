@@ -664,63 +664,58 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Логотип Radio Gram (треугольник V) */
-    .gram-logo {
-      width: 72px;
-      height: 72px;
-      position: absolute;
-      opacity: 0.22;
-      transform: scale(0.95);
-      transition: opacity 0.35s ease, transform 0.35s ease;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .play-btn-main.playing .gram-logo {
-      opacity: 0.14;
-      transform: scale(0.98);
-      animation: logoRGB 4s ease-in-out infinite;
-    }
-
-    @keyframes logoRGB {
-      0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 0, 100, 0.8)); }
-      33% { filter: drop-shadow(0 0 10px rgba(0, 255, 150, 0.8)); }
-      66% { filter: drop-shadow(0 0 10px rgba(0, 150, 255, 0.8)); }
-    }
-
-    .gram-logo svg {
-      width: 100%;
-      height: 100%;
-    }
-
-    .play-icon, .pause-icon {
+    /* Центр кнопки: только play / pause, без логотипа */
+    .play-btn-glyphs {
       position: relative;
-      width: 42px;
-      height: 42px;
-      fill: rgba(245, 249, 255, 0.96);
-      filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.45));
-      opacity: 0;
-      transform: scale(0.72);
-      transition: opacity 0.26s ease, transform 0.26s ease;
-      z-index: 2;
+      z-index: 3;
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
       pointer-events: none;
     }
 
-    .pause-icon { width: 40px; height: 40px; }
-
-    .play-btn-main .play-icon {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .play-btn-main.playing .play-icon {
+    .play-btn-glyphs .play-icon,
+    .play-btn-glyphs .pause-icon {
+      grid-area: 1 / 1;
+      width: 54px;
+      height: 54px;
+      overflow: visible;
       opacity: 0;
-      transform: scale(0.74);
+      transform: scale(0.82);
+      transition:
+        opacity 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.32s cubic-bezier(0.34, 1.2, 0.64, 1);
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.35))
+        drop-shadow(0 0 14px rgba(120, 220, 255, 0.35));
     }
 
-    .play-btn-main.playing .pause-icon {
+    .play-btn-main .play-btn-glyphs .play-icon {
+      opacity: 1;
+      transform: scale(1) translateX(2px);
+    }
+
+    .play-btn-main.playing .play-btn-glyphs .play-icon {
+      opacity: 0;
+      transform: scale(0.78) translateX(2px);
+    }
+
+    .play-btn-main.playing .play-btn-glyphs .pause-icon {
       opacity: 1;
       transform: scale(1);
+    }
+
+    .play-btn-main.playing .play-btn-glyphs .pause-icon .pause-bar {
+      animation: pauseBarsPulse 2.2s ease-in-out infinite;
+    }
+
+    .play-btn-main.playing .play-btn-glyphs .pause-icon .pause-bar-right {
+      animation-delay: 0.12s;
+    }
+
+    @keyframes pauseBarsPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.82; }
     }
 
     /* === ЗАГОЛОВОК И LIVE === */
@@ -1435,7 +1430,9 @@
       .main-title { font-size: 36px; }
       .sub-title { font-size: 12px; }
       .play-btn-main { width: 120px; height: 120px; }
-      .gram-logo { width: 60px; height: 60px; }
+      .play-btn-glyphs { width: 52px; height: 52px; }
+      .play-btn-glyphs .play-icon,
+      .play-btn-glyphs .pause-icon { width: 48px; height: 48px; }
       .play-ring { width: 140px; height: 140px; }
       .listeners-badge { font-size: 12px; padding: 6px 12px; }
       .action-btn { padding: 13px 12px; font-size: 14px; min-height: 46px; }
@@ -1495,7 +1492,9 @@
     @media (max-width: 360px) {
       .main-title { font-size: 32px; }
       .play-btn-main { width: 110px; height: 110px; }
-      .gram-logo { width: 55px; height: 55px; }
+      .play-btn-glyphs { width: 48px; height: 48px; }
+      .play-btn-glyphs .play-icon,
+      .play-btn-glyphs .pause-icon { width: 44px; height: 44px; }
       .play-ring { width: 130px; height: 130px; }
       .listeners-badge { font-size: 11px; }
       .track-text { font-size: 12px; }
@@ -1611,39 +1610,40 @@
       <span data-i18n="listeners" style="opacity: 0.7; font-weight: 400;">слушают</span>
     </div>
 
-    <!-- КНОПКА PLAY С ЛОГОТИПОМ -->
+    <!-- КНОПКА PLAY / PAUSE -->
     <div class="play-wrapper">
       <div class="play-ring" id="play-ring"></div>
       <div class="play-btn-main" id="play-btn" onclick="togglePlay()" role="button" tabindex="0" aria-label="Play or pause radio stream" aria-pressed="false">
-        <div class="gram-logo">
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <!-- Белый круг -->
-            <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
-            
-            <!-- Треугольник V -->
-            <path d="M 30 35 L 70 35 L 50 70 Z" 
-                  fill="none" 
-                  stroke="white" 
-                  stroke-width="6" 
-                  stroke-linecap="round" 
-                  stroke-linejoin="round"/>
-            
-            <!-- Вертикальная линия с красной точкой -->
-            <line x1="50" y1="35" x2="50" y2="68" 
-                  stroke="white" 
-                  stroke-width="5" 
-                  stroke-linecap="round"/>
-            
-            <!-- Красная точка/линия -->
-            <line x1="52" y1="40" x2="56" y2="50" 
-                  stroke="#FF3B30" 
-                  stroke-width="3" 
-                  stroke-linecap="round"/>
-            <circle cx="57" cy="38" r="3" fill="#FF3B30"/>
+        <div class="play-btn-glyphs" aria-hidden="true">
+          <svg class="play-icon" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" focusable="false">
+            <defs>
+              <linearGradient id="rg-play-face" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="45%" stop-color="#e8f6ff"/>
+                <stop offset="100%" stop-color="#9fd9ff"/>
+              </linearGradient>
+              <linearGradient id="rg-play-edge" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.95)"/>
+                <stop offset="100%" stop-color="rgba(160,220,255,0.35)"/>
+              </linearGradient>
+            </defs>
+            <!-- Скруглённый «кристалл» play: мягкие кривые, без острых углов -->
+            <path fill="url(#rg-play-face)" d="M21.2 15.2c0-2.35 2.55-3.85 4.6-2.65l19.2 11.4c2.05 1.22 2.05 4.08 0 5.3L25.8 40.75c-2.05 1.2-4.6-.3-4.6-2.65V15.2z"/>
+            <path fill="none" stroke="url(#rg-play-edge)" stroke-width="1.15" stroke-linejoin="round" d="M21.2 15.2c0-2.35 2.55-3.85 4.6-2.65l19.2 11.4c2.05 1.22 2.05 4.08 0 5.3L25.8 40.75c-2.05 1.2-4.6-.3-4.6-2.65V15.2z"/>
+          </svg>
+          <svg class="pause-icon" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" focusable="false">
+            <defs>
+              <linearGradient id="rg-pause-face" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="100%" stop-color="#bfe8ff"/>
+              </linearGradient>
+            </defs>
+            <rect class="pause-bar pause-bar-left" x="15.5" y="14" width="9" height="28" rx="4.5" fill="url(#rg-pause-face)"/>
+            <rect class="pause-bar pause-bar-right" x="31.5" y="14" width="9" height="28" rx="4.5" fill="url(#rg-pause-face)"/>
+            <rect x="15.5" y="14" width="9" height="28" rx="4.5" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="0.9"/>
+            <rect x="31.5" y="14" width="9" height="28" rx="4.5" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="0.9"/>
           </svg>
         </div>
-        <svg class="play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        <svg class="pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
       </div>
     </div>
 
