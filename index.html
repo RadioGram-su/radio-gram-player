@@ -111,8 +111,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Yandex.RTB — загрузчик рекламы (РСЯ) -->
-  <script>window.yaContextCb = window.yaContextCb || [];</script>
-  <script src="https://yandex.ru/ads/system/context.js" async></script>
 
   <style>
     :root {
@@ -595,50 +593,92 @@
       width: 140px;
       height: 140px;
       border-radius: 50%;
-      background: linear-gradient(145deg, #1a1a2e, #0f0f1e);
-      border: 3px solid rgba(255,255,255,0.15);
+      background:
+        radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 48%),
+        linear-gradient(160deg, rgba(52, 72, 116, 0.92), rgba(20, 24, 44, 0.97) 62%, rgba(14, 18, 34, 1));
+      border: 1px solid rgba(255, 255, 255, 0.24);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 2px 10px rgba(255,255,255,0.1);
+      transition: transform 0.22s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+      box-shadow:
+        0 16px 42px rgba(0, 0, 0, 0.46),
+        0 2px 16px rgba(111, 198, 255, 0.18),
+        inset 0 1px 1px rgba(255, 255, 255, 0.35),
+        inset 0 -16px 28px rgba(10, 13, 26, 0.55);
       position: relative;
       z-index: 2;
       overflow: hidden;
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
     }
 
     .play-btn-main::before {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      inset: -30%;
+      background: conic-gradient(from 10deg, rgba(118, 228, 255, 0.04), rgba(117, 128, 255, 0.4), rgba(95, 245, 255, 0.14), rgba(118, 228, 255, 0.04));
+      transform: rotate(0deg);
       opacity: 0;
-      transition: opacity 0.3s;
+      transition: opacity 0.35s ease;
     }
 
-    .play-btn-main:hover::before {
-      opacity: 1;
+    .play-btn-main::after {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.17);
+      pointer-events: none;
     }
 
-    .play-btn-main:hover { 
-      transform: scale(1.05); 
-      box-shadow: 0 25px 70px rgba(0,0,0,0.6), inset 0 2px 15px rgba(255,255,255,0.15);
+    .play-btn-main:hover::before { opacity: 0.65; }
+
+    .play-btn-main:hover {
+      transform: scale(1.03);
+      box-shadow:
+        0 22px 56px rgba(0, 0, 0, 0.54),
+        0 4px 20px rgba(111, 198, 255, 0.28),
+        inset 0 1px 1px rgba(255, 255, 255, 0.4),
+        inset 0 -18px 30px rgba(10, 13, 26, 0.58);
     }
-    .play-btn-main:active { transform: scale(0.95); }
+
+    .play-btn-main:active { transform: scale(0.97); }
+
+    .play-btn-main.playing {
+      border-color: rgba(132, 235, 255, 0.68);
+      box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.58),
+        0 0 28px rgba(90, 220, 255, 0.34),
+        inset 0 1px 1px rgba(255, 255, 255, 0.45),
+        inset 0 -20px 32px rgba(9, 20, 36, 0.56);
+    }
+
+    .play-btn-main.playing::before {
+      opacity: 0.9;
+      animation: playButtonIridescence 3.4s linear infinite;
+    }
+
+    @keyframes playButtonIridescence {
+      to { transform: rotate(360deg); }
+    }
 
     /* Логотип Radio Gram (треугольник V) */
     .gram-logo {
-      width: 70px;
-      height: 70px;
-      position: relative;
-      transition: all 0.3s;
+      width: 72px;
+      height: 72px;
+      position: absolute;
+      opacity: 0.22;
+      transform: scale(0.95);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      pointer-events: none;
+      z-index: 1;
     }
 
     .play-btn-main.playing .gram-logo {
+      opacity: 0.14;
+      transform: scale(0.98);
       animation: logoRGB 4s ease-in-out infinite;
     }
 
@@ -654,7 +694,33 @@
     }
 
     .play-icon, .pause-icon {
-      display: none;
+      position: relative;
+      width: 42px;
+      height: 42px;
+      fill: rgba(245, 249, 255, 0.96);
+      filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.45));
+      opacity: 0;
+      transform: scale(0.72);
+      transition: opacity 0.26s ease, transform 0.26s ease;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .pause-icon { width: 40px; height: 40px; }
+
+    .play-btn-main .play-icon {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .play-btn-main.playing .play-icon {
+      opacity: 0;
+      transform: scale(0.74);
+    }
+
+    .play-btn-main.playing .pause-icon {
+      opacity: 1;
+      transform: scale(1);
     }
 
     /* === ЗАГОЛОВОК И LIVE === */
@@ -1361,8 +1427,10 @@
 
     /* === АДАПТИВНОСТЬ === */
     @media (max-width: 480px) {
-      .app-container { padding: 15px; }
-      .app-container { padding-bottom: 250px; }
+      .app-container {
+        padding: 14px;
+        padding-bottom: max(118px, calc(102px + env(safe-area-inset-bottom, 0px)));
+      }
       .track-grid { grid-template-columns: 1fr; gap: 10px; }
       .main-title { font-size: 36px; }
       .sub-title { font-size: 12px; }
@@ -1370,25 +1438,28 @@
       .gram-logo { width: 60px; height: 60px; }
       .play-ring { width: 140px; height: 140px; }
       .listeners-badge { font-size: 12px; padding: 6px 12px; }
-      .action-btn { padding: 12px; font-size: 13px; }
-      .buttons-grid { gap: 10px; }
+      .action-btn { padding: 13px 12px; font-size: 14px; min-height: 46px; }
+      .buttons-grid { gap: 10px; grid-template-columns: 1fr; }
       .bottom-controls {
-        bottom: 10px;
-        left: 10px;
-        right: 10px;
+        bottom: max(8px, env(safe-area-inset-bottom, 0px));
+        left: 8px;
+        right: 8px;
         width: auto;
         align-items: stretch;
         gap: 8px;
-        max-height: 24vh;
+        max-height: min(33vh, 240px);
         overflow-y: auto;
-        padding-right: 2px;
+        padding-right: 3px;
         background: transparent;
         border: none;
-        border-radius: 0;
-        padding: 6px;
+        border-radius: 12px;
+        padding: 8px;
       }
-      .settings-row { justify-content: flex-end; }
+      .settings-row { justify-content: space-between; gap: 8px; }
+      .icon-btn { min-width: 42px; min-height: 42px; }
       .immersive-switch { width: fit-content; margin-left: auto; }
+      .modal-content { width: min(95vw, 380px); max-height: 78vh; overflow-y: auto; }
+      .modal-btn { min-height: 46px; }
       .viz-mode-btn { font-size: 10px; padding: 5px 8px; }
       #track-toast { bottom: 110px; font-size: 11px; }
       .stream-switcher-row { grid-template-columns: 1fr; }
@@ -1410,9 +1481,14 @@
       }
     }
     @media (max-width: 768px) {
+      .app-container {
+        padding-bottom: max(126px, calc(108px + env(safe-area-inset-bottom, 0px)));
+      }
       .bottom-controls {
         max-width: min(96vw, 430px);
+        width: min(96vw, 430px);
       }
+      .buttons-grid { grid-template-columns: 1fr; }
       body.visual-only .bottom-controls { pointer-events: none; }
     }
 
@@ -1488,76 +1564,7 @@
       .bottom-controls { transform: scale(1.15); transform-origin: bottom right; }
     }
 
-    /* === Рекламный слот РСЯ / Яндекс (контейнер + место под код) === */
-    .yandex-rsy-slot {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 85;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      padding: 6px 10px calc(6px + env(safe-area-inset-bottom, 0));
-      pointer-events: none;
-      transform: translate3d(0, 110%, 0);
-      transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease;
-      opacity: 0;
-    }
-    .yandex-rsy-slot.is-visible {
-      transform: translate3d(0, 0, 0);
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .yandex-rsy-inner {
-      width: 100%;
-      max-width: min(100vw - 20px, 728px);
-      min-height: 50px;
-      max-height: 130px;
-      background: rgba(8, 8, 18, 0.78);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 14px 14px 0 0;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.35);
-    }
-    /* Не показывать: полноэкран «Релакс», визуал на весь экран, нативный Fullscreen API */
-    body.relax-fullscreen .yandex-rsy-slot,
-    body.visual-only .yandex-rsy-slot {
-      display: none !important;
-    }
-    body:fullscreen .yandex-rsy-slot,
-    html:fullscreen .yandex-rsy-slot {
-      display: none !important;
-    }
-    /*
-      Резерв под фиксированный РСЯ-баннер: без этого блок перекрывает кнопки «Наши каналы» и т.д.
-      Высота полосы может меняться — берём с запасом + safe-area.
-    */
-    body.ad-slot-visible .app-container {
-      padding-bottom: calc(178px + env(safe-area-inset-bottom, 0px));
-      transition: padding-bottom 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    /* Нижние контролы (громкость / визуал) — над баннером */
-    body.ad-slot-visible .bottom-controls {
-      bottom: calc(178px + env(safe-area-inset-bottom, 0px));
-      transition: bottom 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .yandex-rsy-slot {
-        transition: none;
-      }
-      body.ad-slot-visible .bottom-controls {
-        transition: none;
-      }
-      body.ad-slot-visible .app-container {
-        transition: none;
-      }
-    }
+    /* Рекламный слот временно отключён */
   </style>
 </head>
 <body>
@@ -1607,7 +1614,7 @@
     <!-- КНОПКА PLAY С ЛОГОТИПОМ -->
     <div class="play-wrapper">
       <div class="play-ring" id="play-ring"></div>
-      <div class="play-btn-main" id="play-btn" onclick="togglePlay()" role="button" tabindex="0" aria-label="Play or pause radio stream">
+      <div class="play-btn-main" id="play-btn" onclick="togglePlay()" role="button" tabindex="0" aria-label="Play or pause radio stream" aria-pressed="false">
         <div class="gram-logo">
           <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <!-- Белый круг -->
@@ -1795,14 +1802,6 @@
     </div>
   </div>
 
-  <!-- РСЯ / Яндекс — блок R-A-19198992-1 (нижняя панель после скролла; скрывается в полноэкране через .yandex-rsy-slot) -->
-  <aside id="yandex-rsy-slot" class="yandex-rsy-slot" aria-label="Реклама">
-    <div id="yandex-rsy-inner" class="yandex-rsy-inner">
-      <!-- Yandex.RTB R-A-19198992-1: render только из JS после .is-visible (инлайн до показа слота давал пустой баннер) -->
-      <div id="yandex_rtb_R-A-19198992-1"></div>
-    </div>
-  </aside>
-
   <!-- АУДИО -->
   <audio id="audio-player" crossorigin="anonymous">
     <source src="https://radiogram.su/listen/radio_gram/radio.mp3" type="audio/mpeg">
@@ -1821,6 +1820,7 @@
     const vizFullscreenBtn = document.getElementById('viz-fullscreen-btn');
     const ctx = canvas.getContext('2d');
     const playBtn = document.getElementById('play-btn');
+    const ADS_ENABLED = false;
     
     let isPlaying = false;
     let isImmersive = false;
@@ -2720,6 +2720,7 @@
     }
 
     function updateYandexRsySlot() {
+      if (!ADS_ENABLED) return;
       const slot = document.getElementById('yandex-rsy-slot');
       if (!slot) return;
       const slotHadVisible = slot.classList.contains('is-visible');
@@ -2773,6 +2774,7 @@
     }
 
     function scheduleYandexRsySlotUpdate() {
+      if (!ADS_ENABLED) return;
       if (rsyScrollScheduled) return;
       rsyScrollScheduled = true;
       requestAnimationFrame(() => {
@@ -3425,6 +3427,7 @@
           setTimeout(() => {
             audio.pause();
             playBtn.classList.remove('playing');
+            playBtn.setAttribute('aria-pressed', 'false');
             ring.classList.remove('active');
             document.getElementById('live-badge').style.display = 'none';
             stopReactiveBackground();
@@ -3438,6 +3441,7 @@
         } else {
           audio.pause();
           playBtn.classList.remove('playing');
+          playBtn.setAttribute('aria-pressed', 'false');
           ring.classList.remove('active');
           document.getElementById('live-badge').style.display = 'none';
           stopReactiveBackground();
@@ -3455,6 +3459,7 @@
           }
           await audio.play();
           playBtn.classList.add('playing');
+          playBtn.setAttribute('aria-pressed', 'true');
           ring.classList.add('active');
           document.getElementById('live-badge').style.display = 'inline-flex';
           try { localStorage.setItem(AUTOPLAY_CONSENT_KEY, '1'); } catch (_) {}
@@ -3711,35 +3716,24 @@
 
     document.addEventListener('fullscreenchange', syncRelaxFullscreenClassFromBrowser);
     document.addEventListener('webkitfullscreenchange', syncRelaxFullscreenClassFromBrowser);
-    window.addEventListener('scroll', scheduleYandexRsySlotUpdate, { passive: true });
     window.addEventListener('resize', () => {
       rsyLastScrollY = null;
       /* Не сбрасывать баннер на каждом resize: на мобиле innerHeight дергается (адресная строка, safe-area) — было мигание */
       if (rsyIsDesktopLayout()) rsyMobileAdVisible = false;
       enforceMobileVisualPolicy();
-      scheduleYandexRsySlotUpdate();
     }, { passive: true });
     window.addEventListener('orientationchange', () => {
       rsyLastScrollY = null;
       rsyMobileAdVisible = false;
       enforceMobileVisualPolicy();
-      setTimeout(scheduleYandexRsySlotUpdate, 0);
-      setTimeout(scheduleYandexRsySlotUpdate, 200);
     });
     window.addEventListener('load', () => {
-      scheduleYandexRsySlotUpdate();
-      initRsyAdObserver();
-      setTimeout(scheduleYandexRsyBoostIfEmpty, 3200);
+      if (ADS_ENABLED) {
+        scheduleYandexRsySlotUpdate();
+        initRsyAdObserver();
+        setTimeout(scheduleYandexRsyBoostIfEmpty, 3200);
+      }
     });
-    requestAnimationFrame(() => {
-      scheduleYandexRsySlotUpdate();
-    });
-    setTimeout(scheduleYandexRsySlotUpdate, 600);
-    setTimeout(scheduleYandexRsySlotUpdate, 2000);
-    initRsyAdObserver();
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(() => scheduleYandexRsySlotUpdate());
-    }
 
     window.addEventListener('beforeinstallprompt', (event) => {
       event.preventDefault();
