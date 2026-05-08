@@ -1745,10 +1745,11 @@
       <div class="modal-content" tabindex="-1">
         <div class="modal-title" id="viz-modes-title">Режимы визуала</div>
         <div style="display:flex; flex-direction:column; gap:10px; margin-top:6px;">
-          <button class="viz-mode-btn active" onclick="setVizMode('bars', this); closeModal('viz-modes-modal')">Полосы</button>
-          <button class="viz-mode-btn" onclick="setVizMode('particles', this); closeModal('viz-modes-modal')">Частицы</button>
-          <button class="viz-mode-btn" onclick="setVizMode('nebula', this); closeModal('viz-modes-modal')">Небула</button>
-          <button class="viz-mode-btn" onclick="setVizMode('prism', this); closeModal('viz-modes-modal')">Призма</button>
+          <button class="viz-mode-btn active" data-viz-mode="bars" onclick="setVizMode('bars', this); closeModal('viz-modes-modal')">Полосы</button>
+          <button class="viz-mode-btn" data-viz-mode="particles" onclick="setVizMode('particles', this); closeModal('viz-modes-modal')">Частицы</button>
+          <button class="viz-mode-btn" data-viz-mode="nebula" onclick="setVizMode('nebula', this); closeModal('viz-modes-modal')">Небула</button>
+          <button class="viz-mode-btn" data-viz-mode="prism" onclick="setVizMode('prism', this); closeModal('viz-modes-modal')">Призма</button>
+          <button class="viz-mode-btn" data-viz-mode="liquid" onclick="setVizMode('liquid', this); closeModal('viz-modes-modal')">Жидкое стекло</button>
         </div>
         <button class="close-modal" style="width:100%; margin-top:16px;" onclick="closeModal('viz-modes-modal')">Скрыть</button>
       </div>
@@ -1768,10 +1769,11 @@
     <!-- Переключатель режима визуализатора (только десктоп) -->
     <div class="desktop-viz-controls">
     <div class="viz-mode-selector" id="viz-selector">
-      <button class="viz-mode-btn active" onclick="setVizMode('bars', this)">Bars</button>
-      <button class="viz-mode-btn" onclick="setVizMode('particles', this)">Particles</button>
-      <button class="viz-mode-btn" onclick="setVizMode('nebula', this)">Nebula</button>
-      <button class="viz-mode-btn" onclick="setVizMode('prism', this)">Prism</button>
+      <button class="viz-mode-btn active" data-viz-mode="bars" onclick="setVizMode('bars', this)">Bars</button>
+      <button class="viz-mode-btn" data-viz-mode="particles" onclick="setVizMode('particles', this)">Particles</button>
+      <button class="viz-mode-btn" data-viz-mode="nebula" onclick="setVizMode('nebula', this)">Nebula</button>
+      <button class="viz-mode-btn" data-viz-mode="prism" onclick="setVizMode('prism', this)">Prism</button>
+      <button class="viz-mode-btn" data-viz-mode="liquid" onclick="setVizMode('liquid', this)">Liquid</button>
     </div>
 
       <button type="button" class="viz-mode-modal-btn" onclick="openModal('viz-modes-modal')">Режимы</button>
@@ -2945,8 +2947,10 @@
 
     function setVizMode(mode, btn) {
       vizMode = mode;
-      document.querySelectorAll('.viz-mode-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      document.querySelectorAll('.viz-mode-btn').forEach((b) => {
+        b.classList.toggle('active', b.dataset.vizMode === mode);
+      });
+      if (btn && !btn.dataset.vizMode) btn.classList.add('active');
       if (mode === 'particles') initParticles();
       syncVisualModeState();
     }
@@ -3234,6 +3238,7 @@
           case 'particles': drawParticles(); break;
           case 'nebula': drawNebula(); break;
           case 'prism': drawPrism(); break;
+          case 'liquid': drawLiquidGlass(); break;
         }
         
         animationId = requestAnimationFrame(animate);
@@ -3409,6 +3414,84 @@
       ctx.beginPath();
       ctx.arc(cx, cy, base * (0.2 + energy * 0.18), 0, Math.PI * 2);
       ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawLiquidGlass() {
+      const w = canvas.width;
+      const h = canvas.height;
+      const base = Math.min(w, h);
+      const t = performance.now() * 0.001;
+      const step = vizPerf.low ? 10 : 6;
+      let bass = 0;
+      let mid = 0;
+      let treble = 0;
+      const bassEnd = Math.max(1, Math.floor(dataArray.length * 0.18));
+      const midEnd = Math.max(bassEnd + 1, Math.floor(dataArray.length * 0.55));
+
+      for (let i = 0; i < bassEnd; i++) bass += dataArray[i];
+      for (let i = bassEnd; i < midEnd; i++) mid += dataArray[i];
+      for (let i = midEnd; i < dataArray.length; i++) treble += dataArray[i];
+
+      bass = (bass / bassEnd) / 255;
+      mid = (mid / (midEnd - bassEnd)) / 255;
+      treble = (treble / (dataArray.length - midEnd)) / 255;
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+
+      const wash = ctx.createRadialGradient(w * 0.5, h * 0.5, base * 0.05, w * 0.5, h * 0.5, base * 0.75);
+      wash.addColorStop(0, `rgba(124, 245, 255, ${0.05 + mid * 0.12})`);
+      wash.addColorStop(0.52, `rgba(87, 93, 255, ${0.035 + bass * 0.08})`);
+      wash.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = wash;
+      ctx.fillRect(0, 0, w, h);
+
+      for (let i = 0; i < dataArray.length; i += step) {
+        const v = dataArray[i] / 255;
+        const lane = i / dataArray.length;
+        const drift = Math.sin(t * 0.72 + lane * 7.4) * w * 0.08;
+        const x = w * (0.12 + lane * 0.76) + drift;
+        const y = h * (0.5 + Math.sin(t * 0.44 + lane * 10.5) * 0.23);
+        const r = base * (0.035 + v * 0.085 + bass * 0.035);
+        const hue = 178 + lane * 95 + treble * 80;
+
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(Math.sin(t * 0.36 + lane * 8) * 0.55);
+        ctx.scale(1 + bass * 1.2, 0.62 + mid * 0.75);
+
+        const blob = ctx.createRadialGradient(-r * 0.32, -r * 0.38, 0, 0, 0, r);
+        blob.addColorStop(0, `hsla(${hue}, 98%, 82%, ${0.34 + v * 0.34})`);
+        blob.addColorStop(0.42, `hsla(${hue + 22}, 95%, 62%, ${0.16 + v * 0.22})`);
+        blob.addColorStop(1, `hsla(${hue + 60}, 95%, 48%, 0)`);
+
+        ctx.fillStyle = blob;
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = `rgba(225, 255, 255, ${0.08 + v * 0.22})`;
+        ctx.lineWidth = 1 + v * 2.2;
+        ctx.beginPath();
+        ctx.arc(-r * 0.12, -r * 0.08, r * 0.72, Math.PI * 0.08, Math.PI * 1.35);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      ctx.globalCompositeOperation = 'screen';
+      ctx.strokeStyle = `rgba(160, 245, 255, ${0.05 + treble * 0.14})`;
+      ctx.lineWidth = 1.2;
+      for (let y = h * 0.18; y < h * 0.86; y += base * 0.12) {
+        ctx.beginPath();
+        for (let x = -40; x <= w + 40; x += 28) {
+          const yy = y + Math.sin(x * 0.01 + t * 1.25 + y * 0.015) * base * (0.012 + mid * 0.025);
+          if (x === -40) ctx.moveTo(x, yy);
+          else ctx.lineTo(x, yy);
+        }
+        ctx.stroke();
+      }
+
       ctx.restore();
     }
 
