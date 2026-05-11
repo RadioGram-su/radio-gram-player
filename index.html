@@ -327,7 +327,7 @@
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      margin-bottom: 30px;
+      margin-bottom: 14px;
     }
 
     .top-widgets {
@@ -379,6 +379,7 @@
       width: 100%;
       display: flex;
       justify-content: center;
+      margin-top: 0;
       margin-bottom: 14px;
     }
     .hero-toolbar-inner {
@@ -1561,12 +1562,10 @@
       }
     }
     @media (min-width: 1280px) {
-      .app-container { max-width: 560px; }
       .main-title { font-size: 56px; }
       .action-btn { font-size: 15px; padding: 16px; }
     }
     @media (min-width: 1700px) {
-      .app-container { max-width: 680px; }
       .main-title { font-size: 66px; }
       .sub-title { font-size: 18px; }
       .listeners-badge { font-size: 16px; }
@@ -1582,14 +1581,14 @@
     }
     body.rg-app-mode .app-container {
       max-width: 460px !important;
-      padding: 14px 14px 104px !important;
+      padding: 14px 14px 190px !important;
     }
     body.rg-app-mode .hero-toolbar-inner {
       display: flex !important;
       justify-content: center !important;
       width: 100% !important;
     }
-    body.rg-app-mode .hero-stream-btn {
+    body.rg-app-mode .hero-rgb-inner-btn {
       width: 100% !important;
       max-width: 360px !important;
       min-height: 46px !important;
@@ -1618,13 +1617,18 @@
       width: 100% !important;
       max-width: 360px !important;
       margin: 12px auto 0 !important;
-      min-height: 48px !important;
+      min-height: 52px !important;
       border-radius: 18px !important;
       background: linear-gradient(135deg, #ff4868, #ff8f5a) !important;
       color: #fff !important;
       text-decoration: none !important;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
       font-weight: 800 !important;
+      font-size: 13px !important;
+      letter-spacing: 0.02em !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
       box-shadow: 0 14px 34px rgba(255,72,104,0.28) !important;
+      -webkit-font-smoothing: antialiased !important;
     }
     body.rg-app-mode .buttons-grid {
       grid-template-columns: 1fr !important;
@@ -1632,9 +1636,9 @@
     }
     body.rg-app-mode .bottom-controls {
       position: fixed !important;
-      left: 10px !important;
-      right: 10px !important;
-      bottom: 10px !important;
+      left: 14px !important;
+      right: 14px !important;
+      bottom: max(72px, calc(54px + env(safe-area-inset-bottom, 0px))) !important;
       width: auto !important;
       max-width: none !important;
       display: flex !important;
@@ -1668,6 +1672,662 @@
       z-index: 170 !important;
     }
 
+    /* === RADIO GRAM 2026 DASHBOARD SKIN === */
+    body {
+      background:
+        radial-gradient(circle at 12% 8%, rgba(138, 92, 255, 0.22), transparent 30%),
+        radial-gradient(circle at 84% 18%, rgba(0, 207, 255, 0.18), transparent 34%),
+        linear-gradient(135deg, #030712 0%, #071024 42%, #0d0823 100%);
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(circle at center, black, transparent 78%);
+    }
+    .rg-sidebar {
+      display: none;
+      position: fixed;
+      left: max(12px, env(safe-area-inset-left, 0px));
+      top: max(12px, env(safe-area-inset-top, 0px));
+      bottom: max(12px, env(safe-area-inset-bottom, 0px));
+      width: 164px;
+      z-index: 80;
+      padding: 18px 12px;
+      border-radius: 24px;
+      border: 1px solid rgba(114, 151, 255, 0.24);
+      background:
+        linear-gradient(180deg, rgba(9, 18, 42, 0.9), rgba(4, 8, 22, 0.86)),
+        radial-gradient(circle at 30% 0%, rgba(139, 84, 255, 0.18), transparent 42%);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(22px);
+    }
+    .rg-sidebar-brand {
+      display: grid;
+      place-items: center;
+      gap: 6px;
+      margin: 4px 0 22px;
+      text-align: center;
+      letter-spacing: 0.14em;
+      font-size: 10px;
+      color: rgba(232, 242, 255, 0.82);
+      text-transform: uppercase;
+    }
+    .rg-sidebar-logo {
+      display: grid;
+      place-items: center;
+      width: 74px;
+      height: 74px;
+      border-radius: 22px;
+      color: #fff;
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+      background:
+        linear-gradient(135deg, rgba(37, 205, 255, 0.94), rgba(182, 74, 255, 0.9)),
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.45), transparent 38%);
+      box-shadow: 0 12px 34px rgba(94, 78, 255, 0.36);
+    }
+    .rg-sidebar-nav {
+      display: grid;
+      gap: 8px;
+    }
+    .rg-side-link {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 11px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.045);
+      color: rgba(239, 247, 255, 0.88);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 650;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.16s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .rg-side-link:hover,
+    .rg-side-link:focus-visible {
+      transform: translateX(2px);
+      border-color: rgba(100, 210, 255, 0.45);
+      background: linear-gradient(135deg, rgba(0, 148, 255, 0.2), rgba(178, 74, 255, 0.18));
+      outline: none;
+    }
+    .rg-side-link.primary {
+      border-color: rgba(186, 93, 255, 0.48);
+      background: linear-gradient(135deg, rgba(91, 94, 255, 0.38), rgba(181, 72, 255, 0.28));
+      box-shadow: inset 0 0 24px rgba(125, 92, 255, 0.16);
+    }
+    .rg-sidebar-support {
+      margin-top: auto;
+      padding-top: 14px;
+      display: grid;
+      gap: 9px;
+    }
+    @keyframes rgRgbFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .rg-rgb-wrap {
+      flex: 1;
+      min-width: 0;
+      min-height: 46px;
+      padding: 1px;
+      border-radius: 16px;
+      background: linear-gradient(120deg, #ff3b30, #ffcc00, #34c759, #0a84ff, #bf5af2, #64d2ff, #ff3b30);
+      background-size: 320% 100%;
+      animation: rgRgbFlow 5.2s linear infinite;
+      display: flex;
+      align-items: center;
+    }
+    .rg-rgb-wrap.circle {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 auto;
+      min-height: 46px;
+      border-radius: 999px;
+      align-self: center;
+    }
+    .hero-rgb-row {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      align-items: center;
+    }
+    @media (max-width: 520px) {
+      .hero-rgb-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .rg-rgb-wrap.c-full-xs {
+        grid-column: 1 / -1;
+      }
+    }
+    .hero-rgb-inner-btn {
+      flex: 1;
+      width: 100%;
+      min-width: 0;
+      min-height: 46px;
+      border: none;
+      border-radius: 15px;
+      background: rgba(5, 8, 24, 0.94);
+      color: #f5fbff;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 10px;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease, filter 0.2s ease;
+    }
+    .hero-rgb-inner-btn:hover { filter: brightness(1.06); }
+    .hero-rgb-inner-btn:active { transform: scale(0.98); }
+    .hero-rgb-inner-icon {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 999px;
+      background: rgba(5, 8, 24, 0.94);
+      color: rgba(255, 255, 255, 0.92);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease, filter 0.2s ease;
+    }
+    .hero-rgb-inner-icon:hover { filter: brightness(1.06); }
+    .hero-rgb-inner-icon:active { transform: scale(0.96); }
+    .hero-rgb-inner-link {
+      flex: 1;
+      width: 100%;
+      min-width: 0;
+      min-height: 46px;
+      border-radius: 15px;
+      background: rgba(5, 8, 24, 0.94);
+      color: rgba(248, 252, 255, 0.94);
+      font-size: 12px;
+      font-weight: 650;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 8px 10px;
+      text-align: center;
+      line-height: 1.2;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s ease, filter 0.2s ease;
+    }
+    .hero-rgb-inner-link:hover { filter: brightness(1.06); }
+    .hero-rgb-inner-link:active { transform: scale(0.98); }
+    .rg-sidebar-now {
+      display: none;
+      margin: 8px 0 14px;
+      padding: 12px 10px;
+      border-radius: 18px;
+      border: 1px solid rgba(120, 168, 255, 0.2);
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .rg-sidebar-now-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .rg-sidebar-now-head span:first-child {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(220, 236, 255, 0.78);
+    }
+    .rg-sidebar-now .track-label-left {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+    .rg-sidebar-now .track-info-row {
+      gap: 8px;
+      cursor: pointer;
+    }
+    .rg-sidebar-now .track-art {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+    }
+    .rg-sidebar-now .track-text {
+      font-size: 12px;
+      line-height: 1.3;
+      white-space: normal;
+    }
+    .rg-sidebar-now .rg-stream-quality-badge {
+      margin-top: 10px;
+      font-size: 10px;
+    }
+    .rg-partners-mini {
+      margin: 10px 0 0;
+      width: 100%;
+      min-height: 40px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.045);
+      color: rgba(239, 247, 255, 0.88);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    }
+    .rg-partners-mini:hover {
+      border-color: rgba(100, 210, 255, 0.45);
+      background: rgba(0, 148, 255, 0.14);
+    }
+    .rg-partners-mini:active { transform: scale(0.99); }
+    .rg-donate-block {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: grid;
+      gap: 8px;
+    }
+    .rg-donate-block p {
+      margin: 0;
+      font-size: 10px;
+      line-height: 1.45;
+      color: rgba(255, 255, 255, 0.72);
+      font-weight: 500;
+    }
+    .rg-support-rgb {
+      width: 100%;
+      min-height: 54px;
+      border-radius: 16px;
+    }
+    .rg-support-rgb .rg-rgb-inner-link {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      line-height: 1.3;
+      letter-spacing: 0.02em;
+      color: #ffffff;
+      text-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.65),
+        0 0 18px rgba(120, 210, 255, 0.22);
+      background: linear-gradient(180deg, rgba(18, 24, 48, 0.98), rgba(8, 12, 28, 0.98));
+      padding: 12px 14px;
+      min-height: 52px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .rg-support-rgb .rg-rgb-inner-link:hover {
+      filter: brightness(1.08);
+      color: #ffffff;
+    }
+    .rg-mobile-now {
+      display: none;
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto 16px;
+      padding: 14px 14px;
+      border-radius: 22px;
+      border: 1px solid rgba(133, 168, 255, 0.18);
+      background: linear-gradient(180deg, rgba(10, 20, 46, 0.72), rgba(4, 8, 23, 0.62));
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.36);
+      backdrop-filter: blur(20px);
+    }
+    .rg-mobile-now .track-text {
+      white-space: normal;
+    }
+    .rg-right-panel {
+      display: none;
+      position: fixed;
+      right: max(12px, env(safe-area-inset-right, 0px));
+      top: max(12px, env(safe-area-inset-top, 0px));
+      bottom: max(12px, env(safe-area-inset-bottom, 0px));
+      width: min(320px, calc(100vw - 190px));
+      z-index: 78;
+      padding: 18px 14px;
+      border-radius: 24px;
+      border: 1px solid rgba(114, 151, 255, 0.24);
+      background:
+        linear-gradient(180deg, rgba(9, 18, 42, 0.9), rgba(4, 8, 22, 0.86)),
+        radial-gradient(circle at 70% 0%, rgba(0, 207, 255, 0.16), transparent 40%);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(22px);
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+    }
+    .rg-history-title {
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(210, 228, 255, 0.82);
+    }
+    .rg-history-stream {
+      font-size: 12px;
+      font-weight: 750;
+      color: rgba(165, 220, 255, 0.95);
+      margin-top: -4px;
+    }
+    .rg-history-list {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-right: 4px;
+      margin-top: 6px;
+    }
+    .rg-mobile-history {
+      display: none;
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto 18px;
+    }
+    .rg-mobile-history .rg-history-list {
+      max-height: 220px;
+      margin-top: 8px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.16);
+    }
+    .listen-time-badge,
+    .listen-time-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid rgba(111, 218, 255, 0.32);
+      background: rgba(6, 16, 38, 0.72);
+      color: #dff7ff;
+      box-shadow: inset 0 0 18px rgba(0, 198, 255, 0.08), 0 10px 24px rgba(0,0,0,0.28);
+      backdrop-filter: blur(12px);
+      white-space: nowrap;
+    }
+    .listen-time-badge {
+      min-height: 34px;
+      padding: 7px 13px;
+      margin: -10px auto 22px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .listen-time-chip {
+      min-height: 40px;
+      padding: 8px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .listen-time-badge.is-counting,
+    .listen-time-chip.is-counting {
+      border-color: rgba(75, 236, 166, 0.45);
+      color: #e5fff3;
+      background: linear-gradient(135deg, rgba(18, 120, 84, 0.5), rgba(8, 30, 58, 0.72));
+    }
+    body.visual-only .rg-sidebar,
+    body.relax-fullscreen .rg-sidebar,
+    body.visual-only .rg-right-panel,
+    body.relax-fullscreen .rg-right-panel {
+      display: none !important;
+    }
+    body.relax-fullscreen .rg-mobile-now,
+    body.relax-fullscreen .rg-mobile-history {
+      display: none !important;
+    }
+    @media (min-width: 980px) {
+      body:not(.rg-app-mode) .rg-sidebar-now {
+        display: block;
+      }
+    }
+    @media (max-width: 979px) {
+      .rg-mobile-now {
+        display: block;
+      }
+      body.rg-app-mode .rg-mobile-now {
+        display: block !important;
+      }
+    }
+    @media (min-width: 1220px) {
+      body:not(.rg-app-mode):not(.visual-only):not(.relax-fullscreen) .rg-right-panel {
+        display: flex;
+      }
+      body:not(.rg-app-mode):not(.visual-only):not(.relax-fullscreen) .rg-mobile-history {
+        display: none !important;
+      }
+    }
+    @media (max-width: 1219px) {
+      body:not(.rg-app-mode):not(.visual-only):not(.relax-fullscreen) .rg-mobile-history {
+        display: block;
+      }
+    }
+    .app-container,
+    .track-card,
+    .modal-content,
+    .bottom-controls {
+      border-color: rgba(133, 168, 255, 0.18);
+      background:
+        linear-gradient(180deg, rgba(10, 20, 46, 0.72), rgba(4, 8, 23, 0.62));
+      box-shadow: 0 22px 70px rgba(0,0,0,0.36);
+      backdrop-filter: blur(20px);
+    }
+    .app-container {
+      border: 1px solid rgba(133, 168, 255, 0.15);
+      border-radius: 28px;
+    }
+    .main-title {
+      text-shadow: 0 0 24px rgba(101, 211, 255, 0.34);
+      background: linear-gradient(90deg, #ffffff, #d8efff 42%, #d474ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .sub-title {
+      color: rgba(211, 225, 255, 0.78);
+    }
+    .listeners-badge {
+      background: rgba(18, 58, 105, 0.38);
+      border-color: rgba(82, 199, 255, 0.33);
+      color: #a9e7ff;
+    }
+    .track-card {
+      border-radius: 22px;
+    }
+    .buttons-grid .action-btn,
+    .hero-stream-btn,
+    .hero-track-day,
+    .hero-relax-fs-btn,
+    .track-donate-btn {
+      border-radius: 16px;
+    }
+    .play-wrapper::before {
+      content: '';
+      position: absolute;
+      width: min(86vw, 620px);
+      height: 135px;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.16), transparent 10%),
+        linear-gradient(90deg, transparent, rgba(30, 214, 255, 0.44), rgba(243, 67, 255, 0.5), transparent);
+      clip-path: polygon(0 50%, 9% 42%, 16% 56%, 25% 34%, 35% 62%, 45% 43%, 55% 57%, 65% 34%, 76% 64%, 86% 43%, 100% 50%, 100% 51%, 86% 58%, 76% 48%, 65% 66%, 55% 48%, 45% 61%, 35% 44%, 25% 68%, 16% 48%, 9% 60%, 0 51%);
+      opacity: 0.34;
+      filter: blur(0.2px) drop-shadow(0 0 18px rgba(82, 205, 255, 0.45));
+      pointer-events: none;
+    }
+    .play-btn-main {
+      background:
+        radial-gradient(circle at 32% 26%, rgba(255,255,255,0.26), transparent 40%),
+        radial-gradient(circle at center, rgba(26, 34, 70, 0.94), rgba(5, 9, 24, 0.98));
+      border-color: rgba(152, 182, 255, 0.26);
+    }
+    .bottom-controls {
+      border: 1px solid rgba(133, 168, 255, 0.14);
+    }
+    @media (min-width: 980px) {
+      body:not(.rg-app-mode):not(.visual-only):not(.relax-fullscreen) {
+        align-items: stretch;
+        justify-content: flex-start;
+        min-height: 100vh;
+        padding: 14px 14px 86px 190px;
+      }
+      body:not(.rg-app-mode) .rg-sidebar {
+        display: flex;
+        flex-direction: column;
+      }
+      body:not(.rg-app-mode) .app-container {
+        width: min(100%, 940px);
+        max-width: none;
+        min-height: calc(100vh - 110px);
+        margin: 0;
+        padding: 22px 22px 26px;
+        align-self: stretch;
+        justify-content: flex-start;
+      }
+      body:not(.rg-app-mode) .top-bar {
+        display: none;
+      }
+      body:not(.rg-app-mode) .hero-toolbar {
+        margin-top: 0;
+        margin-bottom: 18px;
+      }
+      body:not(.rg-app-mode) .hero-toolbar-inner {
+        width: 100%;
+      }
+      body:not(.rg-app-mode) .play-wrapper {
+        min-height: 180px;
+        margin: 14px 0 18px;
+      }
+      body:not(.rg-app-mode) .bottom-controls {
+        left: 190px;
+        right: 14px;
+        bottom: 12px;
+        width: auto;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 14px;
+        border-radius: 18px;
+      }
+      body:not(.rg-app-mode) .desktop-viz-controls {
+        flex-direction: row;
+        align-items: center;
+      }
+      body:not(.rg-app-mode) .settings-row {
+        flex-shrink: 0;
+      }
+    }
+    @media (min-width: 1220px) {
+      body:not(.rg-app-mode):not(.visual-only):not(.relax-fullscreen) {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 14px;
+        padding-right: calc(14px + min(320px, 28vw) + 14px);
+      }
+      body:not(.rg-app-mode) .app-container {
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+        max-width: none;
+      }
+      body:not(.rg-app-mode) .bottom-controls {
+        right: calc(14px + min(320px, 28vw) + 14px);
+      }
+    }
+    @media (min-width: 1600px) {
+      body:not(.rg-app-mode) .app-container {
+        width: min(100%, 1180px);
+      }
+      body:not(.rg-app-mode) .play-btn-main {
+        width: 170px;
+        height: 170px;
+      }
+      body:not(.rg-app-mode) .play-ring {
+        width: 196px;
+        height: 196px;
+      }
+    }
+    @media (min-width: 700px) and (max-width: 979px) {
+      body:not(.rg-app-mode):not(.visual-only):not(.relax-fullscreen) {
+        justify-content: flex-start;
+        padding: 18px 18px 112px;
+      }
+      body:not(.rg-app-mode) .app-container {
+        max-width: 680px;
+        margin: 0 auto;
+      }
+      body:not(.rg-app-mode) .bottom-controls {
+        left: 18px;
+        right: 18px;
+        width: auto;
+        max-width: none;
+        align-items: stretch;
+        border-radius: 20px;
+        padding: 10px;
+      }
+    }
+    @media (max-width: 699px) {
+      body:not(.rg-app-mode) .app-container {
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        background: transparent;
+        box-shadow: none;
+      }
+      .listen-time-badge {
+        margin-top: -14px;
+      }
+      .bottom-controls {
+        background: rgba(4, 8, 22, 0.78);
+      }
+    }
+    @media (min-width: 1800px) and (min-height: 900px) {
+      body:not(.rg-app-mode):not(.visual-only):not(.relax-fullscreen) {
+        padding: 28px calc(28px + min(320px, 28vw) + 28px) 110px 230px;
+      }
+      body:not(.rg-app-mode) .rg-sidebar {
+        width: 188px;
+        padding: 22px 15px;
+      }
+      body:not(.rg-app-mode) .bottom-controls {
+        left: 230px;
+        right: calc(28px + min(320px, 28vw) + 14px);
+        bottom: 24px;
+        transform: none;
+      }
+      body:not(.rg-app-mode) .app-container {
+        width: min(100%, 1260px);
+        min-height: calc(100vh - 150px);
+      }
+      .rg-side-link {
+        min-height: 52px;
+        font-size: 15px;
+      }
+    }
+
     /* Рекламный слот временно отключён */
   </style>
 </head>
@@ -1687,6 +2347,45 @@
   <button id="visual-exit-btn" onclick="exitVizFullscreen()" aria-label="Exit visual mode">Выйти</button>
   <button type="button" id="relax-fs-exit-btn" class="relax-fs-exit-btn" onclick="exitRelaxFullscreen()"><span data-i18n="relax_fullscreen_exit">Свернуть</span></button>
 
+  <aside class="rg-sidebar" aria-label="Radio Gram navigation">
+    <div class="rg-sidebar-brand">
+      <div class="rg-sidebar-logo" aria-hidden="true">RG</div>
+      <span>Radio Gram</span>
+    </div>
+    <nav class="rg-sidebar-nav">
+      <button type="button" class="rg-side-link primary" onclick="window.scrollTo({top:0,behavior:'smooth'})">⌂ Главная</button>
+      <button type="button" class="rg-side-link" onclick="openModal('streams-modal')">◉ Радио</button>
+      <button type="button" class="rg-side-link" onclick="openModal('viz-modes-modal')">▥ Визуал</button>
+      <button type="button" class="rg-side-link" onclick="togglePopup('channels-popup')">♬ Каналы</button>
+      <button type="button" class="rg-side-link" onclick="togglePopup('partners-popup')">◇ Партнёры</button>
+    </nav>
+    <div class="rg-sidebar-now" aria-label="Сейчас в эфире">
+      <div class="rg-sidebar-now-head">
+        <div class="track-label-left">
+          <span data-i18n="now_playing">Сейчас играет</span>
+          <span class="track-hint" data-i18n="open_channel">↗ Telegram</span>
+        </div>
+      </div>
+      <div class="track-info-row" role="link" tabindex="0" onclick="window.open('https://t.me/gramradiochill', '_blank', 'noopener,noreferrer')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.open('https://t.me/gramradiochill','_blank','noopener,noreferrer')}">
+        <img class="track-art rg-current-track-art" src="images/i.jpg" onerror="this.src='https://player.radiogram.su/apple-touch-icon.png'" alt="">
+        <div class="track-text rg-current-track-text" data-i18n="loading">Загрузка...</div>
+      </div>
+      <div class="stream-quality-badge rg-stream-quality-badge">LIVE · -- kbps</div>
+      <button type="button" class="rg-partners-mini" onclick="togglePopup('partners-popup')" data-i18n="partners_sidebar">Наши партнёры</button>
+      <div class="rg-donate-block" onclick="event.stopPropagation()">
+        <p class="track-donate-text" data-i18n="track_donate_line">
+          Поддержите развитие станции через Cloudtips — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по запросу.
+        </p>
+        <div class="rg-rgb-wrap rg-support-rgb">
+          <a class="rg-rgb-inner-link" href="https://pay.cloudtips.ru/p/b5dba7c2" target="_blank" rel="noopener noreferrer" data-i18n="track_donate_cta">Поддержи наше развитие</a>
+        </div>
+      </div>
+    </div>
+    <div class="rg-sidebar-support">
+      <a class="rg-side-link" href="https://easysong.ru/webapp?refid=3482" target="_blank" rel="noopener noreferrer">✦ Свой трек</a>
+    </div>
+  </aside>
+
   <!-- ОСНОВНОЙ КОНТЕНТ -->
   <div class="app-container" id="main-ui">
     
@@ -1700,19 +2399,27 @@
     </div>
 
     <div class="hero-toolbar">
-      <div class="hero-toolbar-inner">
-        <button type="button" class="hero-stream-btn" id="streams-open-btn-top" onclick="openModal('streams-modal')" aria-haspopup="dialog" aria-controls="streams-modal">Стиль музыки · CHILL</button>
-        <button type="button" class="hero-share-btn" id="hero-share-btn" onclick="openShareModal()" aria-label="Поделиться">
-          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
-        </button>
-        <a class="hero-track-day" id="track-day-link" href="https://easysong.ru/webapp?refid=3482" target="_blank" rel="noopener noreferrer" aria-label="EasySong — свой трек за 2 минуты">
-          <span class="hero-track-day-icon" aria-hidden="true">✦</span>
-          <span class="easy-track-cta-text" data-i18n="easy_track_cta">Свой трек за 2 минуты</span>
-        </a>
-        <button type="button" class="hero-relax-fs-btn" id="relax-fullscreen-btn" onclick="toggleRelaxFullscreen()" aria-expanded="false" aria-controls="main-ui">
-          <span aria-hidden="true">⛶</span>
-          <span data-i18n="relax_fullscreen">Полный экран</span>
-        </button>
+      <div class="hero-toolbar-inner hero-rgb-row">
+        <div class="rg-rgb-wrap c-full-xs">
+          <button type="button" class="hero-rgb-inner-btn" id="streams-open-btn-top" onclick="openModal('streams-modal')" aria-haspopup="dialog" aria-controls="streams-modal">Стиль музыки · CHILL</button>
+        </div>
+        <div class="rg-rgb-wrap circle">
+          <button type="button" class="hero-rgb-inner-icon" id="hero-share-btn" onclick="openShareModal()" aria-label="Поделиться">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+          </button>
+        </div>
+        <div class="rg-rgb-wrap c-full-xs">
+          <a class="hero-rgb-inner-link" id="track-day-link" href="https://easysong.ru/webapp?refid=3482" target="_blank" rel="noopener noreferrer" aria-label="EasySong — свой трек за 2 минуты">
+            <span class="hero-track-day-icon" aria-hidden="true">✦</span>
+            <span class="easy-track-cta-text" data-i18n="easy_track_cta">Свой трек за 2 минуты</span>
+          </a>
+        </div>
+        <div class="rg-rgb-wrap c-full-xs">
+          <button type="button" class="hero-rgb-inner-btn" id="relax-fullscreen-btn" onclick="toggleRelaxFullscreen()" aria-expanded="false" aria-controls="main-ui">
+            <span aria-hidden="true">⛶</span>
+            <span data-i18n="relax_fullscreen">Полный экран</span>
+          </button>
+        </div>
       </div>
     </div>
     <div class="stream-hint-pop" id="stream-hint-pop">Выбери музыку по вкусу</div>
@@ -1721,6 +2428,9 @@
     <div class="listeners-badge">
       <span id="radio-listeners">--</span>
       <span data-i18n="listeners" style="opacity: 0.7; font-weight: 400;">слушают</span>
+    </div>
+    <div class="listen-time-badge" id="listen-time-badge" title="Ваше сохранённое время прослушивания">
+      ⏱ <span id="listen-time-text">00:00</span>
     </div>
 
     <!-- КНОПКА PLAY / PAUSE -->
@@ -1772,38 +2482,33 @@
       <div class="sub-title" data-i18n="radio_stream">RADIO STREAM</div>
     </div>
 
-    <!-- ТРЕКИ -->
-    <div class="track-grid">
-      <div class="track-card clickable" role="button" tabindex="0" aria-label="Open Telegram channel" onclick="window.open('https://t.me/gramradiochill', '_blank', 'noopener,noreferrer')">
-        <div class="track-label">
-          <div class="track-label-left">
-            <span data-i18n="now_playing">Now Playing</span>
-            <span class="track-hint" data-i18n="open_channel">↗ Telegram</span>
-          </div>
-          <div class="stream-quality-badge" id="stream-quality-badge">LIVE · -- kbps</div>
+    <div class="rg-mobile-now" aria-label="Сейчас в эфире">
+      <div class="track-label">
+        <div class="track-label-left">
+          <span data-i18n="now_playing">Сейчас играет</span>
+          <span class="track-hint" data-i18n="open_channel">↗ Telegram</span>
         </div>
-        <div class="track-info-row">
-          <img class="track-art" id="current-art" src="images/i.jpg" onerror="this.src='https://player.radiogram.su/apple-touch-icon.png'" alt="Art">
-          <div class="track-text" id="current-track-text" data-i18n="loading">Loading...</div>
-        </div>
-        <div class="track-history" id="track-history-list"></div>
-        <div class="track-donate-strip" onclick="event.stopPropagation()">
-          <p class="track-donate-text" data-i18n="track_donate_line">
-            Поддержите развитие станции через Cloudtips — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по запросу.
-          </p>
-          <a class="track-donate-btn" href="https://pay.cloudtips.ru/p/b5dba7c2" target="_blank" rel="noopener noreferrer" data-i18n="track_donate_cta">Поддержать нас</a>
+        <div class="stream-quality-badge rg-stream-quality-badge">LIVE · -- kbps</div>
+      </div>
+      <div class="track-info-row" role="link" tabindex="0" onclick="window.open('https://t.me/gramradiochill', '_blank', 'noopener,noreferrer')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.open('https://t.me/gramradiochill','_blank','noopener,noreferrer')}">
+        <img class="track-art rg-current-track-art" src="images/i.jpg" onerror="this.src='https://player.radiogram.su/apple-touch-icon.png'" alt="">
+        <div class="track-text rg-current-track-text" data-i18n="loading">Загрузка...</div>
+      </div>
+      <button type="button" class="rg-partners-mini" style="margin-top:12px;" onclick="togglePopup('partners-popup')" data-i18n="partners_sidebar">Наши партнёры</button>
+      <div class="rg-donate-block" onclick="event.stopPropagation()">
+        <p class="track-donate-text" data-i18n="track_donate_line">
+          Поддержите развитие станции через Cloudtips — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по запросу.
+        </p>
+        <div class="rg-rgb-wrap rg-support-rgb">
+          <a class="rg-rgb-inner-link" href="https://pay.cloudtips.ru/p/b5dba7c2" target="_blank" rel="noopener noreferrer" data-i18n="track_donate_cta">Поддержи наше развитие</a>
         </div>
       </div>
     </div>
 
-    <!-- КНОПКИ ДЕЙСТВИЙ -->
-    <div class="buttons-grid">
-      <button class="action-btn" onclick="togglePopup('channels-popup')">
-        <span data-i18n="channels">Our Channels</span> 📢
-      </button>
-      <button class="action-btn btn-partners" onclick="togglePopup('partners-popup')">
-        <span data-i18n="partners">Partners</span> 🤝
-      </button>
+    <div class="rg-mobile-history" aria-label="История треков">
+    <div class="rg-history-title" data-i18n="history_recent">Недавно в эфире</div>
+    <div class="rg-history-stream" data-rg-history-stream-label="1"></div>
+    <div class="rg-history-list" data-rg-history-host="1"></div>
     </div>
 
     <!-- ПОПАПЫ -->
@@ -1877,6 +2582,12 @@
 
   </div>
 
+  <aside class="rg-right-panel" aria-label="История треков потока">
+    <div class="rg-history-title" data-i18n="history_recent">Недавно в эфире</div>
+    <div class="rg-history-stream" data-rg-history-stream-label="1"></div>
+    <div class="rg-history-list" data-rg-history-host="1"></div>
+  </aside>
+
   <!-- НИЖНИЕ КОНТРОЛЫ -->
   <div class="bottom-controls">
     <!-- Переключатель режима визуализатора (только десктоп) -->
@@ -1909,6 +2620,9 @@
     </div>
     
     <div class="settings-row">
+      <div class="listen-time-chip" id="listen-time-chip" title="Ваше время прослушивания">
+        ⏱ <span id="listen-time-text-compact">00:00</span>
+      </div>
       <button class="icon-btn" id="night-mode-btn" onclick="toggleNightMode()" title="Night Mode" aria-label="Toggle night mode">🌙</button>
       <button class="icon-btn lang-toggle" onclick="toggleLang()" aria-label="Switch language">EN</button>
       <button class="icon-btn" onclick="toggleSleepMenu()" title="Sleep Timer" aria-label="Sleep timer">
@@ -1973,12 +2687,52 @@
     const STREAM_HINT_SEEN_KEY = 'radiogram_stream_hint_seen_v1';
     const AUTOPLAY_CONSENT_KEY = 'radiogram_autoplay_consent_v1';
     const INSTALL_PROMPT_SEEN_KEY = 'radiogram_install_prompt_seen_v1';
-    const TRACK_HISTORY_KEY = 'radiogram_track_history_v1';
+    const TRACK_HISTORY_MAP_KEY = 'radiogram_track_history_map_v2';
+    const TRACK_HISTORY_LEGACY_KEY = 'radiogram_track_history_v1';
+    const LISTEN_TIME_STORAGE_KEY = 'radiogram_listen_time_seconds_v1';
     const trackHistory = [];
+    const trackHistoryByStream = { chill: [], pulse: [], nature: [] };
     let trackHistoryExpanded = false;
+    function migrateLegacyTrackHistory() {
+      try {
+        const legacy = JSON.parse(localStorage.getItem(TRACK_HISTORY_LEGACY_KEY) || 'null');
+        if (Array.isArray(legacy) && legacy.length) {
+          trackHistoryByStream.chill = legacy.slice(0, 20);
+          localStorage.removeItem(TRACK_HISTORY_LEGACY_KEY);
+          persistTrackHistoryMap();
+        }
+      } catch (_) {}
+    }
+    function loadTrackHistoryMapFromStorage() {
+      migrateLegacyTrackHistory();
+      try {
+        const raw = JSON.parse(localStorage.getItem(TRACK_HISTORY_MAP_KEY) || '{}');
+        if (raw && typeof raw === 'object') {
+          Object.keys(STREAMS).forEach((k) => {
+            if (Array.isArray(raw[k])) trackHistoryByStream[k] = raw[k].slice(0, 20);
+          });
+        }
+      } catch (_) {}
+    }
+    function persistTrackHistoryMap() {
+      try { localStorage.setItem(TRACK_HISTORY_MAP_KEY, JSON.stringify(trackHistoryByStream)); } catch (_) {}
+    }
+    function hydrateTrackHistoryArrayFromStreamKey(streamKey) {
+      trackHistory.length = 0;
+      const k = STREAMS[streamKey] ? streamKey : 'chill';
+      const arr = Array.isArray(trackHistoryByStream[k]) ? trackHistoryByStream[k] : [];
+      trackHistory.push(...arr.slice(0, 20));
+    }
+    function syncTrackHistoryMapFromArray() {
+      const k = STREAMS[currentStreamKey] ? currentStreamKey : 'chill';
+      trackHistoryByStream[k] = trackHistory.slice(0, 20);
+    }
     let streamBitrate = '--';
     let streamBufferState = 'LIVE';
     let streamHintTimer = null;
+    let listenTimeSeconds = 0;
+    let listenTimeInterval = null;
+    let lastListenTimeTick = 0;
     const vizPerf = { low: false, secFrames: 0, secStart: 0, lowHits: 0, highHits: 0 };
     const STREAMS = {
       chill: {
@@ -2170,7 +2924,7 @@
 
     function syncBackdropToStream() {
       if (isNatureStreamActive()) {
-        const el = document.getElementById('current-track-text');
+        const el = document.querySelector('.rg-current-track-text');
         const tx = (el && el.textContent) ? el.textContent : '';
         const scene = detectNatureScene(tx);
         applyNatureSceneBackground(scene);
@@ -2196,6 +2950,7 @@
         loading: "Загрузка...",
         channels: "Наши каналы",
         partners: "Партнёры",
+        partners_sidebar: "Наши партнёры",
         channels_title: "Наши каналы",
         partners_title: "Партнёры",
         close: "Закрыть",
@@ -2222,7 +2977,8 @@
         listeners: "слушают",
         night_mode: "Ночь",
         track_donate_line: "Поддержите станцию через Cloudtips — это помогает развитию эфира. В благодарность подарим трек на ваш вкус по запросу.",
-        track_donate_cta: "Поддержать нас"
+        track_donate_cta: "Поддержи наше развитие",
+        history_recent: "Недавно в эфире"
       },
       en: {
         live: "LIVE",
@@ -2233,6 +2989,7 @@
         loading: "Loading...",
         channels: "Our Channels",
         partners: "Partners",
+        partners_sidebar: "Our partners",
         channels_title: "Our Channels",
         partners_title: "Partners",
         close: "Close",
@@ -2259,7 +3016,8 @@
         listeners: "listening",
         night_mode: "Night",
         track_donate_line: "Support the station on Cloudtips — it keeps the broadcast growing. As a thank-you, we'll make you a track to your taste, on request.",
-        track_donate_cta: "Support us"
+        track_donate_cta: "Support our growth",
+        history_recent: "Recently on air"
       }
     };
 
@@ -2336,6 +3094,7 @@
       const hint = document.getElementById('stream-hint-pop');
       if (hint) hint.textContent = translations[currentLang]?.streams_hint || hint.textContent;
       splitEasyTrackCtaLetters();
+      renderHistoryStreamLabels();
       refreshPlayerTitleAndSession();
     }
 
@@ -2460,7 +3219,7 @@
 
     function refreshPlayerTitleAndSession() {
       ensureMediaSessionHandlers();
-      const txEl = document.getElementById('current-track-text');
+      const txEl = document.querySelector('.rg-current-track-text');
       let tx = txEl ? (txEl.textContent || '').trim() : '';
       const loadW = translations[currentLang]?.loading || 'Loading';
       if (!tx || tx === loadW || tx.startsWith('Выбран поток') || tx.startsWith('Selected stream')) {
@@ -2468,7 +3227,7 @@
       }
       if ('mediaSession' in navigator) {
         try {
-          const art = document.getElementById('current-art');
+          const art = document.querySelector('.rg-current-track-art');
           const artwork = art && art.src ? [{ src: art.src, sizes: '512x512', type: 'image/jpeg' }] : [];
           navigator.mediaSession.metadata = new MediaMetadata({
             title: tx,
@@ -2520,24 +3279,24 @@
     }
 
     function updateQualityBadge() {
-      const badge = document.getElementById('stream-quality-badge');
-      if (!badge) return;
-      badge.textContent = `${streamBufferState} · ${streamBitrate} kbps`;
-      badge.classList.remove('state-live', 'state-buffer', 'state-ready');
-      const state = `${streamBufferState || ''}`.toLowerCase();
-      if (state === 'live') badge.classList.add('state-live');
-      else if (state === 'buffer') badge.classList.add('state-buffer');
-      else badge.classList.add('state-ready');
+      document.querySelectorAll('.rg-stream-quality-badge').forEach((badge) => {
+        badge.textContent = `${streamBufferState} · ${streamBitrate} kbps`;
+        badge.classList.remove('state-live', 'state-buffer', 'state-ready');
+        const state = `${streamBufferState || ''}`.toLowerCase();
+        if (state === 'live') badge.classList.add('state-live');
+        else if (state === 'buffer') badge.classList.add('state-buffer');
+        else badge.classList.add('state-ready');
+      });
     }
 
     function setTrackLoadingState(loading) {
-      const art = document.getElementById('current-art');
-      const text = document.getElementById('current-track-text');
-      if (art) art.classList.toggle('loading', loading);
-      if (text) text.classList.toggle('loading', loading);
-      if (loading && text) {
-        text.textContent = currentLang === 'ru' ? 'Обновляем поток...' : 'Switching stream...';
-      }
+      document.querySelectorAll('.rg-current-track-art').forEach((art) => art.classList.toggle('loading', loading));
+      document.querySelectorAll('.rg-current-track-text').forEach((text) => {
+        text.classList.toggle('loading', loading);
+        if (loading) {
+          text.textContent = currentLang === 'ru' ? 'Обновляем поток...' : 'Switching stream...';
+        }
+      });
       streamBufferState = loading ? (currentLang === 'ru' ? 'BUFFER' : 'BUFFER') : 'LIVE';
       updateQualityBadge();
     }
@@ -2642,16 +3401,20 @@
             masterGain.gain.linearRampToValueAtTime(userVolume, now + 0.58);
           }
         } else {
-          const currentTextEl = document.getElementById('current-track-text');
-          if (currentTextEl) currentTextEl.textContent = currentLang === 'ru'
+          const streamMsg = currentLang === 'ru'
             ? `Выбран поток: ${getStreamLabel(next)}. Нажмите Play.`
             : `Selected stream: ${getStreamLabel(next)}. Press Play.`;
+          document.querySelectorAll('.rg-current-track-text').forEach((el) => {
+            el.textContent = streamMsg;
+          });
         }
         setTrackLoadingState(false);
         setBufferState(wasPlaying ? 'LIVE' : 'READY');
         showStatusMessage(currentLang === 'ru'
           ? `Поток переключен: ${getStreamLabel(next)}`
           : `Stream switched: ${getStreamLabel(next)}`);
+        hydrateTrackHistoryArrayFromStreamKey(currentStreamKey);
+        renderTrackHistory();
         await updateTrackInfo();
         updateRadioListeners();
         syncBackdropToStream();
@@ -2984,20 +3747,38 @@
       trackToastTimeout = setTimeout(() => toast.classList.remove('show'), 3200);
     }
 
-    function renderTrackHistory() {
-      const container = document.getElementById('track-history-list');
-      if (!container) return;
-      const isMobile = window.innerWidth <= 480;
-      const maxItems = isMobile ? (trackHistoryExpanded ? 5 : 3) : 5;
-      const visible = trackHistory.slice(0, maxItems);
-      const moreNeeded = isMobile && !trackHistoryExpanded && trackHistory.length > maxItems;
-      const lessNeeded = isMobile && trackHistoryExpanded && trackHistory.length > maxItems;
+    function renderHistoryStreamLabels() {
+      const label = getStreamLabel(getActiveStream());
+      const text = currentLang === 'ru' ? `Поток: ${label}` : `Stream: ${label}`;
+      document.querySelectorAll('[data-rg-history-stream-label]').forEach((el) => {
+        el.textContent = text;
+      });
+    }
 
-      container.innerHTML = [
-        visible.map((name, idx) => `<div class="track-history-item">${idx + 1}. ${name}</div>`).join(''),
-        moreNeeded ? `<button class="track-history-more-btn" onclick="toggleTrackHistoryExpanded()">Ещё</button>` : '',
-        lessNeeded ? `<button class="track-history-more-btn" onclick="toggleTrackHistoryExpanded()">Свернуть</button>` : ''
+    function renderTrackHistory() {
+      const isNarrow = window.innerWidth < 1220;
+      const maxItems = isNarrow ? (trackHistoryExpanded ? 10 : 5) : 18;
+      const visible = trackHistory.slice(0, maxItems);
+      const moreNeeded = isNarrow && !trackHistoryExpanded && trackHistory.length > maxItems;
+      const lessNeeded = isNarrow && trackHistoryExpanded && trackHistory.length > maxItems;
+      const emptyText = currentLang === 'ru'
+        ? 'Пока пусто — включите эфир, список обновится автоматически.'
+        : 'Nothing yet — start listening and tracks will appear here.';
+
+      const itemsHtml = visible.length
+        ? visible.map((name, idx) => `<div class="track-history-item">${idx + 1}. ${name}</div>`).join('')
+        : `<div class="track-history-item" style="opacity:0.55">${emptyText}</div>`;
+
+      const html = [
+        itemsHtml,
+        moreNeeded ? `<button type="button" class="track-history-more-btn" onclick="toggleTrackHistoryExpanded()">Ещё</button>` : '',
+        lessNeeded ? `<button type="button" class="track-history-more-btn" onclick="toggleTrackHistoryExpanded()">Свернуть</button>` : ''
       ].filter(Boolean).join('');
+
+      document.querySelectorAll('[data-rg-history-host]').forEach((host) => {
+        host.innerHTML = html;
+      });
+      renderHistoryStreamLabels();
     }
 
     function toggleTrackHistoryExpanded() {
@@ -3009,8 +3790,9 @@
       if (!trackName) return;
       if (trackHistory[0] === trackName) return;
       trackHistory.unshift(trackName);
-      if (trackHistory.length > 5) trackHistory.length = 5;
-      localStorage.setItem(TRACK_HISTORY_KEY, JSON.stringify(trackHistory));
+      if (trackHistory.length > 20) trackHistory.length = 20;
+      syncTrackHistoryMapFromArray();
+      persistTrackHistoryMap();
       renderTrackHistory();
     }
 
@@ -3322,7 +4104,7 @@
       bgState.mid = 0.08;
       bgState.treble = 0.08;
       if (isNatureStreamActive()) {
-        const el = document.getElementById('current-track-text');
+        const el = document.querySelector('.rg-current-track-text');
         applyNatureSceneBackground(detectNatureScene(el && el.textContent ? el.textContent : ''));
       } else {
         updateAtmosphereByTime();
@@ -3614,6 +4396,7 @@
       if (isFading) return;
 
       if (isPlaying) {
+        stopListenTimeCounter();
         if (audioContextInitialized && masterGain) {
           isFading = true;
           const now = audioContext.currentTime;
@@ -3665,6 +4448,7 @@
           }
           scheduleInstallPromptCheck(true);
           isPlaying = true;
+          startListenTimeCounter();
           syncVisualModeState();
           refreshPlayerTitleAndSession();
         } catch (e) {
@@ -3718,10 +4502,13 @@
           const artist = song.artist || '';
           const fullName = artist ? `${artist} — ${title}` : title;
           
-          const currentTextEl = document.getElementById('current-track-text');
-          if (currentTextEl.textContent !== fullName) {
-            currentTextEl.textContent = fullName;
-            if (song.art) document.getElementById('current-art').src = song.art;
+          const primary = document.querySelector('.rg-current-track-text');
+          const changed = primary ? primary.textContent !== fullName : true;
+          if (changed) {
+            document.querySelectorAll('.rg-current-track-text').forEach((el) => { el.textContent = fullName; });
+            if (song.art) {
+              document.querySelectorAll('.rg-current-track-art').forEach((img) => { img.src = song.art; });
+            }
             setTrackLoadingState(false);
             pushTrackHistory(fullName);
             showTrackToast((currentLang === 'ru' ? 'Сейчас играет: ' : 'Now playing: ') + fullName);
@@ -3822,6 +4609,7 @@
         document.getElementById('play-ring').classList.add('active');
         document.getElementById('live-badge').style.display = 'inline-flex';
         isPlaying = true;
+        startListenTimeCounter();
         startReactiveBackground();
         scheduleInstallPromptCheck(true);
         syncVisualModeState();
@@ -3830,6 +4618,73 @@
       } catch (e) {
         audio.muted = false;
       }
+    }
+
+    function formatListenTime(totalSeconds) {
+      const seconds = Math.max(0, Math.floor(totalSeconds || 0));
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+      if (h > 0) {
+        return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      }
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function renderListenTime() {
+      const value = formatListenTime(listenTimeSeconds);
+      const els = [
+        document.getElementById('listen-time-text'),
+        document.getElementById('listen-time-text-compact')
+      ];
+      els.forEach((el) => {
+        if (el) el.textContent = value;
+      });
+      document.querySelectorAll('.listen-time-badge, .listen-time-chip').forEach((el) => {
+        el.classList.toggle('is-counting', isPlaying && !audio.paused);
+      });
+    }
+
+    function saveListenTime() {
+      try {
+        localStorage.setItem(LISTEN_TIME_STORAGE_KEY, String(Math.floor(listenTimeSeconds)));
+      } catch (_) {}
+    }
+
+    function loadListenTime() {
+      try {
+        const stored = Number(localStorage.getItem(LISTEN_TIME_STORAGE_KEY) || '0');
+        listenTimeSeconds = Number.isFinite(stored) && stored > 0 ? Math.floor(stored) : 0;
+      } catch (_) {
+        listenTimeSeconds = 0;
+      }
+      renderListenTime();
+    }
+
+    function startListenTimeCounter() {
+      lastListenTimeTick = Date.now();
+      if (listenTimeInterval) return;
+      listenTimeInterval = setInterval(() => {
+        const now = Date.now();
+        const delta = Math.max(0, Math.min(5, Math.floor((now - lastListenTimeTick) / 1000)));
+        lastListenTimeTick = now;
+        if (isPlaying && !audio.paused && !audio.ended) {
+          listenTimeSeconds += delta || 1;
+          renderListenTime();
+          if (listenTimeSeconds % 10 === 0) saveListenTime();
+        } else {
+          renderListenTime();
+        }
+      }, 1000);
+    }
+
+    function stopListenTimeCounter() {
+      if (listenTimeInterval) {
+        clearInterval(listenTimeInterval);
+        listenTimeInterval = null;
+      }
+      saveListenTime();
+      renderListenTime();
     }
 
     // === ТАЙМЕР СНА ===
@@ -3887,12 +4742,17 @@
     audio.addEventListener('waiting', () => setBufferState('BUFFER'));
     audio.addEventListener('stalled', () => setBufferState('BUFFER'));
     audio.addEventListener('playing', () => setBufferState('LIVE'));
+    audio.addEventListener('playing', () => {
+      if (isPlaying) startListenTimeCounter();
+    });
+    audio.addEventListener('pause', stopListenTimeCounter);
+    audio.addEventListener('ended', stopListenTimeCounter);
     audio.addEventListener('canplay', () => {
       if (isPlaying) setBufferState('LIVE');
       else setBufferState('READY');
     });
 
-    document.querySelectorAll('.track-card.clickable').forEach((el) => {
+    document.querySelectorAll('.track-info-row[role="link"]').forEach((el) => {
       el.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -3922,6 +4782,7 @@
       /* Не сбрасывать баннер на каждом resize: на мобиле innerHeight дергается (адресная строка, safe-area) — было мигание */
       if (rsyIsDesktopLayout()) rsyMobileAdVisible = false;
       enforceMobileVisualPolicy();
+      renderTrackHistory();
     }, { passive: true });
     window.addEventListener('orientationchange', () => {
       rsyLastScrollY = null;
@@ -3945,7 +4806,13 @@
       localStorage.setItem(INSTALL_PROMPT_SEEN_KEY, '1');
       deferredInstallPrompt = null;
     });
+    window.addEventListener('beforeunload', saveListenTime);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') saveListenTime();
+      else renderListenTime();
+    });
 
+    loadListenTime();
     loadVolumeFromStorage();
     loadStreamFromStorage();
     applyStreamFromUrlParams();
@@ -3955,8 +4822,8 @@
       supportBtn.className = 'rg-app-support-btn';
       supportBtn.href = 'https://pay.cloudtips.ru/p/b5dba7c2';
       supportBtn.rel = 'noopener noreferrer';
-      supportBtn.textContent = 'Поддержать проект';
-      const anchor = document.querySelector('.track-card') || document.querySelector('.buttons-grid') || document.getElementById('main-ui');
+      supportBtn.textContent = 'Поддержи наше развитие';
+      const anchor = document.querySelector('.rg-mobile-now') || document.getElementById('main-ui');
       if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(supportBtn, anchor.nextSibling);
     }
     enforceMobileVisualPolicy();
@@ -3973,10 +4840,8 @@
       });
       applyOutputVolume();
     }
-    try {
-      const persistedTracks = JSON.parse(localStorage.getItem(TRACK_HISTORY_KEY) || '[]');
-      if (Array.isArray(persistedTracks)) trackHistory.push(...persistedTracks.slice(0, 5));
-    } catch (_) {}
+    loadTrackHistoryMapFromStorage();
+    hydrateTrackHistoryArrayFromStreamKey(currentStreamKey);
     renderTrackHistory();
     syncBackdropToStream();
     updateRadioListeners();
