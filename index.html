@@ -23,6 +23,7 @@
   
   <!-- Yandex Verification -->
   <meta name="yandex-verification" content="4c925eb59e9dc5dc" />
+  <meta name="mitgo-verification" content="271c15e9-a5c8-44d3-9f87-0ff39f8473ac" />
   
   <!-- Yandex.Metrika counter -->
   <script type="text/javascript">
@@ -1563,10 +1564,112 @@
       .bottom-controls { transform: scale(1.15); transform-origin: bottom right; }
     }
 
+    /* === МОБИЛЬНЫЙ APP-РЕЖИМ: проще, чище, без наложений === */
+    body.rg-app-mode .hero-track-day,
+    body.rg-app-mode .hero-relax-fs-btn,
+    body.rg-app-mode #hero-share-btn {
+      display: none !important;
+    }
+    body.rg-app-mode .app-container {
+      max-width: 460px !important;
+      padding: 14px 14px 104px !important;
+    }
+    body.rg-app-mode .hero-toolbar-inner {
+      display: flex !important;
+      justify-content: center !important;
+      width: 100% !important;
+    }
+    body.rg-app-mode .hero-stream-btn {
+      width: 100% !important;
+      max-width: 360px !important;
+      min-height: 46px !important;
+    }
+    body.rg-app-mode .main-title {
+      font-size: 38px !important;
+    }
+    body.rg-app-mode .play-wrapper {
+      margin: 14px 0 !important;
+    }
+    body.rg-app-mode .play-btn-main {
+      width: 116px !important;
+      height: 116px !important;
+    }
+    body.rg-app-mode .play-ring {
+      width: 136px !important;
+      height: 136px !important;
+    }
+    body.rg-app-mode .track-donate-strip {
+      display: none !important;
+    }
+    body.rg-app-mode .rg-app-support-btn {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 100% !important;
+      max-width: 360px !important;
+      margin: 12px auto 0 !important;
+      min-height: 48px !important;
+      border-radius: 18px !important;
+      background: linear-gradient(135deg, #ff4868, #ff8f5a) !important;
+      color: #fff !important;
+      text-decoration: none !important;
+      font-weight: 800 !important;
+      box-shadow: 0 14px 34px rgba(255,72,104,0.28) !important;
+    }
+    body.rg-app-mode .buttons-grid {
+      grid-template-columns: 1fr !important;
+      gap: 10px !important;
+    }
+    body.rg-app-mode .bottom-controls {
+      position: fixed !important;
+      left: 10px !important;
+      right: 10px !important;
+      bottom: 10px !important;
+      width: auto !important;
+      max-width: none !important;
+      display: flex !important;
+      justify-content: center !important;
+      gap: 10px !important;
+      padding: 10px !important;
+      border-radius: 22px !important;
+      background: rgba(5, 8, 20, 0.74) !important;
+      border: 1px solid rgba(255,255,255,0.12) !important;
+      backdrop-filter: blur(16px) !important;
+      z-index: 150 !important;
+    }
+    body.rg-app-mode .bottom-controls .desktop-viz-controls,
+    body.rg-app-mode .bottom-controls .desktop-volume {
+      display: none !important;
+    }
+    body.rg-app-mode .settings-row {
+      display: flex !important;
+      gap: 10px !important;
+      justify-content: center !important;
+    }
+    body.rg-app-mode .icon-btn {
+      min-width: 48px !important;
+      min-height: 48px !important;
+      border-radius: 16px !important;
+    }
+    body.rg-app-mode #sleep-timer-widget {
+      position: fixed !important;
+      top: 12px !important;
+      right: 12px !important;
+      z-index: 170 !important;
+    }
+
     /* Рекламный слот временно отключён */
   </style>
 </head>
 <body>
+  <script>
+    if (new URLSearchParams(window.location.search).get('app') === '1') {
+      document.body.classList.add('rg-app-mode');
+    }
+    if (new URLSearchParams(window.location.search).get('shot') === 'support') {
+      setTimeout(() => window.scrollTo(0, 360), 900);
+    }
+  </script>
 
   <!-- CANVAS ДЛЯ ВИЗУАЛИЗАТОРА -->
   <div id="reactive-bg"></div>
@@ -3721,12 +3824,12 @@
 
     // === ТАЙМЕР СНА ===
     let sleepInterval;
+    let sleepSeconds = 0;
     function toggleSleepMenu() {
-      let current = parseInt(document.getElementById('timer-text').textContent) || 0;
-      let next = 0;
-      if (current === 0 || current === 60) next = 15;
-      else if (current === 15) next = 30;
-      else if (current === 30) next = 60;
+      let next = 15;
+      if (sleepSeconds > 0 && sleepSeconds <= 15 * 60) next = 30;
+      else if (sleepSeconds > 15 * 60 && sleepSeconds <= 30 * 60) next = 60;
+      else if (sleepSeconds > 30 * 60) next = 0;
       setSleepTimer(next);
     }
 
@@ -3736,25 +3839,30 @@
       
       if (minutes === 0) {
         clearInterval(sleepInterval);
+        sleepSeconds = 0;
         widget.style.display = 'none';
         return;
       }
 
       widget.style.display = 'flex';
-      textEl.textContent = `${minutes}m`;
-      
-      let sec = minutes * 60;
+      sleepSeconds = minutes * 60;
       clearInterval(sleepInterval);
+
+      const drawSleepTimer = () => {
+        const m = Math.floor(sleepSeconds / 60);
+        const s = sleepSeconds % 60;
+        textEl.textContent = `${m}:${s < 10 ? '0'+s : s}`;
+      };
+      drawSleepTimer();
       
       sleepInterval = setInterval(() => {
-        sec--;
-        const m = Math.floor(sec / 60);
-        const s = sec % 60;
-        textEl.textContent = `${m}:${s < 10 ? '0'+s : s}`;
+        sleepSeconds--;
+        drawSleepTimer();
         
-        if (sec <= 0) {
+        if (sleepSeconds <= 0) {
           clearInterval(sleepInterval);
-          togglePlay();
+          sleepSeconds = 0;
+          if (isPlaying) togglePlay();
           widget.style.display = 'none';
         }
       }, 1000);
@@ -3831,6 +3939,16 @@
     loadVolumeFromStorage();
     loadStreamFromStorage();
     applyStreamFromUrlParams();
+    if (document.body.classList.contains('rg-app-mode') && !document.getElementById('rg-app-support-btn')) {
+      const supportBtn = document.createElement('a');
+      supportBtn.id = 'rg-app-support-btn';
+      supportBtn.className = 'rg-app-support-btn';
+      supportBtn.href = 'https://pay.cloudtips.ru/p/b5dba7c2';
+      supportBtn.rel = 'noopener noreferrer';
+      supportBtn.textContent = 'Поддержать проект';
+      const anchor = document.querySelector('.track-card') || document.querySelector('.buttons-grid') || document.getElementById('main-ui');
+      if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(supportBtn, anchor.nextSibling);
+    }
     enforceMobileVisualPolicy();
     renderStreamButtons();
     syncStreamButtons();
