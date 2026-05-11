@@ -1958,27 +1958,65 @@
     }
     .rg-support-rgb {
       width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: stretch;
       min-height: 54px;
+      padding: 2px;
       border-radius: 16px;
     }
-    .rg-support-rgb .rg-rgb-inner-link {
+    a.rg-donate-cta,
+    a.rg-donate-cta:visited,
+    a.rg-donate-cta:hover,
+    a.rg-donate-cta:active {
+      text-decoration: none !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .rg-donate-cta {
+      flex: 1 1 auto;
+      align-self: stretch;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      margin: 0;
+      border: 0;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 14px 16px;
+      min-height: 50px;
+      cursor: pointer;
       font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       font-weight: 800;
-      font-size: 13px;
-      line-height: 1.3;
-      letter-spacing: 0.02em;
-      color: #ffffff;
-      text-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.65),
-        0 0 18px rgba(120, 210, 255, 0.22);
-      background: linear-gradient(180deg, rgba(18, 24, 48, 0.98), rgba(8, 12, 28, 0.98));
-      padding: 12px 14px;
-      min-height: 52px;
+      font-size: clamp(12.5px, 2.8vw, 14px);
+      line-height: 1.25;
+      letter-spacing: 0.03em;
+      color: #f8fbff !important;
+      white-space: normal;
+      background: radial-gradient(120% 180% at 30% 0%, rgba(66, 120, 255, 0.22), transparent 55%),
+        linear-gradient(180deg, #161c34 0%, #0a0e1a 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+        0 10px 26px rgba(0, 0, 0, 0.35);
       -webkit-font-smoothing: antialiased;
+      transition: transform 0.15s ease, filter 0.2s ease, box-shadow 0.2s ease;
     }
-    .rg-support-rgb .rg-rgb-inner-link:hover {
-      filter: brightness(1.08);
-      color: #ffffff;
+    .rg-donate-cta:hover {
+      filter: brightness(1.07);
+      color: #ffffff !important;
+    }
+    .rg-donate-cta:active {
+      transform: scale(0.985);
+    }
+    .rg-donate-cta:focus-visible {
+      outline: 2px solid rgba(120, 210, 255, 0.65);
+      outline-offset: 2px;
     }
     .rg-mobile-now {
       display: none;
@@ -2377,7 +2415,7 @@
           Поддержите развитие станции через Cloudtips — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по запросу.
         </p>
         <div class="rg-rgb-wrap rg-support-rgb">
-          <a class="rg-rgb-inner-link" href="https://pay.cloudtips.ru/p/b5dba7c2" target="_blank" rel="noopener noreferrer" data-i18n="track_donate_cta">Поддержи наше развитие</a>
+          <a class="rg-donate-cta" href="https://pay.cloudtips.ru/p/b5dba7c2" target="_blank" rel="noopener noreferrer" data-i18n="track_donate_cta">Поддержи наше развитие</a>
         </div>
       </div>
     </div>
@@ -2500,7 +2538,7 @@
           Поддержите развитие станции через Cloudtips — нам важен каждый вклад. В благодарность подарим трек на ваш вкус по запросу.
         </p>
         <div class="rg-rgb-wrap rg-support-rgb">
-          <a class="rg-rgb-inner-link" href="https://pay.cloudtips.ru/p/b5dba7c2" target="_blank" rel="noopener noreferrer" data-i18n="track_donate_cta">Поддержи наше развитие</a>
+          <a class="rg-donate-cta" href="https://pay.cloudtips.ru/p/b5dba7c2" target="_blank" rel="noopener noreferrer" data-i18n="track_donate_cta">Поддержи наше развитие</a>
         </div>
       </div>
     </div>
