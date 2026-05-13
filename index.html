@@ -137,9 +137,16 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: linear-gradient(-45deg, #1a0033, #330066, #003366, #006666, #003366, #330066, #1a0033);
-      background-size: 600% 600%;
-      animation: vibrantGradient 20s ease infinite;
+      background-color: #030712;
+      background-image:
+        radial-gradient(118% 88% at 12% 16%, rgba(140, 100, 255, 0.42), transparent 58%),
+        radial-gradient(95% 80% at 88% 10%, rgba(0, 194, 255, 0.34), transparent 55%),
+        radial-gradient(90% 92% at 74% 90%, rgba(255, 95, 180, 0.26), transparent 60%),
+        radial-gradient(78% 70% at 18% 86%, rgba(70, 255, 215, 0.18), transparent 58%),
+        linear-gradient(145deg, #040815 0%, #0b1228 52%, #050a18 100%);
+      background-size: 155% 155%;
+      background-position: 14% 32%, 86% 18%, 76% 86%, 20% 80%, center;
+      animation: rgAppleBackdropDrift 32s ease-in-out infinite alternate;
       color: var(--text-primary);
       min-height: 100vh;
       display: flex;
@@ -167,12 +174,15 @@
       background-repeat: no-repeat;
     }
 
-    @keyframes vibrantGradient {
-      0% { background-position: 0% 50%; }
-      25% { background-position: 50% 100%; }
-      50% { background-position: 100% 50%; }
-      75% { background-position: 50% 0%; }
-      100% { background-position: 0% 50%; }
+    @keyframes rgAppleBackdropDrift {
+      0% {
+        background-position: 8% 28%, 92% 20%, 80% 90%, 12% 78%, center;
+        filter: saturate(108%) hue-rotate(0deg);
+      }
+      100% {
+        background-position: 24% 44%, 70% 36%, 40% 66%, 36% 58%, center;
+        filter: saturate(124%) hue-rotate(22deg);
+      }
     }
 
     /* === CANVAS ВИЗУАЛИЗАТОРА === */
@@ -245,39 +255,48 @@
       opacity: 1;
       pointer-events: auto;
       transform: translateY(0);
+      padding: 7px 12px !important;
+      font-size: 11px !important;
+    }
+    body.relax-fullscreen {
+      overflow: hidden;
     }
 
-    body.relax-fullscreen {
-      overflow: auto;
+    body.relax-fullscreen::before {
+      opacity: 0 !important;
+      pointer-events: none;
     }
+
+    body.relax-fullscreen #reactive-bg {
+      opacity: 0 !important;
+      visibility: hidden;
+    }
+
+    body.relax-fullscreen .rg-sidebar,
+    body.relax-fullscreen .rg-right-panel,
+    body.relax-fullscreen #main-ui,
+    body.relax-fullscreen .bottom-controls,
+    body.relax-fullscreen #visual-exit-btn,
+    body.relax-fullscreen #player-status,
+    body.relax-fullscreen #track-toast,
+    body.relax-fullscreen #yandex-rsy-slot {
+      display: none !important;
+    }
+
     body.relax-fullscreen .top-bar,
     body.relax-fullscreen .hero-toolbar,
     body.relax-fullscreen .listeners-badge,
     body.relax-fullscreen .buttons-grid,
-    body.relax-fullscreen .bottom-controls,
+    body.relax-fullscreen .listen-time-badge,
     body.relax-fullscreen .stream-hint-pop {
       display: none !important;
     }
-    body.relax-fullscreen .track-history,
-    body.relax-fullscreen .track-donate-strip {
-      display: none !important;
-    }
-    body.relax-fullscreen:not(.visual-only) #visualizer-canvas {
-      opacity: 0 !important;
+
+    body.relax-fullscreen #visualizer-canvas {
+      opacity: 1 !important;
       pointer-events: none !important;
-    }
-    body.relax-fullscreen .app-container {
-      max-width: min(560px, 96vw);
-      padding: 24px 16px 32px;
-    }
-    body.relax-fullscreen .play-wrapper {
-      margin-bottom: 20px;
-    }
-    body.relax-fullscreen .title-section {
-      margin-bottom: 20px;
-    }
-    body.relax-fullscreen .track-grid {
-      margin-bottom: 0;
+      z-index: 40 !important;
+      transition: opacity 0.35s ease;
     }
 
     .hero-relax-fs-btn {
@@ -372,6 +391,38 @@
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    /* Таймер сна: активный счётчик — всегда плавающий (иначе на широком layout .top-bar скрыт) */
+    #sleep-timer-widget.sleep-on {
+      position: fixed;
+      top: max(14px, env(safe-area-inset-top, 0px));
+      right: max(14px, env(safe-area-inset-right, 0px));
+      z-index: 175;
+      display: inline-flex !important;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 10px 34px rgba(0, 0, 0, 0.35);
+      border-color: rgba(120, 210, 255, 0.35);
+      background: rgba(8, 16, 40, 0.78);
+      font-weight: 650;
+      color: rgba(230, 248, 255, 0.94);
+      cursor: pointer;
+    }
+
+    .sleep-modal-status {
+      font-size: 12px;
+      line-height: 1.35;
+      color: rgba(125, 220, 255, 0.92);
+      text-align: center;
+      padding: 6px 4px 2px;
+    }
+
+    .sleep-time-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 6px;
     }
 
     /* Верхняя панель: поток + трек дня */
@@ -1481,6 +1532,11 @@
         align-items: center;
         width: 100%;
       }
+      .hero-toolbar-inner.hero-toolbar-stack {
+        align-items: stretch;
+        width: 100%;
+        max-width: min(480px, 100%);
+      }
       .hero-stream-btn,
       .hero-track-day,
       .hero-relax-fs-btn {
@@ -1665,20 +1721,12 @@
       min-height: 48px !important;
       border-radius: 16px !important;
     }
-    body.rg-app-mode #sleep-timer-widget {
-      position: fixed !important;
-      top: 12px !important;
-      right: 12px !important;
-      z-index: 170 !important;
+    body.rg-app-mode #sleep-timer-widget.sleep-on {
+      top: max(12px, env(safe-area-inset-top, 0px)) !important;
+      right: max(12px, env(safe-area-inset-right, 0px)) !important;
     }
 
     /* === RADIO GRAM 2026 DASHBOARD SKIN === */
-    body {
-      background:
-        radial-gradient(circle at 12% 8%, rgba(138, 92, 255, 0.22), transparent 30%),
-        radial-gradient(circle at 84% 18%, rgba(0, 207, 255, 0.18), transparent 34%),
-        linear-gradient(135deg, #030712 0%, #071024 42%, #0d0823 100%);
-    }
     body::before {
       content: '';
       position: fixed;
@@ -1768,12 +1816,6 @@
       background: linear-gradient(135deg, rgba(91, 94, 255, 0.38), rgba(181, 72, 255, 0.28));
       box-shadow: inset 0 0 24px rgba(125, 92, 255, 0.16);
     }
-    .rg-sidebar-support {
-      margin-top: auto;
-      padding-top: 14px;
-      display: grid;
-      gap: 9px;
-    }
     @keyframes rgRgbFlow {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -1791,28 +1833,51 @@
       display: flex;
       align-items: center;
     }
-    .rg-rgb-wrap.circle {
-      width: 46px;
-      height: 46px;
-      flex: 0 0 auto;
-      min-height: 46px;
-      border-radius: 999px;
-      align-self: center;
+    .hero-toolbar-stack {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
     }
-    .hero-rgb-row {
+    .hero-toolbar-inner.hero-toolbar-stack {
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+    }
+    .hero-toolbar-row-three {
       width: 100%;
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
-      align-items: center;
+      align-items: stretch;
+    }
+    .hero-toolbar-share-row {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .hero-share-rgb {
+      width: 100%;
+      max-width: 100%;
+      min-height: 46px;
+    }
+    .hero-share-rgb .hero-rgb-inner-btn svg {
+      flex-shrink: 0;
+      opacity: 0.92;
     }
     @media (max-width: 520px) {
-      .hero-rgb-row {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
+      .hero-toolbar-row-three {
+        gap: 8px;
       }
-      .rg-rgb-wrap.c-full-xs {
-        grid-column: 1 / -1;
+      .hero-toolbar-row-three .hero-rgb-inner-btn,
+      .hero-toolbar-row-three .hero-rgb-inner-link {
+        font-size: 10px;
+        padding: 7px 6px;
+        min-height: 44px;
+        line-height: 1.15;
+      }
+      .hero-track-day-icon {
+        display: none;
       }
     }
     .hero-rgb-inner-btn {
@@ -2383,7 +2448,10 @@
   <div id="reactive-bg"></div>
   <canvas id="visualizer-canvas"></canvas>
   <button id="visual-exit-btn" onclick="exitVizFullscreen()" aria-label="Exit visual mode">Выйти</button>
-  <button type="button" id="relax-fs-exit-btn" class="relax-fs-exit-btn" onclick="exitRelaxFullscreen()"><span data-i18n="relax_fullscreen_exit">Свернуть</span></button>
+  <button type="button" id="relax-fs-exit-btn" class="relax-fs-exit-btn" onclick="exitRelaxFullscreen()"><span data-i18n="relax_fullscreen_exit">Выйти</span></button>
+  <div class="widget-pill" id="sleep-timer-widget" style="display: none;" role="timer" onclick="openSleepModal()">
+    💤 <span id="timer-text">–</span>
+  </div>
 
   <aside class="rg-sidebar" aria-label="Radio Gram navigation">
     <div class="rg-sidebar-brand">
@@ -2419,44 +2487,37 @@
         </div>
       </div>
     </div>
-    <div class="rg-sidebar-support">
-      <a class="rg-side-link" href="https://easysong.ru/webapp?refid=3482" target="_blank" rel="noopener noreferrer">✦ Свой трек</a>
-    </div>
   </aside>
 
   <!-- ОСНОВНОЙ КОНТЕНТ -->
   <div class="app-container" id="main-ui">
-    
-    <!-- ВЕРХНЯЯ ПАНЕЛЬ (только таймер сна) -->
-    <div class="top-bar">
-      <div class="top-widgets">
-        <div class="widget-pill" id="sleep-timer-widget" style="display: none; cursor: pointer;" onclick="toggleSleepMenu()">
-          💤 <span id="timer-text">30m</span>
-        </div>
-      </div>
-    </div>
 
     <div class="hero-toolbar">
-      <div class="hero-toolbar-inner hero-rgb-row">
-        <div class="rg-rgb-wrap c-full-xs">
-          <button type="button" class="hero-rgb-inner-btn" id="streams-open-btn-top" onclick="openModal('streams-modal')" aria-haspopup="dialog" aria-controls="streams-modal">Стиль музыки · CHILL</button>
+      <div class="hero-toolbar-inner hero-toolbar-stack">
+        <div class="hero-toolbar-row-three">
+          <div class="rg-rgb-wrap">
+            <button type="button" class="hero-rgb-inner-btn" id="streams-open-btn-top" onclick="openModal('streams-modal')" aria-haspopup="dialog" aria-controls="streams-modal">Стиль музыки · CHILL</button>
+          </div>
+          <div class="rg-rgb-wrap">
+            <a class="hero-rgb-inner-link" id="track-day-link" href="https://easysong.ru/webapp?refid=3482" target="_blank" rel="noopener noreferrer" aria-label="EasySong — свой трек за 2 минуты">
+              <span class="hero-track-day-icon" aria-hidden="true">✦</span>
+              <span class="easy-track-cta-text" data-i18n="easy_track_cta">Свой трек за 2 минуты</span>
+            </a>
+          </div>
+          <div class="rg-rgb-wrap">
+            <button type="button" class="hero-rgb-inner-btn" id="relax-fullscreen-btn" onclick="toggleRelaxFullscreen()" aria-expanded="false" aria-controls="main-ui">
+              <span aria-hidden="true">⛶</span>
+              <span data-i18n="relax_fullscreen">Полный экран</span>
+            </button>
+          </div>
         </div>
-        <div class="rg-rgb-wrap circle">
-          <button type="button" class="hero-rgb-inner-icon" id="hero-share-btn" onclick="openShareModal()" aria-label="Поделиться">
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
-          </button>
-        </div>
-        <div class="rg-rgb-wrap c-full-xs">
-          <a class="hero-rgb-inner-link" id="track-day-link" href="https://easysong.ru/webapp?refid=3482" target="_blank" rel="noopener noreferrer" aria-label="EasySong — свой трек за 2 минуты">
-            <span class="hero-track-day-icon" aria-hidden="true">✦</span>
-            <span class="easy-track-cta-text" data-i18n="easy_track_cta">Свой трек за 2 минуты</span>
-          </a>
-        </div>
-        <div class="rg-rgb-wrap c-full-xs">
-          <button type="button" class="hero-rgb-inner-btn" id="relax-fullscreen-btn" onclick="toggleRelaxFullscreen()" aria-expanded="false" aria-controls="main-ui">
-            <span aria-hidden="true">⛶</span>
-            <span data-i18n="relax_fullscreen">Полный экран</span>
-          </button>
+        <div class="hero-toolbar-share-row">
+          <div class="rg-rgb-wrap hero-share-rgb">
+            <button type="button" class="hero-rgb-inner-btn" id="hero-share-btn" onclick="openShareModal()" aria-label="Поделиться">
+              <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><path fill="currentColor" d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+              <span data-i18n="share_toolbar">Поделиться</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -2570,6 +2631,25 @@
       </div>
     </div>
 
+    <div id="sleep-modal" class="modal-overlay" onclick="closePopups(event)" role="dialog" aria-modal="true" aria-labelledby="sleep-modal-title">
+      <div class="modal-content" tabindex="-1">
+        <button type="button" class="close-modal" onclick="closeModal('sleep-modal')" aria-label="Close">✕</button>
+        <div class="modal-title" id="sleep-modal-title" data-i18n="sleep_modal_title">Таймер сна</div>
+        <div id="sleep-modal-status" class="sleep-modal-status" hidden aria-live="polite"></div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.76); margin:6px 0 2px; line-height:1.45;" data-i18n="sleep_modal_desc">
+          Остановить воспроизведение через:
+        </div>
+        <div class="sleep-time-grid">
+          <button type="button" class="modal-btn" onclick="setSleepTimerFromModal(15)"><span data-i18n="sleep_min_15">15 мин</span></button>
+          <button type="button" class="modal-btn" onclick="setSleepTimerFromModal(30)"><span data-i18n="sleep_min_30">30 мин</span></button>
+          <button type="button" class="modal-btn" onclick="setSleepTimerFromModal(60)"><span data-i18n="sleep_min_60">60 мин</span></button>
+          <button type="button" class="modal-btn" onclick="setSleepTimerFromModal(120)"><span data-i18n="sleep_min_120">120 мин</span></button>
+        </div>
+        <button type="button" class="modal-btn" style="width:100%; margin-top:12px;" onclick="setSleepTimerFromModal(0)"><span data-i18n="sleep_timer_off">Выключить таймер</span></button>
+        <button type="button" class="close-modal" style="width:100%; margin-top:10px;" onclick="closeModal('sleep-modal')" data-i18n="close">Закрыть</button>
+      </div>
+    </div>
+
     <div id="install-modal" class="modal-overlay" onclick="closePopups(event)" role="dialog" aria-modal="true" aria-labelledby="install-title">
       <div class="modal-content" tabindex="-1">
         <div class="modal-title" id="install-title">Установить приложение</div>
@@ -2663,7 +2743,7 @@
       </div>
       <button class="icon-btn" id="night-mode-btn" onclick="toggleNightMode()" title="Night Mode" aria-label="Toggle night mode">🌙</button>
       <button class="icon-btn lang-toggle" onclick="toggleLang()" aria-label="Switch language">EN</button>
-      <button class="icon-btn" onclick="toggleSleepMenu()" title="Sleep Timer" aria-label="Sleep timer">
+      <button class="icon-btn" type="button" id="sleep-timer-open-btn" onclick="openSleepModal()" title="Таймер сна" aria-label="Таймер сна">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
       </button>
     </div>
@@ -2692,6 +2772,7 @@
     let isPlaying = false;
     let isImmersive = false;
     let vizUserEnabled = false;
+    let relaxVizOnly = false;
     let userVolume = 1;
     let isNightMode = false;
     let currentLang = 'ru';
@@ -2994,6 +3075,7 @@
         close: "Закрыть",
         share_aria: "Поделиться станцией",
         share_title: "Поделиться",
+        share_toolbar: "Поделиться",
         share_in_telegram: "В Telegram",
         share_in_vk: "Во ВКонтакте",
         share_in_max: "В MAX",
@@ -3010,13 +3092,22 @@
         easy_track_cta: "Свой трек за 2 минуты",
         easy_track_aria: "EasySong — свой трек за 2 минуты",
         relax_fullscreen: "Полный экран",
-        relax_fullscreen_exit: "Свернуть",
+        relax_fullscreen_exit: "Выйти",
         volume_label: "Громкость",
         listeners: "слушают",
         night_mode: "Ночь",
         track_donate_line: "Поддержите станцию через Cloudtips — это помогает развитию эфира. В благодарность подарим трек на ваш вкус по запросу.",
         track_donate_cta: "Поддержи наше развитие",
-        history_recent: "Недавно в эфире"
+        history_recent: "Недавно в эфире",
+        sleep_modal_title: "Таймер сна",
+        sleep_modal_desc: "Остановить воспроизведение через:",
+        sleep_min_15: "15 мин",
+        sleep_min_30: "30 мин",
+        sleep_min_60: "60 мин",
+        sleep_min_120: "120 мин",
+        sleep_timer_off: "Выключить таймер",
+        sleep_timer_tooltip: "Таймер сна",
+        sleep_timer_status: "Таймер вкл.: осталось ~{m} мин."
       },
       en: {
         live: "LIVE",
@@ -3033,6 +3124,7 @@
         close: "Close",
         share_aria: "Share station",
         share_title: "Share",
+        share_toolbar: "Share",
         share_in_telegram: "Telegram",
         share_in_vk: "VK",
         share_in_max: "MAX",
@@ -3049,13 +3141,22 @@
         easy_track_cta: "Your track in 2 minutes",
         easy_track_aria: "EasySong — make your track in 2 minutes",
         relax_fullscreen: "Fullscreen",
-        relax_fullscreen_exit: "Exit fullscreen",
+        relax_fullscreen_exit: "Exit",
         volume_label: "Volume",
         listeners: "listening",
         night_mode: "Night",
         track_donate_line: "Support the station on Cloudtips — it keeps the broadcast growing. As a thank-you, we'll make you a track to your taste, on request.",
         track_donate_cta: "Support our growth",
-        history_recent: "Recently on air"
+        history_recent: "Recently on air",
+        sleep_modal_title: "Sleep timer",
+        sleep_modal_desc: "Stop playback after:",
+        sleep_min_15: "15 min",
+        sleep_min_30: "30 min",
+        sleep_min_60: "60 min",
+        sleep_min_120: "120 min",
+        sleep_timer_off: "Turn off timer",
+        sleep_timer_tooltip: "Sleep timer",
+        sleep_timer_status: "Timer on: ~{m} min left"
       }
     };
 
@@ -3117,6 +3218,12 @@
       const relaxExit = document.getElementById('relax-fs-exit-btn');
       if (relaxExit) {
         relaxExit.setAttribute('aria-label', translations[currentLang]?.relax_fullscreen_exit || 'Exit fullscreen');
+      }
+      const sleepOpen = document.getElementById('sleep-timer-open-btn');
+      if (sleepOpen) {
+        const tl = translations[currentLang]?.sleep_timer_tooltip || 'Sleep timer';
+        sleepOpen.title = tl;
+        sleepOpen.setAttribute('aria-label', tl);
       }
       const trackDayLink = document.getElementById('track-day-link');
       if (trackDayLink) {
@@ -3236,6 +3343,7 @@
 
     function enforceMobileVisualPolicy() {
       if (!prefersMobileReducedVisuals()) return;
+      if (relaxVizOnly) return;
       vizUserEnabled = false;
       if (isImmersive) {
         isImmersive = false;
@@ -3700,11 +3808,15 @@
     }
 
     function syncRelaxFullscreenClassFromBrowser() {
-      if (!getFullscreenElement()) document.body.classList.remove('relax-fullscreen');
+      if (!getFullscreenElement()) {
+        relaxVizOnly = false;
+        document.body.classList.remove('relax-fullscreen');
+      }
       const enterBtn = document.getElementById('relax-fullscreen-btn');
       if (enterBtn) {
         enterBtn.setAttribute('aria-expanded', document.body.classList.contains('relax-fullscreen') ? 'true' : 'false');
       }
+      syncVisualModeState();
       updateYandexRsySlot();
       setTimeout(scheduleYandexRsySlotUpdate, 0);
       setTimeout(scheduleYandexRsySlotUpdate, 120);
@@ -3713,9 +3825,13 @@
 
     async function enterRelaxFullscreen() {
       if (isImmersive) exitVizFullscreen();
+      relaxVizOnly = true;
       document.body.classList.add('relax-fullscreen');
       const enterBtn = document.getElementById('relax-fullscreen-btn');
       if (enterBtn) enterBtn.setAttribute('aria-expanded', 'true');
+      await setupAudioVisualization();
+      if (vizUserEnabled && vizMode === 'particles') initParticles();
+      syncVisualModeState();
       const root = document.documentElement;
       try {
         if (root.requestFullscreen) await root.requestFullscreen();
@@ -3726,6 +3842,7 @@
     }
 
     async function exitRelaxFullscreen() {
+      relaxVizOnly = false;
       document.body.classList.remove('relax-fullscreen');
       const enterBtn = document.getElementById('relax-fullscreen-btn');
       if (enterBtn) enterBtn.setAttribute('aria-expanded', 'false');
@@ -3735,6 +3852,7 @@
           else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
         }
       } catch (_) {}
+      syncVisualModeState();
       updateYandexRsySlot();
     }
 
@@ -3878,6 +3996,11 @@
       applyAtmosphereTheme(variant);
     }
 
+    function getRelaxVizDrawMode() {
+      if (relaxVizOnly && !vizUserEnabled) return 'bars';
+      return vizMode;
+    }
+
     function setVizMode(mode, btn) {
       vizMode = mode;
       document.querySelectorAll('.viz-mode-btn').forEach((b) => {
@@ -3889,10 +4012,11 @@
     }
 
     function syncVisualModeState() {
-      const mobileNoViz = prefersMobileReducedVisuals();
-      const wantCanvas = !mobileNoViz && vizUserEnabled && (isPlaying || isImmersive);
+      const mobileNoVizBlock = prefersMobileReducedVisuals() && !relaxVizOnly;
+      const wantCanvas = !mobileNoVizBlock && (vizUserEnabled || relaxVizOnly) && (isPlaying || isImmersive || relaxVizOnly);
       canvas.classList.toggle('active', wantCanvas);
-      if (wantCanvas && isPlaying && audioContextInitialized) startVisualization();
+      const shouldRunVisualizer = wantCanvas && audioContextInitialized && (isPlaying || relaxVizOnly);
+      if (shouldRunVisualizer) startVisualization();
       else stopVisualization();
       /* Живой фон (#reactive-bg) — при воспроизведении, без привязки к «Визуал»; canvas только с визуалом */
       if (isPlaying) {
@@ -4166,7 +4290,7 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         monitorVisualizationFps(ts || performance.now());
         
-        switch(vizMode) {
+        switch (getRelaxVizDrawMode()) {
           case 'bars': drawBars(); break;
           case 'particles': drawParticles(); break;
           case 'nebula': drawNebula(); break;
@@ -4726,47 +4850,91 @@
     }
 
     // === ТАЙМЕР СНА ===
-    let sleepInterval;
+    let sleepInterval = null;
     let sleepSeconds = 0;
-    function toggleSleepMenu() {
-      let next = 15;
-      if (sleepSeconds > 0 && sleepSeconds <= 15 * 60) next = 30;
-      else if (sleepSeconds > 15 * 60 && sleepSeconds <= 30 * 60) next = 60;
-      else if (sleepSeconds > 30 * 60) next = 0;
-      setSleepTimer(next);
+
+    function refreshSleepModalStatusText() {
+      const status = document.getElementById('sleep-modal-status');
+      if (!status) return;
+      if (sleepSeconds > 0) {
+        const m = Math.max(1, Math.ceil(sleepSeconds / 60));
+        const tpl = translations[currentLang]?.sleep_timer_status || 'Timer on: ~{m} min left';
+        status.textContent = tpl.replace('{m}', String(m));
+        status.hidden = false;
+      } else {
+        status.textContent = '';
+        status.hidden = true;
+      }
+    }
+
+    function openSleepModal() {
+      refreshSleepModalStatusText();
+      openModal('sleep-modal');
+    }
+
+    function setSleepTimerFromModal(minutes) {
+      closeModal('sleep-modal');
+      setSleepTimer(Number(minutes) || 0);
     }
 
     function setSleepTimer(minutes) {
       const widget = document.getElementById('sleep-timer-widget');
       const textEl = document.getElementById('timer-text');
-      
-      if (minutes === 0) {
-        clearInterval(sleepInterval);
+
+      const clearSleepCountdown = () => {
+        if (sleepInterval) {
+          clearInterval(sleepInterval);
+          sleepInterval = null;
+        }
+      };
+
+      if (!minutes || minutes <= 0) {
+        clearSleepCountdown();
         sleepSeconds = 0;
-        widget.style.display = 'none';
+        if (widget) {
+          widget.classList.remove('sleep-on');
+          widget.style.display = 'none';
+        }
+        if (activeModalId === 'sleep-modal') refreshSleepModalStatusText();
         return;
       }
 
-      widget.style.display = 'flex';
-      sleepSeconds = minutes * 60;
-      clearInterval(sleepInterval);
+      if (!widget || !textEl) return;
+
+      const total = Math.round(Number(minutes)) * 60;
+      sleepSeconds = Math.max(60, Math.min(Number.isFinite(total) ? total : 0, 24 * 60 * 60));
+      widget.classList.add('sleep-on');
+      widget.style.display = 'inline-flex';
+
+      clearSleepCountdown();
 
       const drawSleepTimer = () => {
-        const m = Math.floor(sleepSeconds / 60);
-        const s = sleepSeconds % 60;
-        textEl.textContent = `${m}:${s < 10 ? '0'+s : s}`;
+        const totalLeft = Math.max(0, sleepSeconds);
+        const m = Math.floor(totalLeft / 60);
+        const s = totalLeft % 60;
+        textEl.textContent = `${m}:${String(s).padStart(2, '0')}`;
+        if (activeModalId === 'sleep-modal') refreshSleepModalStatusText();
       };
       drawSleepTimer();
-      
+
       sleepInterval = setInterval(() => {
-        sleepSeconds--;
+        sleepSeconds -= 1;
+        if (sleepSeconds < 0) sleepSeconds = 0;
         drawSleepTimer();
-        
+
         if (sleepSeconds <= 0) {
-          clearInterval(sleepInterval);
+          clearSleepCountdown();
           sleepSeconds = 0;
-          if (isPlaying) togglePlay();
-          widget.style.display = 'none';
+          if (widget) {
+            widget.classList.remove('sleep-on');
+            widget.style.display = 'none';
+          }
+          if (isPlaying) void togglePlay();
+          const msg = currentLang === 'ru'
+            ? 'Таймер сна: воспроизведение остановлено.'
+            : 'Sleep timer: playback stopped.';
+          showStatusMessage(msg);
+          refreshSleepModalStatusText();
         }
       }, 1000);
     }
