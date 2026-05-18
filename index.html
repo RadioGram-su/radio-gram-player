@@ -2141,19 +2141,64 @@
       padding-right: 4px;
       margin-top: 6px;
     }
-    .rg-mobile-history {
+
+    .rg-vk-playlist-host {
+      flex: 1;
+      min-height: 0;
+      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(114, 151, 255, 0.2);
+      background: rgba(0, 0, 0, 0.22);
+      padding: 8px 4px 10px;
+    }
+    .rg-vk-playlist-host > div {
+      width: 100%;
+      max-width: 100%;
+    }
+    .rg-vk-playlist-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 10px;
+      width: 100%;
+      min-height: 40px;
+      border-radius: 14px;
+      border: 1px solid rgba(100, 210, 255, 0.35);
+      background: rgba(0, 148, 255, 0.12);
+      color: #dff4ff;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    }
+    .rg-vk-playlist-link:hover {
+      border-color: rgba(130, 230, 255, 0.55);
+      background: rgba(0, 148, 255, 0.22);
+      color: #fff;
+    }
+    .rg-vk-playlist-link:active {
+      transform: scale(0.99);
+    }
+
+    .rg-mobile-vk-playlist {
       display: none;
       width: 100%;
       max-width: 520px;
       margin: 0 auto 18px;
+      padding: 14px;
+      border-radius: 22px;
+      border: 1px solid rgba(133, 168, 255, 0.18);
+      background: linear-gradient(180deg, rgba(10, 20, 46, 0.72), rgba(4, 8, 23, 0.62));
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.36);
+      backdrop-filter: blur(20px);
     }
-    .rg-mobile-history .rg-history-list {
-      max-height: 220px;
-      margin-top: 8px;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.16);
+    .rg-mobile-vk-playlist .rg-vk-playlist-host {
+      min-height: 320px;
+      max-height: 420px;
     }
     .listen-time-badge,
     .listen-time-chip {
@@ -2196,7 +2241,7 @@
       display: none !important;
     }
     body.relax-fullscreen .rg-mobile-now,
-    body.relax-fullscreen .rg-mobile-history {
+    body.relax-fullscreen .rg-mobile-vk-playlist {
       display: none !important;
     }
     @media (min-width: 980px) {
@@ -2216,12 +2261,12 @@
       body:not(.rg-app-mode):not(.visual-only):not(.relax-fullscreen) .rg-right-panel {
         display: flex;
       }
-      body:not(.rg-app-mode):not(.visual-only):not(.relax-fullscreen) .rg-mobile-history {
+      body:not(.rg-app-mode):not(.visual-only):not(.relax-fullscreen) .rg-mobile-vk-playlist {
         display: none !important;
       }
     }
     @media (max-width: 1219px) {
-      body:not(.rg-app-mode):not(.visual-only):not(.relax-fullscreen) .rg-mobile-history {
+      body:not(.rg-app-mode):not(.visual-only):not(.relax-fullscreen) .rg-mobile-vk-playlist {
         display: block;
       }
     }
@@ -2604,13 +2649,15 @@
       </div>
     </div>
 
-    <div class="rg-mobile-history" aria-label="История треков">
-    <div class="rg-history-title" data-i18n="history_recent">Недавно в эфире</div>
-    <div class="rg-history-stream" data-rg-history-stream-label="1"></div>
-    <div class="rg-history-list" data-rg-history-host="1"></div>
-    </div>
-
-    <!-- ПОПАПЫ -->
+        <section class="rg-mobile-vk-playlist" aria-label="Плейлист Radio Gram в VK Музыке">
+      <div class="rg-history-title" data-i18n="vk_playlist_title">Наши треки</div>
+      <div class="rg-history-stream" data-i18n="vk_playlist_sub">VK Музыка · альбом</div>
+      <div class="rg-vk-playlist-host rg-vk-playlist-host--mobile" data-vk-playlist-host="mobile">
+        <div id="vk_playlist_rg_mobile"></div>
+      </div>
+      <a class="rg-vk-playlist-link" href="https://vk.com/music/album/-2000622442_27622442_d4162a47bd046b097b" target="_blank" rel="noopener noreferrer" data-i18n="vk_playlist_open">Открыть в VK Музыке</a>
+    </section>
+<!-- ПОПАПЫ -->
     <div id="channels-popup" class="modal-overlay" onclick="closePopups(event)" role="dialog" aria-modal="true" aria-labelledby="channels-title">
       <div class="modal-content" style="position: relative;" tabindex="-1">
         <button class="close-modal" onclick="closeModal('channels-popup')">✕</button>
@@ -2700,10 +2747,13 @@
 
   </div>
 
-  <aside class="rg-right-panel" aria-label="История треков потока">
-    <div class="rg-history-title" data-i18n="history_recent">Недавно в эфире</div>
-    <div class="rg-history-stream" data-rg-history-stream-label="1"></div>
-    <div class="rg-history-list" data-rg-history-host="1"></div>
+    <aside class="rg-right-panel" aria-label="Плейлист Radio Gram в VK Музыке">
+    <div class="rg-history-title" data-i18n="vk_playlist_title">Наши треки</div>
+    <div class="rg-history-stream" data-i18n="vk_playlist_sub">VK Музыка · альбом</div>
+    <div class="rg-vk-playlist-host rg-vk-playlist-host--sidebar" data-vk-playlist-host="sidebar">
+      <div id="vk_playlist_rg_sidebar"></div>
+    </div>
+    <a class="rg-vk-playlist-link" href="https://vk.com/music/album/-2000622442_27622442_d4162a47bd046b097b" target="_blank" rel="noopener noreferrer" data-i18n="vk_playlist_open">Открыть в VK Музыке</a>
   </aside>
 
   <!-- НИЖНИЕ КОНТРОЛЫ -->
@@ -2758,6 +2808,8 @@
   </div>
   <div id="track-toast" aria-live="polite"></div>
 
+  <script src="https://vk.com/js/api/openapi.js?173" async></script>
+
   <script>
     // === ПЕРЕМЕННЫЕ ===
     const audio = document.getElementById('audio-player');
@@ -2809,6 +2861,7 @@
     const TRACK_HISTORY_MAP_KEY = 'radiogram_track_history_map_v2';
     const TRACK_HISTORY_LEGACY_KEY = 'radiogram_track_history_v1';
     const LISTEN_TIME_STORAGE_KEY = 'radiogram_listen_time_seconds_v1';
+
     const trackHistory = [];
     const trackHistoryByStream = { chill: [], pulse: [], nature: [] };
     let trackHistoryExpanded = false;
@@ -2887,6 +2940,54 @@
       }
     };
 
+
+    const VK_PLAYLIST = {
+      ownerId: -2000622442,
+      playlistId: 27622442,
+      hash: '34fc988511c97a458e',
+      url: 'https://vk.com/music/album/-2000622442_27622442_d4162a47bd046b097b',
+      targets: [
+        { id: 'vk_playlist_rg_sidebar', host: '.rg-vk-playlist-host--sidebar' },
+        { id: 'vk_playlist_rg_mobile', host: '.rg-vk-playlist-host--mobile' }
+      ]
+    };
+    let vkPlaylistResizeTimer = null;
+
+    function getVkPlaylistWidth(hostEl) {
+      if (!hostEl) return 280;
+      const w = hostEl.clientWidth || hostEl.offsetWidth || 280;
+      return Math.max(240, Math.min(300, Math.floor(w - 12)));
+    }
+
+    function isVkPlaylistHostVisible(wrap) {
+      if (!wrap) return false;
+      const panel = wrap.closest('.rg-right-panel, .rg-mobile-vk-playlist');
+      if (!panel) return false;
+      return window.getComputedStyle(panel).display !== 'none';
+    }
+
+    function initVkPlaylistWidgets() {
+      if (!window.VK || !VK.Widgets || !VK.Widgets.Playlist) return;
+      VK_PLAYLIST.targets.forEach(({ id, host }) => {
+        const wrap = document.querySelector(host);
+        if (!wrap || !isVkPlaylistHostVisible(wrap)) return;
+        const width = getVkPlaylistWidth(wrap);
+        try {
+          VK.Widgets.Playlist(id, VK_PLAYLIST.ownerId, VK_PLAYLIST.playlistId, VK_PLAYLIST.hash, { width });
+        } catch (e) {
+          console.warn('VK playlist widget:', e);
+        }
+      });
+    }
+
+    function scheduleVkPlaylistInit() {
+      if (vkPlaylistResizeTimer) clearTimeout(vkPlaylistResizeTimer);
+      vkPlaylistResizeTimer = setTimeout(initVkPlaylistWidgets, 300);
+    }
+
+    window.vkAsyncInit = function () {
+      initVkPlaylistWidgets();
+    };
     /** EasySong webapp (реферальная ссылка). */
     const EASYSONG_WEBAPP_URL = 'https://easysong.ru/webapp?refid=3482';
 
@@ -3098,6 +3199,9 @@
         night_mode: "Ночь",
         track_donate_line: "Поддержите станцию через Cloudtips — это помогает развитию эфира. В благодарность подарим трек на ваш вкус по запросу.",
         track_donate_cta: "Поддержи наше развитие",
+        vk_playlist_title: "Наши треки",
+        vk_playlist_sub: "VK Музыка · альбом",
+        vk_playlist_open: "Открыть в VK Музыке",
         history_recent: "Недавно в эфире",
         sleep_modal_title: "Таймер сна",
         sleep_modal_desc: "Остановить воспроизведение через:",
@@ -3147,6 +3251,9 @@
         night_mode: "Night",
         track_donate_line: "Support the station on Cloudtips — it keeps the broadcast growing. As a thank-you, we'll make you a track to your taste, on request.",
         track_donate_cta: "Support our growth",
+        vk_playlist_title: "Our tracks",
+        vk_playlist_sub: "VK Music · album",
+        vk_playlist_open: "Open in VK Music",
         history_recent: "Recently on air",
         sleep_modal_title: "Sleep timer",
         sleep_modal_desc: "Stop playback after:",
@@ -3239,7 +3346,7 @@
       const hint = document.getElementById('stream-hint-pop');
       if (hint) hint.textContent = translations[currentLang]?.streams_hint || hint.textContent;
       splitEasyTrackCtaLetters();
-      renderHistoryStreamLabels();
+      scheduleVkPlaylistInit();
       refreshPlayerTitleAndSession();
     }
 
@@ -3560,7 +3667,7 @@
           ? `Поток переключен: ${getStreamLabel(next)}`
           : `Stream switched: ${getStreamLabel(next)}`);
         hydrateTrackHistoryArrayFromStreamKey(currentStreamKey);
-        renderTrackHistory();
+        scheduleVkPlaylistInit();
         await updateTrackInfo();
         updateRadioListeners();
         syncBackdropToStream();
@@ -3934,12 +4041,12 @@
       document.querySelectorAll('[data-rg-history-host]').forEach((host) => {
         host.innerHTML = html;
       });
-      renderHistoryStreamLabels();
+      scheduleVkPlaylistInit();
     }
 
     function toggleTrackHistoryExpanded() {
       trackHistoryExpanded = !trackHistoryExpanded;
-      renderTrackHistory();
+      scheduleVkPlaylistInit();
     }
 
     function pushTrackHistory(trackName) {
@@ -3949,7 +4056,7 @@
       if (trackHistory.length > 20) trackHistory.length = 20;
       syncTrackHistoryMapFromArray();
       persistTrackHistoryMap();
-      renderTrackHistory();
+      scheduleVkPlaylistInit();
     }
 
     function applyAtmosphereTheme(variant) {
@@ -4988,7 +5095,7 @@
       /* Не сбрасывать баннер на каждом resize: на мобиле innerHeight дергается (адресная строка, safe-area) — было мигание */
       if (rsyIsDesktopLayout()) rsyMobileAdVisible = false;
       enforceMobileVisualPolicy();
-      renderTrackHistory();
+      scheduleVkPlaylistInit();
     }, { passive: true });
     window.addEventListener('orientationchange', () => {
       rsyLastScrollY = null;
@@ -4996,6 +5103,8 @@
       enforceMobileVisualPolicy();
     });
     window.addEventListener('load', () => {
+      scheduleVkPlaylistInit();
+      setTimeout(initVkPlaylistWidgets, 1500);
       if (ADS_ENABLED) {
         scheduleYandexRsySlotUpdate();
         initRsyAdObserver();
@@ -5048,7 +5157,7 @@
     }
     loadTrackHistoryMapFromStorage();
     hydrateTrackHistoryArrayFromStreamKey(currentStreamKey);
-    renderTrackHistory();
+    scheduleVkPlaylistInit();
     syncBackdropToStream();
     updateRadioListeners();
     updateTrackInfo().then(() => syncBackdropToStream());
