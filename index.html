@@ -3080,7 +3080,7 @@
     /* Рекламный слот временно отключён */
   </style>
 </head>
-<body>
+<body class="night-mode">
   <script>
     if (new URLSearchParams(window.location.search).get('app') === '1') {
       document.body.classList.add('rg-app-mode');
@@ -3429,10 +3429,10 @@
     
     let isPlaying = false;
     let isImmersive = false;
-    let vizUserEnabled = false;
+    let vizUserEnabled = true;
     let relaxVizOnly = false;
     let userVolume = 1;
-    let isNightMode = false;
+    let isNightMode = true;
     let currentLang = 'ru';
     let vizMode = 'bars';
     let audioContext = null;
