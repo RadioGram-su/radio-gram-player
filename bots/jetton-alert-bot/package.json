@@ -1,0 +1,16 @@
+{
+  "name": "jetton-alert-bot",
+  "version": "1.0.0",
+  "description": "Price Tons (@Price_Tons_bot) — jetton prices and alerts on STON.fi and DeDust",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "check": "node --check bot.js",
+    "self-test": "node bot.js --self-test"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "ISC",
+  "type": "commonjs"
+}
