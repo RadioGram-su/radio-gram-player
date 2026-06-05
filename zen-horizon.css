@@ -216,6 +216,7 @@ body.zen-h .viz-mode-modal-btn,
 body.zen-h .desktop-volume,
 body.zen-h .immersive-switch,
 body.zen-h .viz-fullscreen-btn,
+body.zen-h .zen-only-fs,
 body.zen-h .listen-time-chip,
 body.zen-h .desktop-viz-controls .settings-row {
   display: none !important;
