@@ -1,0 +1,494 @@
+/* Radio Gram — Zen Horizon layout */
+
+body.zen-h {
+  background: #030712;
+  animation: none;
+  justify-content: flex-start;
+}
+
+body.zen-h #reactive-bg {
+  background-image:
+    linear-gradient(180deg, rgba(3, 8, 22, 0.35) 0%, rgba(3, 8, 22, 0.08) 42%, rgba(3, 8, 22, 0.55) 100%),
+    url('/189405_morze_zachod_slonca.jpg');
+  background-size: cover;
+  background-position: center 40%;
+  background-repeat: no-repeat;
+  filter: saturate(1.05) brightness(0.92);
+}
+
+body.zen-h #reactive-bg.nature-photo {
+  filter: saturate(1.08) brightness(0.88);
+}
+
+body.zen-h #visualizer-canvas {
+  opacity: 0.22;
+  mix-blend-mode: screen;
+}
+
+body.zen-h #visualizer-canvas.active {
+  opacity: 0.38;
+}
+
+/* --- Top stream bar --- */
+.zen-stream-bar {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 140;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(8, 14, 28, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  max-width: min(96vw, 520px);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.zen-stream-bar::-webkit-scrollbar { display: none; }
+
+.zen-stream-pill {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding: 4px 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+.zen-stream-pill:hover { color: #fff; }
+
+.zen-stream-pill.active {
+  color: #7ee8ff;
+  text-shadow: 0 0 18px rgba(80, 220, 255, 0.55);
+  border-bottom: 2px solid #5ce1ff;
+}
+
+.zen-stream-dot {
+  color: rgba(255, 255, 255, 0.28);
+  font-size: 10px;
+  user-select: none;
+  pointer-events: none;
+}
+
+.zen-top-tools {
+  position: fixed;
+  top: max(58px, calc(env(safe-area-inset-top) + 46px));
+  right: 12px;
+  z-index: 135;
+  display: flex;
+  gap: 6px;
+}
+
+.zen-top-tools button,
+.zen-top-tools a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(8, 14, 28, 0.42);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 11px;
+  font-family: inherit;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+/* --- Horizon equalizer --- */
+#horizon-eq-canvas {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 26vh;
+  width: min(94vw, 720px);
+  height: min(16vh, 120px);
+  z-index: 12;
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+/* --- Hide legacy chrome --- */
+body.zen-h .rg-sidebar,
+body.zen-h .rg-right-panel,
+body.zen-h .hero-toolbar,
+body.zen-h .rg-main-actions,
+body.zen-h .title-section,
+body.zen-h .stream-hint-pop,
+body.zen-h .rg-mobile-vk-playlist,
+body.zen-h .listen-time-badge,
+body.zen-h .viz-mode-modal-btn {
+  display: none !important;
+}
+
+body.zen-h .app-container {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 72px;
+  padding-bottom: 200px;
+}
+
+body.zen-h .listeners-badge {
+  position: fixed;
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 130;
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.85;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+body.zen-h .play-wrapper {
+  margin-top: -4vh;
+}
+
+body.zen-h .play-btn-main {
+  width: 132px;
+  height: 132px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 0 40px rgba(92, 225, 255, 0.12), inset 0 0 30px rgba(255, 255, 255, 0.04);
+}
+
+body.zen-h .play-ring {
+  width: 156px;
+  height: 156px;
+  border-color: rgba(92, 225, 255, 0.35);
+}
+
+/* --- Now playing center card --- */
+body.zen-h .rg-mobile-now {
+  display: block !important;
+  position: fixed;
+  left: 50%;
+  bottom: calc(52px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 125;
+  width: min(92vw, 420px);
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(8, 14, 28, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+body.zen-h .rg-mobile-now .rg-partners-mini,
+body.zen-h .rg-mobile-now .rg-donate-block {
+  display: none;
+}
+
+body.zen-h .rg-mobile-now .track-label,
+body.zen-h .rg-mobile-now .stream-quality-badge {
+  margin-bottom: 8px;
+}
+
+body.zen-h .rg-mobile-now .stream-quality-badge {
+  font-size: 10px;
+  opacity: 0.75;
+}
+
+body.zen-h .rg-mobile-now .track-text {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+body.zen-h .zen-track-genre {
+  margin-top: 6px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+}
+
+body.zen-h .zen-listeners-icon {
+  display: inline;
+  margin-right: 2px;
+  opacity: 0.85;
+}
+
+body.zen-h .listeners-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.zen-setting-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 44px;
+  padding: 4px 6px !important;
+}
+
+.zen-setting-glyph {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.zen-setting-label {
+  font-size: 9px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+  letter-spacing: 0.02em;
+}
+
+body:not(.zen-h) .zen-setting-label,
+body:not(.zen-h) .zen-only-fs,
+body:not(.zen-h) .zen-listeners-icon {
+  display: none !important;
+}
+
+body:not(.zen-h) .zen-setting-btn {
+  flex-direction: row;
+  min-width: auto;
+}
+
+body.zen-h .zen-settings-row {
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 240px;
+}
+
+body.zen-h .bottom-controls .desktop-viz-controls .settings-row {
+  display: none;
+}
+
+body.zen-h .bottom-controls > .settings-row {
+  display: flex;
+}
+
+body.zen-h .immersive-switch {
+  order: -1;
+  margin-bottom: 4px;
+}
+
+/* --- Bottom-left dock (viz + settings) --- */
+body.zen-h .bottom-controls {
+  position: fixed;
+  left: max(10px, env(safe-area-inset-left));
+  bottom: max(10px, env(safe-area-inset-bottom));
+  right: auto;
+  align-items: flex-start;
+  gap: 8px;
+  z-index: 140;
+  transform: none !important;
+  max-width: min(72vw, 340px);
+}
+
+body.zen-h .desktop-viz-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(8, 14, 28, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+}
+
+body.zen-h .viz-mode-selector {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 220px;
+}
+
+body.zen-h .viz-mode-btn {
+  font-size: 10px;
+  padding: 5px 8px;
+  border-radius: 8px;
+}
+
+body.zen-h .desktop-volume {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(8, 14, 28, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+body.zen-h .desktop-volume input[type="range"] {
+  width: 88px;
+}
+
+body.zen-h .bottom-controls > .settings-row {
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(8, 14, 28, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.zen-h .immersive-switch {
+  background: rgba(8, 14, 28, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- Right social rail --- */
+.zen-social-rail {
+  position: fixed;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: calc(88px + env(safe-area-inset-bottom));
+  z-index: 140;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 12px 10px;
+  border-radius: 14px;
+  background: rgba(8, 14, 28, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+.zen-social-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.82);
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  min-width: 44px;
+  padding: 4px;
+}
+
+.zen-social-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  opacity: 0.9;
+}
+
+.zen-social-btn:hover { color: #fff; }
+
+/* --- Mobile --- */
+@media (max-width: 768px) {
+  body.zen-h .app-container {
+    padding-bottom: 240px;
+  }
+
+  #horizon-eq-canvas {
+    bottom: 30vh;
+    height: 12vh;
+  }
+
+  body.zen-h .bottom-controls {
+    left: 8px;
+    bottom: 8px;
+    max-width: calc(100vw - 90px);
+  }
+
+  body.zen-h .desktop-viz-controls {
+    padding: 8px;
+  }
+
+  body.zen-h .viz-mode-selector {
+    max-width: 180px;
+  }
+
+  body.zen-h .desktop-volume label {
+    display: none;
+  }
+
+  body.zen-h .listen-time-chip {
+    display: none;
+  }
+
+  .zen-social-rail {
+    bottom: calc(72px + env(safe-area-inset-bottom));
+    gap: 10px;
+    padding: 8px 6px;
+  }
+
+  .zen-top-tools {
+    top: max(52px, calc(env(safe-area-inset-top) + 40px));
+    right: 8px;
+    flex-wrap: wrap;
+    max-width: 46vw;
+    justify-content: flex-end;
+  }
+
+  body.zen-h .rg-mobile-now {
+    bottom: calc(44px + env(safe-area-inset-bottom));
+    width: min(94vw, 400px);
+  }
+
+  body.zen-h .listeners-badge {
+    bottom: calc(8px + env(safe-area-inset-bottom));
+    font-size: 11px;
+  }
+
+  body.zen-h .play-btn-main {
+    width: 118px;
+    height: 118px;
+  }
+
+  body.zen-h .play-ring {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+@media (max-width: 380px) {
+  .zen-stream-pill { font-size: 12px; }
+  body.zen-h .rg-mobile-now .track-text { font-size: 13px; }
+}
+
+/* Visual-only / relax fullscreen */
+body.zen-h.visual-only .zen-stream-bar,
+body.zen-h.visual-only .zen-top-tools,
+body.zen-h.visual-only .zen-social-rail,
+body.zen-h.visual-only .rg-mobile-now,
+body.zen-h.visual-only .listeners-badge {
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.zen-h.relax-fullscreen .zen-stream-bar,
+body.zen-h.relax-fullscreen .zen-top-tools,
+body.zen-h.relax-fullscreen .zen-social-rail {
+  opacity: 0.35;
+}
+
+body.zen-h.relax-fullscreen .zen-stream-bar:hover,
+body.zen-h.relax-fullscreen .zen-top-tools:hover,
+body.zen-h.relax-fullscreen .zen-social-rail:hover {
+  opacity: 1;
+}
