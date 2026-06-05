@@ -328,21 +328,11 @@ body.zen-h .bottom-controls {
 }
 
 body.zen-h .desktop-viz-controls {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  backdrop-filter: none;
+  display: none !important;
 }
 
 body.zen-h .viz-mode-selector {
-  display: flex !important;
-  flex-wrap: nowrap;
-  gap: 2px;
-  max-width: none;
+  display: none !important;
 }
 
 body.zen-h .zen-viz-btn {

@@ -3893,12 +3893,18 @@
       const baseline = h * 0.92;
       const hasAudio = audioContextInitialized && analyser && isPlaying && dataArray;
       horizonPhase += 0.035;
+      if (hasAudio) {
+        analyser.getByteFrequencyData(dataArray);
+      }
 
       for (let i = 0; i < barCount; i++) {
         let amp;
         if (hasAudio) {
           const idx = Math.floor((i / barCount) * dataArray.length);
-          amp = dataArray[idx] / 255;
+          const prev = dataArray[Math.max(0, idx - 1)] || 0;
+          const next = dataArray[Math.min(dataArray.length - 1, idx + 1)] || 0;
+          const raw = (prev + dataArray[idx] * 1.8 + next) / (3.8 * 255);
+          amp = Math.max(0.04, Math.pow(raw, 0.72));
         } else {
           const wave = Math.abs(Math.sin(horizonPhase + i * 0.18)) * 0.22
             + Math.abs(Math.cos(horizonPhase * 0.65 + i * 0.09)) * 0.12;
