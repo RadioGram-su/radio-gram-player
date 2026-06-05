@@ -1,8 +1,10 @@
-const CACHE_NAME = 'radio-gram-v3';
+const CACHE_NAME = 'radio-gram-v4';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/manifest.json',
+  '/zen-horizon.css',
+  '/189405_morze_zachod_slonca.jpg'
 ];
 
 // Установка Service Worker
