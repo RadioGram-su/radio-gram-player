@@ -3391,11 +3391,11 @@
     <!-- Переключатель режима визуализатора (только десктоп) -->
     <div class="desktop-viz-controls">
     <div class="viz-mode-selector" id="viz-selector">
-      <button class="viz-mode-btn active" data-viz-mode="bars" onclick="setVizMode('bars', this)">Bars</button>
-      <button class="viz-mode-btn" data-viz-mode="particles" onclick="setVizMode('particles', this)">Particles</button>
-      <button class="viz-mode-btn" data-viz-mode="nebula" onclick="setVizMode('nebula', this)">Nebula</button>
-      <button class="viz-mode-btn" data-viz-mode="prism" onclick="setVizMode('prism', this)">Prism</button>
-      <button class="viz-mode-btn" data-viz-mode="liquid" onclick="setVizMode('liquid', this)">Liquid</button>
+      <button class="viz-mode-btn zen-viz-btn active" data-viz-mode="bars" onclick="setVizMode('bars', this)"><span class="zen-viz-glyph" aria-hidden="true">▥</span><span class="zen-viz-label">Bars</span></button>
+      <button class="viz-mode-btn zen-viz-btn" data-viz-mode="particles" onclick="setVizMode('particles', this)"><span class="zen-viz-glyph" aria-hidden="true">✦</span><span class="zen-viz-label">Particles</span></button>
+      <button class="viz-mode-btn zen-viz-btn" data-viz-mode="nebula" onclick="setVizMode('nebula', this)"><span class="zen-viz-glyph" aria-hidden="true">☁</span><span class="zen-viz-label">Nebula</span></button>
+      <button class="viz-mode-btn zen-viz-btn" data-viz-mode="prism" onclick="setVizMode('prism', this)"><span class="zen-viz-glyph" aria-hidden="true">◇</span><span class="zen-viz-label">Prism</span></button>
+      <button class="viz-mode-btn zen-viz-btn" data-viz-mode="liquid" onclick="setVizMode('liquid', this)"><span class="zen-viz-glyph" aria-hidden="true">◌</span><span class="zen-viz-label">Liquid</span></button>
     </div>
 
       <button type="button" class="viz-mode-modal-btn" onclick="openModal('viz-modes-modal')">Режимы</button>
@@ -3468,7 +3468,7 @@
     
     let isPlaying = false;
     let isImmersive = false;
-    let vizUserEnabled = true;
+    let vizUserEnabled = !document.body.classList.contains('zen-h');
     let relaxVizOnly = false;
     let userVolume = 1;
     let isNightMode = true;
@@ -3787,20 +3787,31 @@
       }
     }
 
+    function isZenHorizonMode() {
+      return document.body.classList.contains('zen-h');
+    }
+
+    function applyZenBackdrop() {
+      if (!reactiveBg || !isZenHorizonMode()) return;
+      reactiveBg.classList.remove('nature-photo');
+      reactiveBg.classList.add('zen-sunset');
+      reactiveBg.style.background = '';
+      reactiveBg.style.backgroundImage = '';
+      reactiveBg.style.backgroundSize = '';
+      reactiveBg.style.backgroundPosition = '';
+      reactiveBg.style.backgroundRepeat = '';
+      reactiveBg.style.boxShadow = '';
+      reactiveBg.style.filter = '';
+    }
+
     function syncBackdropToStream() {
       if (isNatureStreamActive()) {
         const el = document.querySelector('.rg-current-track-text');
         const tx = (el && el.textContent) ? el.textContent : '';
         const scene = detectNatureScene(tx);
         applyNatureSceneBackground(scene);
-      } else if (document.body.classList.contains('zen-h')) {
-        reactiveBg.classList.remove('nature-photo');
-        reactiveBg.style.backgroundImage = '';
-        reactiveBg.style.backgroundSize = '';
-        reactiveBg.style.backgroundPosition = '';
-        reactiveBg.style.backgroundRepeat = '';
-        reactiveBg.style.boxShadow = '';
-        reactiveBg.style.filter = '';
+      } else if (isZenHorizonMode()) {
+        applyZenBackdrop();
       } else {
         reactiveBg.classList.remove('nature-photo');
         reactiveBg.style.backgroundSize = '';
@@ -3876,12 +3887,12 @@
       const w = horizonCanvas.clientWidth;
       const h = horizonCanvas.clientHeight;
       horizonCtx.clearRect(0, 0, w, h);
-      const barCount = w < 400 ? 48 : 72;
-      const gap = 2;
+      const barCount = w < 400 ? 56 : 88;
+      const gap = 1.5;
       const barW = w / barCount;
-      const baseline = h * 0.88;
+      const baseline = h * 0.92;
       const hasAudio = audioContextInitialized && analyser && isPlaying && dataArray;
-      horizonPhase += 0.04;
+      horizonPhase += 0.035;
 
       for (let i = 0; i < barCount; i++) {
         let amp;
@@ -3889,16 +3900,22 @@
           const idx = Math.floor((i / barCount) * dataArray.length);
           amp = dataArray[idx] / 255;
         } else {
-          amp = 0.12 + Math.abs(Math.sin(horizonPhase + i * 0.22)) * 0.18 + Math.abs(Math.cos(horizonPhase * 0.7 + i * 0.11)) * 0.1;
+          const wave = Math.abs(Math.sin(horizonPhase + i * 0.18)) * 0.22
+            + Math.abs(Math.cos(horizonPhase * 0.65 + i * 0.09)) * 0.12;
+          amp = 0.1 + wave;
         }
-        const barH = Math.max(3, amp * h * 0.72);
+        const barH = Math.max(2, amp * h * 0.78);
         const x = i * barW + gap / 2;
-        const t = i / (barCount - 1);
+        const dist = Math.abs(i / (barCount - 1) - 0.5) * 2;
+        const r = Math.round(255 - dist * 35);
+        const g = Math.round(155 - dist * 55 + (1 - dist) * 45);
+        const b = Math.round(70 + dist * 150);
         const grad = horizonCtx.createLinearGradient(x, baseline - barH, x, baseline);
-        grad.addColorStop(0, `rgba(${Math.round(255 - t * 80)}, ${Math.round(140 + t * 40)}, ${Math.round(80 + t * 120)}, 0.95)`);
-        grad.addColorStop(1, `rgba(${Math.round(200 - t * 60)}, ${Math.round(90 + t * 30)}, ${Math.round(200 + t * 40)}, 0.35)`);
+        grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.98)`);
+        grad.addColorStop(0.55, `rgba(${Math.round(r * 0.85)}, ${Math.round(g * 0.8)}, ${Math.round(b * 0.9)}, 0.72)`);
+        grad.addColorStop(1, `rgba(${Math.round(r * 0.55)}, ${Math.round(g * 0.5)}, ${Math.round(b * 0.75)}, 0.18)`);
         horizonCtx.fillStyle = grad;
-        horizonCtx.fillRect(x, baseline - barH, barW - gap, barH);
+        horizonCtx.fillRect(x, baseline - barH, Math.max(1.5, barW - gap), barH);
       }
     }
 
@@ -4760,6 +4777,8 @@
       if (isNatureStreamActive()) {
         if (reactiveBgAnimationId) renderReactiveBackground();
         else applyNatureSceneBackground(lastNatureScene);
+      } else if (isZenHorizonMode()) {
+        applyZenBackdrop();
       } else if (reactiveBgAnimationId) renderReactiveBackground();
     }
 
@@ -4892,14 +4911,18 @@
     }
 
     function syncVisualModeState() {
+      const zen = isZenHorizonMode();
       const mobileNoVizBlock = prefersMobileReducedVisuals() && !relaxVizOnly;
-      const wantCanvas = !mobileNoVizBlock && (vizUserEnabled || relaxVizOnly) && (isPlaying || isImmersive || relaxVizOnly);
+      const wantCanvas = !zen && !mobileNoVizBlock && (vizUserEnabled || relaxVizOnly) && (isPlaying || isImmersive || relaxVizOnly);
       canvas.classList.toggle('active', wantCanvas);
       const shouldRunVisualizer = wantCanvas && audioContextInitialized && (isPlaying || relaxVizOnly);
       if (shouldRunVisualizer) startVisualization();
       else stopVisualization();
-      /* Живой фон (#reactive-bg) — при воспроизведении, без привязки к «Визуал»; canvas только с визуалом */
-      if (isPlaying) {
+      if (zen) {
+        stopReactiveBackground();
+        applyZenBackdrop();
+        ensureZenHorizonEq();
+      } else if (isPlaying) {
         if (!reactiveBgAnimationId) startReactiveBackground();
       } else {
         stopReactiveBackground();
@@ -5066,6 +5089,7 @@
 
     function renderReactiveBackground() {
       if (!reactiveBg) return;
+      if (isZenHorizonMode() && !isNatureStreamActive()) return;
       const y1 = Math.round(28 + bgState.treble * 14);
       const y2 = Math.round(72 - bgState.bass * 16);
       const h = Math.round(205 + bgState.mid * 120 + bgState.treble * 80);
@@ -5118,6 +5142,7 @@
     }
 
     function startReactiveBackground() {
+      if (isZenHorizonMode() && !isNatureStreamActive()) return;
       if (reactiveBgAnimationId) return;
       const animateBg = () => {
         if (audioContextInitialized && analyser && isPlaying) {
@@ -5148,6 +5173,8 @@
       if (isNatureStreamActive()) {
         const el = document.querySelector('.rg-current-track-text');
         applyNatureSceneBackground(detectNatureScene(el && el.textContent ? el.textContent : ''));
+      } else if (isZenHorizonMode()) {
+        applyZenBackdrop();
       } else {
         updateAtmosphereByTime();
       }
@@ -5938,6 +5965,7 @@
     updateRadioListeners();
     updateTrackInfo().then(() => syncBackdropToStream());
     setInterval(() => {
+      if (isZenHorizonMode()) return;
       if (!isNatureStreamActive()) updateAtmosphereByTime();
     }, 20 * 60 * 1000);
     startHourlyTimeAnnouncements();

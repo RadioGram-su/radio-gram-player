@@ -1,53 +1,76 @@
-/* Radio Gram — Zen Horizon layout */
+/* Radio Gram — Zen Horizon (pixel match to mockup) */
 
-body.zen-h {
-  background: #030712;
-  animation: none;
+/* --- Kill legacy night gradients; show sunset photo --- */
+body.zen-h,
+body.zen-h.night-mode:not(.visual-only):not(.relax-fullscreen) {
+  color: #f4f7ff;
+  background: transparent !important;
+  background-image: none !important;
+  animation: none !important;
   justify-content: flex-start;
+  padding: 0 !important;
 }
 
-body.zen-h #reactive-bg {
-  background-image:
-    linear-gradient(180deg, rgba(3, 8, 22, 0.35) 0%, rgba(3, 8, 22, 0.08) 42%, rgba(3, 8, 22, 0.55) 100%),
-    url('/189405_morze_zachod_slonca.jpg');
-  background-size: cover;
-  background-position: center 40%;
-  background-repeat: no-repeat;
-  filter: saturate(1.05) brightness(0.92);
+body.zen-h::before,
+body.zen-h.night-mode::before {
+  display: none !important;
 }
 
-body.zen-h #reactive-bg.nature-photo {
-  filter: saturate(1.08) brightness(0.88);
+body.zen-h #reactive-bg,
+body.zen-h #reactive-bg.zen-sunset {
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+  background:
+    linear-gradient(180deg, rgba(4, 10, 28, 0.38) 0%, rgba(4, 10, 28, 0.06) 44%, rgba(4, 10, 28, 0.52) 100%),
+    url('/189405_morze_zachod_slonca.jpg') center 42% / cover no-repeat !important;
+  filter: saturate(1.08) brightness(0.94) !important;
+  box-shadow: none !important;
 }
 
-body.zen-h #visualizer-canvas {
-  opacity: 0.22;
-  mix-blend-mode: screen;
-}
-
+body.zen-h #visualizer-canvas,
 body.zen-h #visualizer-canvas.active {
-  opacity: 0.38;
+  display: none !important;
+}
+
+body.zen-h .zen-top-tools {
+  display: none !important;
+}
+
+body.zen-h .app-container {
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: block;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
 }
 
 /* --- Top stream bar --- */
 .zen-stream-bar {
   position: fixed;
-  top: max(12px, env(safe-area-inset-top));
+  top: max(14px, env(safe-area-inset-top));
   left: 50%;
   transform: translateX(-50%);
   z-index: 140;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 4px;
+  padding: 10px 22px;
   border-radius: 999px;
-  background: rgba(8, 14, 28, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  max-width: min(96vw, 520px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  max-width: min(94vw, 560px);
   overflow-x: auto;
   scrollbar-width: none;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
 }
 
 .zen-stream-bar::-webkit-scrollbar { display: none; }
@@ -55,71 +78,129 @@ body.zen-h #visualizer-canvas.active {
 .zen-stream-pill {
   background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.78);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.02em;
-  padding: 4px 2px;
+  letter-spacing: 0.03em;
+  padding: 2px 4px;
   cursor: pointer;
   white-space: nowrap;
-  transition: color 0.2s, text-shadow 0.2s;
+  transition: color 0.2s;
+  border-bottom: 2px solid transparent;
 }
 
 .zen-stream-pill:hover { color: #fff; }
 
 .zen-stream-pill.active {
-  color: #7ee8ff;
-  text-shadow: 0 0 18px rgba(80, 220, 255, 0.55);
-  border-bottom: 2px solid #5ce1ff;
+  color: #fff;
+  border-bottom-color: #5ce8d8;
+  text-shadow: none;
 }
 
 .zen-stream-dot {
-  color: rgba(255, 255, 255, 0.28);
-  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 11px;
   user-select: none;
   pointer-events: none;
+  margin: 0 2px;
 }
 
-.zen-top-tools {
+/* --- Center play + orbit ring --- */
+body.zen-h .play-wrapper {
   position: fixed;
-  top: max(58px, calc(env(safe-area-inset-top) + 46px));
-  right: 12px;
-  z-index: 135;
-  display: flex;
-  gap: 6px;
+  top: 44vh;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  z-index: 35;
 }
 
-.zen-top-tools button,
-.zen-top-tools a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 36px;
-  height: 32px;
-  padding: 0 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: rgba(8, 14, 28, 0.42);
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 11px;
-  font-family: inherit;
-  text-decoration: none;
+body.zen-h .play-ring {
+  width: 210px;
+  height: 210px;
+  border: none;
+  border-radius: 50%;
+  opacity: 0.7;
+  background: conic-gradient(
+    from 200deg,
+    transparent 0deg,
+    rgba(92, 232, 216, 0.55) 60deg,
+    rgba(255, 168, 88, 0.45) 120deg,
+    transparent 200deg,
+    transparent 360deg
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  animation: zenRingSpin 9s linear infinite;
+  box-shadow: none;
+}
+
+body.zen-h .play-ring.active { opacity: 1; }
+
+@keyframes zenRingSpin {
+  to { transform: rotate(360deg); }
+}
+
+body.zen-h .play-btn-main {
+  width: 104px;
+  height: 104px;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.62) !important;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.04) !important;
   backdrop-filter: blur(10px);
-  cursor: pointer;
+  -webkit-backdrop-filter: blur(10px);
 }
 
-/* --- Horizon equalizer --- */
+body.zen-h .play-btn-main::before,
+body.zen-h .play-btn-main::after {
+  display: none !important;
+}
+
+body.zen-h .play-btn-main:hover {
+  transform: scale(1.04);
+  border-color: rgba(255, 255, 255, 0.82) !important;
+}
+
+body.zen-h .play-btn-main.playing {
+  border-color: rgba(255, 255, 255, 0.75) !important;
+  box-shadow: 0 0 32px rgba(92, 232, 216, 0.22), inset 0 0 20px rgba(255, 255, 255, 0.06) !important;
+}
+
+body.zen-h .play-btn-glyphs {
+  width: 40px;
+  height: 40px;
+}
+
+body.zen-h .play-btn-glyphs .play-icon,
+body.zen-h .play-btn-glyphs .pause-icon {
+  width: 36px;
+  height: 36px;
+  filter: none;
+}
+
+body.zen-h .play-btn-glyphs .play-icon path {
+  fill: #fff !important;
+  stroke: none !important;
+}
+
+body.zen-h .play-btn-glyphs .pause-icon rect {
+  fill: #fff !important;
+  stroke: none !important;
+}
+
+/* --- Horizon equalizer at sunset line --- */
 #horizon-eq-canvas {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 26vh;
-  width: min(94vw, 720px);
-  height: min(16vh, 120px);
-  z-index: 12;
+  top: 50vh;
+  bottom: auto;
+  width: min(96vw, 920px);
+  height: min(20vh, 130px);
+  z-index: 15;
   pointer-events: none;
-  opacity: 0.95;
+  opacity: 0.92;
 }
 
 /* --- Hide legacy chrome --- */
@@ -131,140 +212,232 @@ body.zen-h .title-section,
 body.zen-h .stream-hint-pop,
 body.zen-h .rg-mobile-vk-playlist,
 body.zen-h .listen-time-badge,
-body.zen-h .viz-mode-modal-btn {
+body.zen-h .viz-mode-modal-btn,
+body.zen-h .desktop-volume,
+body.zen-h .immersive-switch,
+body.zen-h .viz-fullscreen-btn,
+body.zen-h .listen-time-chip,
+body.zen-h .desktop-viz-controls .settings-row {
   display: none !important;
 }
 
-body.zen-h .app-container {
-  position: relative;
-  z-index: 20;
-  width: 100%;
-  max-width: none;
-  min-height: 100vh;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-top: 72px;
-  padding-bottom: 200px;
-}
-
-body.zen-h .listeners-badge {
-  position: fixed;
-  bottom: calc(18px + env(safe-area-inset-bottom));
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 130;
-  margin: 0;
-  font-size: 12px;
-  opacity: 0.85;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-}
-
-body.zen-h .play-wrapper {
-  margin-top: -4vh;
-}
-
-body.zen-h .play-btn-main {
-  width: 132px;
-  height: 132px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 0 40px rgba(92, 225, 255, 0.12), inset 0 0 30px rgba(255, 255, 255, 0.04);
-}
-
-body.zen-h .play-ring {
-  width: 156px;
-  height: 156px;
-  border-color: rgba(92, 225, 255, 0.35);
-}
-
-/* --- Now playing center card --- */
+/* --- Now playing card (center bottom) --- */
 body.zen-h .rg-mobile-now {
   display: block !important;
   position: fixed;
   left: 50%;
-  bottom: calc(52px + env(safe-area-inset-bottom));
+  bottom: calc(56px + env(safe-area-inset-bottom));
   transform: translateX(-50%);
   z-index: 125;
-  width: min(92vw, 420px);
-  padding: 14px 16px;
-  border-radius: 16px;
-  background: rgba(8, 14, 28, 0.52);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  width: min(90vw, 440px);
+  padding: 16px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
 }
 
 body.zen-h .rg-mobile-now .rg-partners-mini,
-body.zen-h .rg-mobile-now .rg-donate-block {
-  display: none;
+body.zen-h .rg-mobile-now .rg-donate-block,
+body.zen-h .rg-mobile-now .track-hint,
+body.zen-h .rg-mobile-now .stream-quality-badge,
+body.zen-h .rg-mobile-now .track-art {
+  display: none !important;
 }
 
-body.zen-h .rg-mobile-now .track-label,
-body.zen-h .rg-mobile-now .stream-quality-badge {
-  margin-bottom: 8px;
+body.zen-h .rg-mobile-now .track-label {
+  margin-bottom: 6px;
+  justify-content: center;
 }
 
-body.zen-h .rg-mobile-now .stream-quality-badge {
-  font-size: 10px;
-  opacity: 0.75;
+body.zen-h .rg-mobile-now .track-label-left span:first-child {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.62);
+  letter-spacing: 0.04em;
+}
+
+body.zen-h .rg-mobile-now .track-info-row {
+  display: block;
+  cursor: default;
 }
 
 body.zen-h .rg-mobile-now .track-text {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
 }
 
 body.zen-h .zen-track-genre {
-  margin-top: 6px;
-  font-size: 11px;
+  margin-top: 8px;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.55);
   letter-spacing: 0.02em;
-  line-height: 1.35;
+  line-height: 1.4;
+}
+
+/* --- Listeners below card --- */
+body.zen-h .listeners-badge {
+  position: fixed;
+  bottom: calc(22px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 126;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.72);
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
 
 body.zen-h .zen-listeners-icon {
   display: inline;
-  margin-right: 2px;
-  opacity: 0.85;
+  font-size: 13px;
+  opacity: 0.8;
 }
 
-body.zen-h .listeners-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+/* --- Bottom-left dock (single glass card) --- */
+body.zen-h .bottom-controls {
+  position: fixed;
+  left: max(14px, env(safe-area-inset-left));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  right: auto;
+  z-index: 140;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.22);
+  transform: none !important;
+  max-width: min(78vw, 360px);
 }
 
-.zen-setting-btn {
+body.zen-h .desktop-viz-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  backdrop-filter: none;
+}
+
+body.zen-h .viz-mode-selector {
+  display: flex !important;
+  flex-wrap: nowrap;
+  gap: 2px;
+  max-width: none;
+}
+
+body.zen-h .zen-viz-btn {
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  min-width: 44px;
-  padding: 4px 6px !important;
+  justify-content: center;
+  gap: 3px;
+  min-width: 48px;
+  padding: 6px 4px !important;
+  border-radius: 10px;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  box-shadow: none !important;
+  font-size: 9px;
 }
 
-.zen-setting-glyph {
-  font-size: 16px;
+body.zen-h .zen-viz-btn:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.zen-h .zen-viz-btn.active {
+  color: #fff !important;
+  border-color: rgba(92, 232, 216, 0.45) !important;
+  background: rgba(92, 232, 216, 0.12) !important;
+}
+
+body.zen-h .zen-viz-glyph {
+  font-size: 15px;
   line-height: 1;
+  opacity: 0.9;
 }
 
-.zen-setting-label {
+body.zen-h .zen-viz-label {
   font-size: 9px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.72);
   letter-spacing: 0.02em;
 }
 
+body.zen-h .bottom-controls > .settings-row,
+body.zen-h .zen-settings-row {
+  display: flex !important;
+  flex-wrap: nowrap;
+  gap: 2px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  max-width: none;
+}
+
+body.zen-h .zen-setting-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 48px;
+  padding: 6px 4px !important;
+  border-radius: 10px;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+  box-shadow: none !important;
+}
+
+body.zen-h .zen-setting-btn:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.zen-h .zen-setting-glyph {
+  font-size: 15px;
+  line-height: 1;
+}
+
+body.zen-h .zen-setting-label {
+  font-size: 9px;
+  font-weight: 500;
+  color: inherit;
+  letter-spacing: 0.02em;
+}
+
+body:not(.zen-h) .zen-viz-glyph,
+body:not(.zen-h) .zen-viz-label,
 body:not(.zen-h) .zen-setting-label,
 body:not(.zen-h) .zen-only-fs,
 body:not(.zen-h) .zen-listeners-icon {
   display: none !important;
+}
+
+body:not(.zen-h) .zen-viz-btn {
+  flex-direction: row;
+  min-width: auto;
 }
 
 body:not(.zen-h) .zen-setting-btn {
@@ -272,223 +445,136 @@ body:not(.zen-h) .zen-setting-btn {
   min-width: auto;
 }
 
-body.zen-h .zen-settings-row {
-  flex-wrap: wrap;
-  gap: 4px;
-  max-width: 240px;
-}
-
-body.zen-h .bottom-controls .desktop-viz-controls .settings-row {
-  display: none;
-}
-
-body.zen-h .bottom-controls > .settings-row {
-  display: flex;
-}
-
-body.zen-h .immersive-switch {
-  order: -1;
-  margin-bottom: 4px;
-}
-
-/* --- Bottom-left dock (viz + settings) --- */
-body.zen-h .bottom-controls {
-  position: fixed;
-  left: max(10px, env(safe-area-inset-left));
-  bottom: max(10px, env(safe-area-inset-bottom));
-  right: auto;
-  align-items: flex-start;
-  gap: 8px;
-  z-index: 140;
-  transform: none !important;
-  max-width: min(72vw, 340px);
-}
-
-body.zen-h .desktop-viz-controls {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: rgba(8, 14, 28, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(14px);
-}
-
-body.zen-h .viz-mode-selector {
-  display: flex !important;
-  flex-wrap: wrap;
-  gap: 6px;
-  max-width: 220px;
-}
-
-body.zen-h .viz-mode-btn {
-  font-size: 10px;
-  padding: 5px 8px;
-  border-radius: 8px;
-}
-
-body.zen-h .desktop-volume {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 12px;
-  background: rgba(8, 14, 28, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.75);
-}
-
-body.zen-h .desktop-volume input[type="range"] {
-  width: 88px;
-}
-
-body.zen-h .bottom-controls > .settings-row {
-  padding: 8px 10px;
-  border-radius: 12px;
-  background: rgba(8, 14, 28, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-body.zen-h .immersive-switch {
-  background: rgba(8, 14, 28, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* --- Right social rail --- */
+/* --- Right social rail (minimal, no box) --- */
 .zen-social-rail {
   position: fixed;
-  right: max(12px, env(safe-area-inset-right));
-  bottom: calc(88px + env(safe-area-inset-bottom));
+  right: max(18px, env(safe-area-inset-right));
+  bottom: calc(100px + env(safe-area-inset-bottom));
   z-index: 140;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 12px 10px;
-  border-radius: 14px;
-  background: rgba(8, 14, 28, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(12px);
+  align-items: flex-end;
+  gap: 18px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  backdrop-filter: none;
 }
 
 .zen-social-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   background: none;
   border: none;
   color: rgba(255, 255, 255, 0.82);
   font-family: inherit;
   font-size: 10px;
+  font-weight: 500;
   cursor: pointer;
   text-decoration: none;
   min-width: 44px;
-  padding: 4px;
+  padding: 2px;
+  letter-spacing: 0.02em;
 }
 
 .zen-social-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   fill: currentColor;
-  opacity: 0.9;
+  opacity: 0.88;
 }
 
 .zen-social-btn:hover { color: #fff; }
 
 /* --- Mobile --- */
 @media (max-width: 768px) {
-  body.zen-h .app-container {
-    padding-bottom: 240px;
-  }
-
   #horizon-eq-canvas {
-    bottom: 30vh;
-    height: 12vh;
+    top: 48vh;
+    width: min(98vw, 720px);
+    height: 14vh;
   }
 
-  body.zen-h .bottom-controls {
-    left: 8px;
-    bottom: 8px;
-    max-width: calc(100vw - 90px);
-  }
-
-  body.zen-h .desktop-viz-controls {
-    padding: 8px;
-  }
-
-  body.zen-h .viz-mode-selector {
-    max-width: 180px;
-  }
-
-  body.zen-h .desktop-volume label {
-    display: none;
-  }
-
-  body.zen-h .listen-time-chip {
-    display: none;
-  }
-
-  .zen-social-rail {
-    bottom: calc(72px + env(safe-area-inset-bottom));
-    gap: 10px;
-    padding: 8px 6px;
-  }
-
-  .zen-top-tools {
-    top: max(52px, calc(env(safe-area-inset-top) + 40px));
-    right: 8px;
-    flex-wrap: wrap;
-    max-width: 46vw;
-    justify-content: flex-end;
-  }
-
-  body.zen-h .rg-mobile-now {
-    bottom: calc(44px + env(safe-area-inset-bottom));
-    width: min(94vw, 400px);
-  }
-
-  body.zen-h .listeners-badge {
-    bottom: calc(8px + env(safe-area-inset-bottom));
-    font-size: 11px;
+  body.zen-h .play-wrapper {
+    top: 42vh;
   }
 
   body.zen-h .play-btn-main {
-    width: 118px;
-    height: 118px;
+    width: 92px;
+    height: 92px;
   }
 
   body.zen-h .play-ring {
-    width: 140px;
-    height: 140px;
+    width: 180px;
+    height: 180px;
   }
+
+  body.zen-h .bottom-controls {
+    left: 10px;
+    bottom: 10px;
+    max-width: calc(100vw - 80px);
+    padding: 10px;
+  }
+
+  body.zen-h .zen-viz-btn,
+  body.zen-h .zen-setting-btn {
+    min-width: 42px;
+    padding: 5px 3px !important;
+  }
+
+  body.zen-h .viz-mode-selector {
+    flex-wrap: wrap;
+    max-width: 240px;
+  }
+
+  .zen-social-rail {
+    bottom: calc(88px + env(safe-area-inset-bottom));
+    gap: 14px;
+    right: 10px;
+  }
+
+  body.zen-h .rg-mobile-now {
+    bottom: calc(50px + env(safe-area-inset-bottom));
+    width: min(94vw, 400px);
+    padding: 14px 16px;
+  }
+
+  body.zen-h .listeners-badge {
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    font-size: 11px;
+  }
+
+  .zen-stream-bar {
+    padding: 8px 16px;
+    max-width: 96vw;
+  }
+
+  .zen-stream-pill { font-size: 13px; }
 }
 
 @media (max-width: 380px) {
-  .zen-stream-pill { font-size: 12px; }
-  body.zen-h .rg-mobile-now .track-text { font-size: 13px; }
+  body.zen-h .rg-mobile-now .track-text { font-size: 15px; }
+  body.zen-h .zen-viz-btn,
+  body.zen-h .zen-setting-btn { min-width: 38px; }
 }
 
 /* Visual-only / relax fullscreen */
 body.zen-h.visual-only .zen-stream-bar,
-body.zen-h.visual-only .zen-top-tools,
 body.zen-h.visual-only .zen-social-rail,
 body.zen-h.visual-only .rg-mobile-now,
-body.zen-h.visual-only .listeners-badge {
+body.zen-h.visual-only .listeners-badge,
+body.zen-h.visual-only .bottom-controls {
   opacity: 0;
   pointer-events: none;
 }
 
 body.zen-h.relax-fullscreen .zen-stream-bar,
-body.zen-h.relax-fullscreen .zen-top-tools,
 body.zen-h.relax-fullscreen .zen-social-rail {
   opacity: 0.35;
 }
 
 body.zen-h.relax-fullscreen .zen-stream-bar:hover,
-body.zen-h.relax-fullscreen .zen-top-tools:hover,
 body.zen-h.relax-fullscreen .zen-social-rail:hover {
   opacity: 1;
 }
